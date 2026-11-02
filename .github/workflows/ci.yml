@@ -6,7 +6,7 @@ on:
 
 env:
   # Must match the Godot version the project is developed with.
-  GODOT_VERSION: "4.7-stable"
+  GODOT_VERSION: "4.7.2-stable"
 
 jobs:
   lint:
