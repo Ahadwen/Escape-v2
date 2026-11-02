@@ -1,0 +1,7 @@
+# gdlint configuration (gdtoolkit 4). Run: gdlint .
+max-line-length: 100
+max-file-lines: 1000
+excluded_directories: !!set
+  .git: null
+  .godot: null
+  addons: null

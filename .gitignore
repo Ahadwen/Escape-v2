@@ -1,3 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Export output
+/build/
+
+# Python tooling (gdtoolkit)
+__pycache__/

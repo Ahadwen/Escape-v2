@@ -77,7 +77,7 @@ PC is the development and first-release target. Gamepad and touch are accounted 
 | Renderer | Forward+ on PC; Mobile renderer for phone exports | |
 | Art (for now) | Geometric primitives (capsules, boxes, cylinders) with flat colour materials | Prettify once the game works |
 | Pathfinding | NavigationServer3D; navmesh baked at runtime after level generation | Needed for click-to-move and enemy chasing |
-| Testing | GdUnit4 (or GUT) for pure logic: stats, damage, threat curve, generation | |
+| Testing | Small built-in headless runner (`tests/run_tests.gd`) for pure logic: stats, damage, threat curve, generation | No addon dependency; can move to GdUnit4 later if we need mocking or scene testing |
 
 ## 7. Architecture
 
