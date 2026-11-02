@@ -36,14 +36,16 @@ Each level is procedurally generated and its **threat rises steadily over time**
 
 ## 4. Starting character — The Knight (working name)
 
-A simple, readable kit that teaches the game: one displacement ability, one buff, one aggro tool, and one escape button.
+A simple, readable introductory kit: one displacement ability, one buff, one aggro tool, and one escape button. **Cooldowns only — no resource.** Later characters get more complex kits and resource pools.
 
 | Slot | Ability | Behaviour | Scaling |
 |---|---|---|---|
-| **Q** | **Dash** | Short dash in the aimed direction (`DIRECTION`, movement override). | Range scales a little with **Will**. The landing scales with **HP**: at high HP the landing produces a small shockwave that knocks back and slows nearby enemies. |
-| **W** | **Rally** (move-speed steroid) | Timed self-buff adding a move-speed modifier. | TBD (likely Will → amount or duration). |
+| **Q** | **Dash** | Short dash in the aimed direction (`DIRECTION`, movement override). | Range scales a little with **Will**. The landing scales with **current HP**: above 50% HP, landing produces a shockwave (knockback + slow) whose radius and strength grow with HP. |
+| **W** | **Rally** (move-speed steroid) | Timed self-buff adding a move-speed modifier. Will → speed amount; fixed duration (~3s). |
 | **E** | **Decoy** | Places a decoy (`POINT`) with a high-priority `Targetable` that draws enemy aggro and absorbs hits until destroyed. | Decoy HP scales with **Will**. |
-| **R** | **Unstoppable Charge** | Invulnerable while charging forward, gaining speed over time; steerable with a limited turn rate; ends on collision. | TBD. |
+| **R** | **Unstoppable Charge** | Invulnerable while charging forward, gaining speed over time; steerable with a limited turn rate; ends on collision with terrain or an enemy (impact knocks enemies back), or after a max duration (~3s). No early recast. | None for now. |
+
+All numbers above are placeholder defaults to get something playable; they live in `.tres` data and will be tuned in playtesting.
 
 Systems this character proves out (good reason to build her first):
 
@@ -223,10 +225,6 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 
 ## 10. Open questions
 
-- Knight Q: does the shockwave scale with **current** HP or **max** HP? And is it continuous (stronger the more HP), or does it switch on above a threshold?
-- Knight R: does it end on hitting an enemy as well as terrain? Does impact knock enemies back/stun them? Can it be recast to stop early? Max duration?
-- Knight W: what scales — amount, duration, both?
-- Does the Knight use a resource (e.g. stamina), or cooldowns only?
 
 
 - Meta-progression contents (Nexus unlocks).
