@@ -6,9 +6,16 @@ extends Node
 ## scheme emits; the InputRouter decides which one is active.
 
 signal intent_emitted(intent: PlayerIntent)
+## Show an aim preview for a slot (-1 = generic aim, no specific ability).
+signal aim_preview_changed(slot: int, aim: AimData)
+signal aim_preview_ended
+
+const NO_SLOT: int = -1
 
 ## Camera used to convert screen/stick input into world space. Set by the router.
 var camera: Camera3D
+## Where aim is measured from (the player). Set by the router.
+var aim_origin: Node3D
 var is_active: bool = false
 
 var _last_move_stick: Vector2 = Vector2.ZERO
@@ -27,6 +34,7 @@ func deactivate() -> void:
 	# Release any analogue movement before going quiet, so the player doesn't
 	# keep walking after a scheme switch.
 	_update_analog_move(Vector2.ZERO)
+	_end_aim_preview()
 	is_active = false
 	_on_deactivated()
 
@@ -44,6 +52,36 @@ func _on_deactivated() -> void:
 func _emit(intent: PlayerIntent) -> void:
 	if is_active:
 		intent_emitted.emit(intent)
+
+
+func _emit_aim_preview(slot: int, aim: AimData) -> void:
+	if is_active:
+		aim_preview_changed.emit(slot, aim)
+
+
+func _end_aim_preview() -> void:
+	if is_active:
+		aim_preview_ended.emit()
+
+
+func _origin() -> Vector3:
+	return aim_origin.global_position if aim_origin != null else Vector3.ZERO
+
+
+## Aim at a ground point (mouse cursor).
+func _aim_at_screen_position(screen_position: Vector2) -> AimData:
+	var hit: Variant = _screen_to_ground(screen_position)
+	if hit is Vector3:
+		var point: Vector3 = hit
+		return AimData.from_point(_origin(), point)
+	return AimData.none()
+
+
+## Aim along a stick. Returns "no aim" when the stick is centred.
+func _aim_from_stick(stick: Vector2) -> AimData:
+	if stick.length_squared() < 0.0001:
+		return AimData.none()
+	return AimData.from_direction(_stick_to_world(stick), stick.length())
 
 
 ## Emits a MoveDirectionIntent when the stick value changes.

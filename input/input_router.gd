@@ -5,6 +5,9 @@ extends Node
 
 signal intent_emitted(intent: PlayerIntent)
 signal scheme_changed(kind: SchemeKind)
+## Forwarded from the active scheme; slot -1 means generic aim.
+signal aim_preview_changed(slot: int, aim: AimData)
+signal aim_preview_ended
 
 enum SchemeKind { PC, GAMEPAD, TOUCH }
 
@@ -17,6 +20,12 @@ const STICK_SWITCH_THRESHOLD: float = 0.5
 		camera = value
 		for scheme: InputScheme in _schemes.values():
 			scheme.camera = value
+## Where aim is measured from (the player).
+@export var aim_origin: Node3D:
+	set(value):
+		aim_origin = value
+		for scheme: InputScheme in _schemes.values():
+			scheme.aim_origin = value
 @export var pc_scheme: PCInputScheme
 @export var gamepad_scheme: GamepadInputScheme
 @export var touch_scheme: TouchInputScheme
@@ -36,7 +45,10 @@ func _ready() -> void:
 	}
 	for scheme: InputScheme in _schemes.values():
 		scheme.camera = camera
+		scheme.aim_origin = aim_origin
 		scheme.intent_emitted.connect(_on_scheme_intent)
+		scheme.aim_preview_changed.connect(_on_scheme_aim_preview)
+		scheme.aim_preview_ended.connect(_on_scheme_aim_preview_ended)
 	_activate(_initial_kind())
 
 
@@ -60,6 +72,14 @@ func _input(event: InputEvent) -> void:
 
 func _on_scheme_intent(intent: PlayerIntent) -> void:
 	intent_emitted.emit(intent)
+
+
+func _on_scheme_aim_preview(slot: int, aim: AimData) -> void:
+	aim_preview_changed.emit(slot, aim)
+
+
+func _on_scheme_aim_preview_ended() -> void:
+	aim_preview_ended.emit()
 
 
 func _activate(kind: SchemeKind) -> void:

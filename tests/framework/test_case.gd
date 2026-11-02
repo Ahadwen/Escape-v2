@@ -6,6 +6,7 @@ extends RefCounted
 ## rather than aborting, so every assertion in a test is reported.
 
 var _failures: PackedStringArray = PackedStringArray()
+var _owned_nodes: Array[Node] = []
 
 
 ## Called before each test method. Override to set up fixtures.
@@ -59,11 +60,25 @@ func fail(message: String) -> void:
 	_fail("failed", message)
 
 
+## Adds a node to the scene tree for this test; it's freed after the test.
+func add_to_tree(node: Node) -> Node:
+	(Engine.get_main_loop() as SceneTree).root.add_child(node)
+	_owned_nodes.append(node)
+	return node
+
+
 # --- Runner interface -------------------------------------------------------
 
 
 func _reset() -> void:
 	_failures = PackedStringArray()
+
+
+func _cleanup() -> void:
+	for node: Node in _owned_nodes:
+		if is_instance_valid(node):
+			node.free()
+	_owned_nodes.clear()
 
 
 func _get_failures() -> PackedStringArray:

@@ -5,6 +5,9 @@
 [ext_resource type="Script" path="res://ui/feedback/move_marker.gd" id="3_marker"]
 [ext_resource type="PackedScene" path="res://actors/player/player.tscn" id="4_player"]
 [ext_resource type="PackedScene" path="res://input/input_router.tscn" id="5_input"]
+[ext_resource type="Script" path="res://ui/feedback/aim_indicator.gd" id="6_aim_indicator"]
+[ext_resource type="Script" path="res://ui/feedback/aim_preview_presenter.gd" id="7_aim_presenter"]
+[ext_resource type="Script" path="res://ui/hud/ability_bar.gd" id="8_ability_bar"]
 
 [sub_resource type="Environment" id="Environment_arena"]
 background_mode = 1
@@ -205,5 +208,34 @@ target = NodePath("../Player")
 [node name="MoveMarker" type="Node3D" parent="."]
 script = ExtResource("3_marker")
 
-[node name="InputRouter" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_input")]
+[node name="AimIndicator" type="Node3D" parent="."]
+script = ExtResource("6_aim_indicator")
+
+[node name="AimPreviewPresenter" type="Node" parent="." node_paths=PackedStringArray("abilities", "movement", "indicator")]
+script = ExtResource("7_aim_presenter")
+abilities = NodePath("../Player/AbilityCaster")
+movement = NodePath("../Player/ActorMovement")
+indicator = NodePath("../AimIndicator")
+
+[node name="InputRouter" parent="." node_paths=PackedStringArray("camera", "aim_origin") instance=ExtResource("5_input")]
 camera = NodePath("../IsometricCamera")
+aim_origin = NodePath("../Player")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="AbilityBar" type="Control" parent="HUD" node_paths=PackedStringArray("abilities")]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("8_ability_bar")
+abilities = NodePath("../../Player/AbilityCaster")

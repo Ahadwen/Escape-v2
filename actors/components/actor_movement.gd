@@ -2,6 +2,7 @@ class_name ActorMovement
 extends Node
 ## Moves a CharacterBody3D either along a navigation path to a point or in a
 ## steered direction, and turns its visual to face where it's going.
+## A MovementOverride (dash, charge, knockback) takes priority while active.
 ## Shared by the player and (later) enemies.
 
 signal arrived
@@ -12,7 +13,9 @@ enum Mode { IDLE, TO_POINT, DIRECTION }
 @export var nav_agent: NavigationAgent3D
 ## Node rotated to face movement. Rotating a child keeps collision unaffected.
 @export var visual: Node3D
-## Metres per second. Will come from the actor's StatBlock in M3.
+## Optional. If set, speed comes from its move_speed stat.
+@export var stats: StatsComponent
+## Fallback speed in metres per second when there's no StatsComponent.
 @export var move_speed: float = 5.0
 ## How quickly the visual turns toward the movement direction.
 @export var turn_sharpness: float = 16.0
@@ -20,6 +23,7 @@ enum Mode { IDLE, TO_POINT, DIRECTION }
 var mode: Mode = Mode.IDLE
 
 var _direction: Vector3 = Vector3.ZERO
+var _override: MovementOverride
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 
@@ -37,6 +41,7 @@ func move_to(point: Vector3) -> void:
 ## steering, but doesn't cancel a path that is being followed.
 func move_in_direction(direction: Vector3) -> void:
 	if direction.length_squared() < 0.0001:
+		_direction = Vector3.ZERO
 		if mode == Mode.DIRECTION:
 			mode = Mode.IDLE
 		return
@@ -48,8 +53,40 @@ func stop() -> void:
 	mode = Mode.IDLE
 
 
+func current_speed() -> float:
+	if stats != null and stats.block.has_base(StatIds.MOVE_SPEED):
+		return stats.get_value(StatIds.MOVE_SPEED)
+	return move_speed
+
+
+## Flat world direction the actor is facing.
+func get_facing() -> Vector3:
+	var node: Node3D = visual if visual != null else body
+	var forward: Vector3 = -node.global_basis.z
+	forward.y = 0.0
+	return forward.normalized() if forward.length_squared() > 0.0001 else Vector3.FORWARD
+
+
+func has_override() -> bool:
+	return _override != null
+
+
+## Starts a movement override, replacing any current one. Cancels a path
+## being followed; stick steering resumes when the override ends.
+func start_override(movement_override: MovementOverride) -> void:
+	if _override != null:
+		_override.cancel()
+	_override = movement_override
+	if mode == Mode.TO_POINT:
+		mode = Mode.IDLE
+
+
 func _physics_process(delta: float) -> void:
-	var desired: Vector3 = _desired_velocity()
+	var desired: Vector3
+	if _override != null:
+		desired = _override.compute_velocity(delta)
+	else:
+		desired = _desired_velocity()
 	body.velocity.x = desired.x
 	body.velocity.z = desired.z
 	if body.is_on_floor():
@@ -57,6 +94,10 @@ func _physics_process(delta: float) -> void:
 	else:
 		body.velocity.y -= _gravity * delta
 	body.move_and_slide()
+	if _override != null:
+		_override.after_move(body)
+		if _override.finished:
+			_override = null
 	_face(desired, delta)
 
 
@@ -71,9 +112,9 @@ func _desired_velocity() -> Vector3:
 			to_next.y = 0.0
 			if to_next.length_squared() < 0.0001:
 				return Vector3.ZERO
-			return to_next.normalized() * move_speed
+			return to_next.normalized() * current_speed()
 		Mode.DIRECTION:
-			return _direction * move_speed
+			return _direction * current_speed()
 	return Vector3.ZERO
 
 

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://abilities/types/charge_ability_data.gd" id="1_charge"]
+
+[resource]
+script = ExtResource("1_charge")
+start_speed = 6.0
+max_speed = 16.0
+acceleration = 8.0
+turn_rate_degrees = 90.0
+max_duration = 3.0
+id = &"knight_charge"
+display_name = "Unstoppable Charge"
+targeting = 2
+cooldown = 30.0
+requires_free_movement = true

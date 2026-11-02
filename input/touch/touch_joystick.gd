@@ -3,12 +3,19 @@ extends Control
 ## On-screen analogue stick. The Control's rect is the touch zone; touching
 ## inside it grabs the stick. Read `output` (0..1 length, y down).
 
+## A finger took hold of the stick.
+signal grabbed
+## The finger let go. final_output is the stick value just before release.
+signal released(final_output: Vector2)
+
 @export var radius: float = 90.0
 @export_range(0.0, 0.9) var deadzone: float = 0.15
 ## If true, the stick base recentres wherever the finger lands in the zone.
 @export var floating: bool = true
 @export var base_color: Color = Color(1.0, 1.0, 1.0, 0.18)
 @export var knob_color: Color = Color(1.0, 1.0, 1.0, 0.55)
+## Optional text drawn in the middle of the stick (e.g. ability name).
+@export var label: String = ""
 
 ## Current stick value. Read-only for other nodes.
 var output: Vector2 = Vector2.ZERO
@@ -40,9 +47,12 @@ func _input(event: InputEvent) -> void:
 				_finger = touch.index
 				_center = local if floating else _rest_center()
 				_move_knob(local)
+				grabbed.emit()
 				get_viewport().set_input_as_handled()
 		elif not touch.pressed and touch.index == _finger:
+			var final_output: Vector2 = output
 			_release()
+			released.emit(final_output)
 			get_viewport().set_input_as_handled()
 	elif event is InputEventScreenDrag:
 		var drag: InputEventScreenDrag = event as InputEventScreenDrag
@@ -56,6 +66,20 @@ func _draw() -> void:
 		return
 	draw_circle(_center, radius, base_color)
 	draw_circle(_knob, radius * 0.4, knob_color)
+	if not label.is_empty():
+		var font: Font = ThemeDB.fallback_font
+		var font_size: int = 14
+		var text_size: Vector2 = font.get_string_size(
+			label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size
+		)
+		var baseline: Vector2 = (
+			_rest_center() + Vector2(-text_size.x * 0.5, radius + font_size + 4.0)
+		)
+		draw_string(font, baseline, label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
+
+
+func is_held() -> bool:
+	return _finger != -1
 
 
 func _move_knob(local_position: Vector2) -> void:

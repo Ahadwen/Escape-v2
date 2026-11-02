@@ -1,7 +1,7 @@
 class_name PCInputScheme
 extends InputScheme
-## Mouse and keyboard: right-click (or hold) to move, S to stop.
-## Abilities on Q/W/E/R arrive in M2.
+## Mouse and keyboard: right-click (or hold) to move, S to stop, Q/W/E/R to
+## cast toward the cursor (quick cast).
 
 ## While move is held, re-issue the move order toward the cursor this often.
 @export var repath_interval: float = 0.1
@@ -17,6 +17,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		_repath_timer = repath_interval
 	elif event.is_action_pressed(InputActions.STOP):
 		_emit(StopIntent.new())
+	else:
+		for slot: int in InputActions.ABILITY_SLOT_COUNT:
+			if event.is_action_pressed(InputActions.ability(slot)):
+				_emit(CastAbilityIntent.new(slot, _cursor_aim()))
+				break
 
 
 func _process(delta: float) -> void:
@@ -26,6 +31,15 @@ func _process(delta: float) -> void:
 	if _repath_timer <= 0.0:
 		_repath_timer = repath_interval
 		_move_to_cursor()
+
+
+func _physics_process(_delta: float) -> void:
+	if is_active:
+		_emit(AimIntent.new(_cursor_aim()))
+
+
+func _cursor_aim() -> AimData:
+	return _aim_at_screen_position(get_viewport().get_mouse_position())
 
 
 func _move_to_cursor() -> void:

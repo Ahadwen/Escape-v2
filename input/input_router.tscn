@@ -18,10 +18,11 @@ script = ExtResource("2_pc")
 [node name="GamepadInputScheme" type="Node" parent="."]
 script = ExtResource("3_gamepad")
 
-[node name="TouchInputScheme" type="Node" parent="." node_paths=PackedStringArray("controls", "move_stick")]
+[node name="TouchInputScheme" type="Node" parent="." node_paths=PackedStringArray("controls", "move_stick", "ability_sticks")]
 script = ExtResource("4_touch")
 controls = NodePath("../TouchControls")
 move_stick = NodePath("../TouchControls/MoveStick")
+ability_sticks = [NodePath("../TouchControls/AbilityStick1"), NodePath("../TouchControls/AbilityStick2"), NodePath("../TouchControls/AbilityStick3"), NodePath("../TouchControls/AbilityStick4")]
 
 [node name="TouchControls" type="CanvasLayer" parent="."]
 visible = false
@@ -36,3 +37,79 @@ offset_right = 520.0
 grow_vertical = 0
 mouse_filter = 2
 script = ExtResource("5_joystick")
+
+[node name="AbilityStick1" type="Control" parent="TouchControls"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -470.0
+offset_top = -170.0
+offset_right = -340.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("5_joystick")
+radius = 52.0
+floating = false
+label = "1"
+
+[node name="AbilityStick2" type="Control" parent="TouchControls"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -330.0
+offset_right = -290.0
+offset_bottom = -200.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("5_joystick")
+radius = 52.0
+floating = false
+label = "2"
+
+[node name="AbilityStick3" type="Control" parent="TouchControls"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -290.0
+offset_top = -440.0
+offset_right = -160.0
+offset_bottom = -310.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("5_joystick")
+radius = 52.0
+floating = false
+label = "3"
+
+[node name="AbilityStick4" type="Control" parent="TouchControls"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -190.0
+offset_top = -200.0
+offset_right = -30.0
+offset_bottom = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("5_joystick")
+radius = 64.0
+floating = false
+label = "4"

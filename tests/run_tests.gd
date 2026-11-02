@@ -66,6 +66,7 @@ func _run_file(path: String) -> Vector2i:
 		test_case.before_each()
 		test_case.call(method_name)
 		test_case.after_each()
+		test_case._cleanup()
 
 		var failures: PackedStringArray = test_case._get_failures()
 		if failures.is_empty():

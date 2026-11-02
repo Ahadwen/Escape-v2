@@ -4,6 +4,7 @@ extends Node
 ## about devices or control schemes.
 
 @export var movement: ActorMovement
+@export var abilities: AbilityCaster
 
 
 func handle_intent(intent: PlayerIntent) -> void:
@@ -13,3 +14,8 @@ func handle_intent(intent: PlayerIntent) -> void:
 		movement.move_in_direction((intent as MoveDirectionIntent).direction)
 	elif intent is StopIntent:
 		movement.stop()
+	elif intent is CastAbilityIntent:
+		var cast: CastAbilityIntent = intent as CastAbilityIntent
+		abilities.try_cast(cast.slot, cast.aim)
+	elif intent is AimIntent:
+		abilities.update_aim((intent as AimIntent).aim)

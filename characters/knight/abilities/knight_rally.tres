@@ -1,0 +1,21 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://abilities/types/stat_buff_ability_data.gd" id="1_buff"]
+[ext_resource type="Script" path="res://stats/stat_scaling.gd" id="2_scaling"]
+
+[sub_resource type="Resource" id="Resource_amount"]
+script = ExtResource("2_scaling")
+stat = &"will"
+base_value = 0.3
+per_point = 0.01
+
+[resource]
+script = ExtResource("1_buff")
+stat = &"move_speed"
+modifier_type = 1
+amount_scaling = SubResource("Resource_amount")
+duration = 3.0
+id = &"knight_rally"
+display_name = "Rally"
+targeting = 1
+cooldown = 12.0
