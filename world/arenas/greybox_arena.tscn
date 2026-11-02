@@ -1,0 +1,209 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/arenas/greybox_arena.gd" id="1_arena"]
+[ext_resource type="Script" path="res://world/camera/isometric_camera.gd" id="2_camera"]
+[ext_resource type="Script" path="res://ui/feedback/move_marker.gd" id="3_marker"]
+[ext_resource type="PackedScene" path="res://actors/player/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://input/input_router.tscn" id="5_input"]
+
+[sub_resource type="Environment" id="Environment_arena"]
+background_mode = 1
+background_color = Color(0.11, 0.12, 0.15, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.75, 0.8, 0.9, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
+ssao_enabled = true
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
+agent_radius = 0.5
+agent_max_climb = 0.3
+
+[sub_resource type="StandardMaterial3D" id="Material_Ground"]
+albedo_color = Color(0.36, 0.48, 0.32, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_Stone"]
+albedo_color = Color(0.58, 0.58, 0.62, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_Boundary"]
+albedo_color = Color(0.3, 0.3, 0.34, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+material = SubResource("Material_Ground")
+size = Vector3(40, 1, 40)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(40, 1, 40)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pillar"]
+material = SubResource("Material_Stone")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pillar"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall"]
+material = SubResource("Material_Stone")
+size = Vector3(8, 2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall"]
+size = Vector3(8, 2, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_block"]
+material = SubResource("Material_Stone")
+size = Vector3(4, 2, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_block"]
+size = Vector3(4, 2, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_boundary"]
+material = SubResource("Material_Boundary")
+size = Vector3(41, 3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_boundary"]
+size = Vector3(41, 3, 1)
+
+[node name="GreyboxArena" type="Node3D"]
+script = ExtResource("1_arena")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_arena")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.573576, 0.819152, 0, -0.819152, 0.573576, 0, 10, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_arena")
+
+[node name="Floor" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Floor"]
+mesh = SubResource("BoxMesh_floor")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="Obstacles" type="Node3D" parent="NavigationRegion3D"]
+
+[node name="Pillar1" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 5, 1, -4)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/Pillar1"]
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/Pillar1"]
+shape = SubResource("BoxShape3D_pillar")
+
+[node name="Pillar2" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -6, 1, 6)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/Pillar2"]
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/Pillar2"]
+shape = SubResource("BoxShape3D_pillar")
+
+[node name="Pillar3" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 10, 1, 9)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/Pillar3"]
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/Pillar3"]
+shape = SubResource("BoxShape3D_pillar")
+
+[node name="Wall1" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -8, 1, -8)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/Wall1"]
+mesh = SubResource("BoxMesh_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/Wall1"]
+shape = SubResource("BoxShape3D_wall")
+
+[node name="Wall2" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8, 1, 3)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/Wall2"]
+mesh = SubResource("BoxMesh_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/Wall2"]
+shape = SubResource("BoxShape3D_wall")
+
+[node name="Wall3" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 1, 12)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/Wall3"]
+mesh = SubResource("BoxMesh_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/Wall3"]
+shape = SubResource("BoxShape3D_wall")
+
+[node name="Block1" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, -12, 1, 2)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/Block1"]
+mesh = SubResource("BoxMesh_block")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/Block1"]
+shape = SubResource("BoxShape3D_block")
+
+[node name="Block2" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 12, 1, -10)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/Block2"]
+mesh = SubResource("BoxMesh_block")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/Block2"]
+shape = SubResource("BoxShape3D_block")
+
+[node name="BoundaryNorth" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 1.5, -20.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/BoundaryNorth"]
+mesh = SubResource("BoxMesh_boundary")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/BoundaryNorth"]
+shape = SubResource("BoxShape3D_boundary")
+
+[node name="BoundarySouth" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0, 1.5, 20.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/BoundarySouth"]
+mesh = SubResource("BoxMesh_boundary")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/BoundarySouth"]
+shape = SubResource("BoxShape3D_boundary")
+
+[node name="BoundaryEast" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 20.5, 1.5, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/BoundaryEast"]
+mesh = SubResource("BoxMesh_boundary")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/BoundaryEast"]
+shape = SubResource("BoxShape3D_boundary")
+
+[node name="BoundaryWest" type="StaticBody3D" parent="NavigationRegion3D/Obstacles"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -20.5, 1.5, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Obstacles/BoundaryWest"]
+mesh = SubResource("BoxMesh_boundary")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Obstacles/BoundaryWest"]
+shape = SubResource("BoxShape3D_boundary")
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+
+[node name="IsometricCamera" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("2_camera")
+target = NodePath("../Player")
+
+[node name="MoveMarker" type="Node3D" parent="."]
+script = ExtResource("3_marker")
+
+[node name="InputRouter" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("5_input")]
+camera = NodePath("../IsometricCamera")

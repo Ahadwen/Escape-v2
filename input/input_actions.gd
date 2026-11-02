@@ -34,6 +34,9 @@ const ABILITY_4: StringName = &"ability_4"
 const INTERACT: StringName = &"interact"
 const PAUSE: StringName = &"pause"
 
+# Debug builds only: cycle PC -> gamepad -> touch scheme (disables auto-detect).
+const DEBUG_CYCLE_SCHEME: StringName = &"debug_cycle_input_scheme"
+
 const ABILITY_SLOT_COUNT: int = 4
 
 const ABILITIES: Array[StringName] = [ABILITY_1, ABILITY_2, ABILITY_3, ABILITY_4]
@@ -56,6 +59,7 @@ const ALL: Array[StringName] = [
 	ABILITY_4,
 	INTERACT,
 	PAUSE,
+	DEBUG_CYCLE_SCHEME,
 ]
 
 

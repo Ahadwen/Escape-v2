@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://input/input_router.gd" id="1_router"]
+[ext_resource type="Script" path="res://input/schemes/pc_input_scheme.gd" id="2_pc"]
+[ext_resource type="Script" path="res://input/schemes/gamepad_input_scheme.gd" id="3_gamepad"]
+[ext_resource type="Script" path="res://input/schemes/touch_input_scheme.gd" id="4_touch"]
+[ext_resource type="Script" path="res://input/touch/virtual_joystick.gd" id="5_joystick"]
+
+[node name="InputRouter" type="Node" node_paths=PackedStringArray("pc_scheme", "gamepad_scheme", "touch_scheme")]
+script = ExtResource("1_router")
+pc_scheme = NodePath("PCInputScheme")
+gamepad_scheme = NodePath("GamepadInputScheme")
+touch_scheme = NodePath("TouchInputScheme")
+
+[node name="PCInputScheme" type="Node" parent="."]
+script = ExtResource("2_pc")
+
+[node name="GamepadInputScheme" type="Node" parent="."]
+script = ExtResource("3_gamepad")
+
+[node name="TouchInputScheme" type="Node" parent="." node_paths=PackedStringArray("controls", "move_stick")]
+script = ExtResource("4_touch")
+controls = NodePath("../TouchControls")
+move_stick = NodePath("../TouchControls/MoveStick")
+
+[node name="TouchControls" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="MoveStick" type="Control" parent="TouchControls"]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -420.0
+offset_right = 520.0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("5_joystick")
