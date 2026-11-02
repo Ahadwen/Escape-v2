@@ -4,7 +4,7 @@ extends InputScheme
 
 ## Root of the on-screen touch UI; shown only while this scheme is active.
 @export var controls: CanvasLayer
-@export var move_stick: VirtualJoystick
+@export var move_stick: TouchJoystick
 
 
 func _ready() -> void:

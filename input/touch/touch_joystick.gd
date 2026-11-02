@@ -1,4 +1,4 @@
-class_name VirtualJoystick
+class_name TouchJoystick
 extends Control
 ## On-screen analogue stick. The Control's rect is the touch zone; touching
 ## inside it grabs the stick. Read `output` (0..1 length, y down).

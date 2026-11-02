@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://input/schemes/pc_input_scheme.gd" id="2_pc"]
 [ext_resource type="Script" path="res://input/schemes/gamepad_input_scheme.gd" id="3_gamepad"]
 [ext_resource type="Script" path="res://input/schemes/touch_input_scheme.gd" id="4_touch"]
-[ext_resource type="Script" path="res://input/touch/virtual_joystick.gd" id="5_joystick"]
+[ext_resource type="Script" path="res://input/touch/touch_joystick.gd" id="5_joystick"]
 
 [node name="InputRouter" type="Node" node_paths=PackedStringArray("pc_scheme", "gamepad_scheme", "touch_scheme")]
 script = ExtResource("1_router")
