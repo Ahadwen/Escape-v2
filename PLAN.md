@@ -34,7 +34,26 @@ Each level is procedurally generated and its **threat rises steadily over time**
 - **Elemental resistance** — mitigates elemental damage
 - **Character-specific resource pools** (mana, rage, …) — extendable; defined per character as data
 
-## 4. Controls
+## 4. Starting character — The Knight (working name)
+
+A simple, readable kit that teaches the game: one displacement ability, one buff, one aggro tool, and one escape button.
+
+| Slot | Ability | Behaviour | Scaling |
+|---|---|---|---|
+| **Q** | **Dash** | Short dash in the aimed direction (`DIRECTION`, movement override). | Range scales a little with **Will**. The landing scales with **HP**: at high HP the landing produces a small shockwave that knocks back and slows nearby enemies. |
+| **W** | **Rally** (move-speed steroid) | Timed self-buff adding a move-speed modifier. | TBD (likely Will → amount or duration). |
+| **E** | **Decoy** | Places a decoy (`POINT`) with a high-priority `Targetable` that draws enemy aggro and absorbs hits until destroyed. | Decoy HP scales with **Will**. |
+| **R** | **Unstoppable Charge** | Invulnerable while charging forward, gaining speed over time; steerable with a limited turn rate; ends on collision. | TBD. |
+
+Systems this character proves out (good reason to build her first):
+
+- `StatScaling` on two different stats (Will and HP) within one ability.
+- Movement override (Q and R), status effects on enemies (Q shockwave), invulnerability as a status (R).
+- A timed buff via stat modifiers (W).
+- Spawning an ally entity with its own HP and aggro (E), which forces enemy AI to target `Targetable`s rather than the player.
+- A sustained, steerable ability (R) that has to work on all three control schemes.
+
+## 5. Controls
 
 Three control schemes, all mapped to the same abstract action list. Abilities are owned by the character, not by the control scheme.
 
@@ -46,7 +65,7 @@ Three control schemes, all mapped to the same abstract action list. Abilities ar
 
 PC is the development and first-release target. Gamepad and touch are accounted for in the architecture from day one so they're not bolted on later.
 
-## 5. Technical decisions
+## 6. Technical decisions
 
 | Decision | Choice | Why |
 |---|---|---|
@@ -58,11 +77,11 @@ PC is the development and first-release target. Gamepad and touch are accounted 
 | Pathfinding | NavigationServer3D; navmesh baked at runtime after level generation | Needed for click-to-move and enemy chasing |
 | Testing | GdUnit4 (or GUT) for pure logic: stats, damage, threat curve, generation | |
 
-## 6. Architecture
+## 7. Architecture
 
 Guiding rule: **each domain communicates through narrow interfaces — data Resources, signals, and intent objects — never by reaching into another domain's internals.** Gameplay data lives in `.tres` Resources so content is added as data, not code.
 
-### 6.1 Input: device → actions → intents → controller
+### 7.1 Input: device → actions → intents → controller
 
 ```
 [Device]          [Actions (InputMap)]       [Intents]                 [Gameplay]
@@ -74,16 +93,20 @@ Touch UI   ─┘     cancel, interact           CastAbility(slot, aim)    asks 
 - **InputMap actions** are the single list of inputs; device bindings hang off them (and are remappable).
 - **Input schemes** (`PCInputScheme`, `GamepadInputScheme`, `TouchInputScheme`) translate actions into intents. Only schemes know about devices.
 - **`InputRouter`** detects the last-used device, activates the matching scheme, and shows/hides touch UI.
+- **Steering**: while a sustained ability is active (e.g. a steerable charge), the active scheme keeps emitting `AimUpdate(vec)` intents (cursor direction / right stick / held ability stick), and the ability reads them.
 - **Targeting types** decouple abilities from devices. Each ability declares one of `SELF`, `DIRECTION`, `POINT` (with range), `NONE`; each scheme knows how to produce aim data for each type (cursor / right stick / stick drag) and how to draw the aim indicator.
 
-### 6.2 Characters & abilities
+### 7.2 Characters & abilities
 
 - **`CharacterData`** (Resource): name, model, base stats, 4 `AbilityData`, list of resource pools.
 - **`AbilityData`** (Resource): id, icon, targeting type, range, cooldown, cost (pool id + amount), tags, behaviour.
 - **`AbilityBehaviour`**: the logic (dash, blink, decoy, slow field, shield, knockback…). Receives a `CastContext` (caster, aim, stat snapshot).
 - **`AbilitySlot`** ×4 on the player: cooldowns, cost checks, cast requests. Filled from the chosen character at run start.
+- **`StatScaling`** (Resource): maps a stat to an ability parameter through a `Curve` or linear coefficient, e.g. `dash_range = base + 0.5 × will`. Abilities declare their scalings as data, so tuning and item effects ("+30% Q range") never touch behaviour code.
+- **Movement override**: dashes and charges ask the actor's movement component for a temporary `MovementOverride` (own velocity, collision response, end condition). Normal movement intents are ignored until it ends. Every displacement ability uses this, so there's one source of truth for "who is moving the actor right now".
+- **Ability phases**: an ability can be instant, timed (buff), or sustained (runs until an end condition). The slot tracks the phase so the HUD and input schemes know when an ability is "in progress".
 
-### 6.3 Stats, resources, damage, status effects
+### 7.3 Stats, resources, damage, status effects
 
 - **`StatId`**: extendable set (`max_hp`, `move_speed`, `will`, `armour`, `elemental_resist`, …).
 - **`StatBlock`**: base values + `StatModifier`s (flat, % additive, % multiplicative, each tagged with a source). Final values cached; emits `stat_changed`. Items, buffs, and meta upgrades only ever add/remove modifiers.
@@ -91,21 +114,22 @@ Touch UI   ─┘     cancel, interact           CastAbility(slot, aim)    asks 
 - **Damage pipeline**: enemy attack → `DamageEvent` (amount, `PHYSICAL`/`ELEMENTAL`, source) → `DamageResolver` (armour/resist mitigation, then item hooks) → HP pool. There is deliberately no player-to-enemy damage path.
 - **`StatusEffect` system** (shared by player and enemies): slow, stun, root, knockback, blind, taunt, shield, haste… Applied via a `StatusEffectHost` component. Player abilities control enemies through this; enemies can use it on the player too.
 
-### 6.4 Items
+### 7.4 Items
 
 - **`ItemData`** (Resource): rarity, price, stat modifiers, tags (`generic`, `character:<id>`, `ability:<id>`), list of `ItemEffect`s.
 - **`ItemEffect`**: small script subscribing to gameplay hooks (`on_damage_taken`, `on_ability_cast`, `on_pickup`, `on_level_start`, `on_status_applied`, …). Covers stat items, ability-specific modifiers, and unique passives.
 - **`LootTable`**: weighted pools filtered by tags, so character-specific items only drop for that character.
 
-### 6.5 Enemies & threat director
+### 7.5 Enemies & threat director
 
 - **`EnemyData`** (Resource): stats, attack definition, behaviour, threat cost, lifetime range.
 - **AI**: small state machine — wander → notice → chase → attack → lose interest — on nav agents. Responds to status effects (stunned, taunted, blinded).
+- **Targets, not "the player"**: enemies pick targets from a `Targetable` component (with a priority and a faction), never by referencing the player directly. Decoys, and anything else that should draw aggro, simply carry a higher-priority `Targetable` and their own HP pool.
 - **Lifetime**: per-enemy timer; telegraphs ~2s before despawning.
 - **Archetypes** should create distinct evasion problems: charger (telegraphed dashes), spitter (ranged, dodgeable projectiles), stalker (slow, relentless, ignores lose-interest), area denier (leaves hazards), pack hunters (flank).
-- **`ThreatDirector`** (per level): `threat = f(time, level)` from tunable `Curve` resources per level. Threat drives spawn budget, frequency, enemy mix, elite chance, and lifetime. The enemy mix comes from the level's zone-blended pool (see 6.6). Spawns off-screen, near but not on top of the player. Constraint enforced by a test: `threat(level N+1, t=0)` is clearly below `threat(level N, typical exit time)`.
+- **`ThreatDirector`** (per level): `threat = f(time, level)` from tunable `Curve` resources per level. Threat drives spawn budget, frequency, enemy mix, elite chance, and lifetime. The enemy mix comes from the level's zone-blended pool (see 7.6). Spawns off-screen, near but not on top of the player. Constraint enforced by a test: `threat(level N+1, t=0)` is clearly below `threat(level N, typical exit time)`.
 
-### 6.6 Zones & theming
+### 7.6 Zones & theming
 
 A zone is pure data, and the rest of the game reads it through a single **`LevelTheme`** computed for each level. No system hard-codes "fire" or "swamp".
 
@@ -129,18 +153,18 @@ A zone is pure data, and the rest of the game reads it through a single **`Level
   - **Enemy pool:** shared enemies get the zone variant with a probability that scales with intensity, and exclusive enemies unlock at their threshold.
   - **Environment:** lighting, fog and colour grading blend from base to zone.
 - **Level 1** uses the base zone (`neutral_grasslands`) at intensity 0 every run. That makes it a consistent on-ramp.
-- **Destination zone** is picked at random from the run seed when the run starts and stored in `RunState`. Picking it from the seed makes runs reproducible for debugging.
+- **Destination zone** is picked at random from the run seed when the run starts and stored in `RunState`. It is **not announced**: the player discovers it as the levels shift. Picking it from the seed makes runs reproducible for debugging.
 
 Elemental resistance becomes a strategic stat because of this. Once you know the run is heading into Inferno, you start valuing it.
 
-### 6.7 World & level generation
+### 7.7 World & level generation
 
 - Seeded generator: layout graph → place modular chunks → bake navmesh → place points of interest.
 - Takes the `LevelTheme` as input; outputs a **`LevelLayout`** data object; a separate **`LevelBuilder`** instantiates scenes. Generation is testable without rendering.
 - POI rules: safehouses far from spawn (1–3 per level); crystals and chests spread with minimum spacing; every POI reachable.
 - **Safehouse**: an enterable trigger zone. Entering ends the level and opens the shop screen, then advances to the next level.
 
-### 6.8 Game flow & persistence
+### 7.8 Game flow & persistence
 
 - **`GameFlow`** (autoload): Nexus → Level ↔ Safehouse → … → Results → Nexus.
 - **`RunState`**: character, items, gold, level index, seed, destination zone. Created at run start, discarded on death or win. HP restored on level start.
@@ -148,7 +172,7 @@ Elemental resistance becomes a strategic stat because of this. Once you know the
 - **`EventBus`** (autoload): cross-domain events only (`player_died`, `level_completed`, `item_acquired`, `threat_tier_changed`). Local communication uses plain signals.
 - Autoloads kept minimal: `GameFlow`, `EventBus`, `Settings`, later `Audio`.
 
-### 6.9 Folder structure
+### 7.9 Folder structure
 
 ```
 res://
@@ -170,7 +194,7 @@ res://
   tests/
 ```
 
-## 7. Milestones
+## 8. Milestones
 
 The biggest risk is design, not tech: **is evasion-only fun?** So the core loop gets proven in a hand-built arena before procedural generation and content.
 
@@ -178,8 +202,8 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 |---|---|---|
 | **M0** | Foundations | Folder layout, typed-GDScript settings, test framework, InputMap action list, export preset for PC |
 | **M1** | Move & input | Greybox arena, ortho camera, player capsule moves via PC and gamepad schemes; touch scheme working via emulated touch; auto device switching |
-| **M2** | Abilities | 4 slots, targeting types + aim indicators per scheme, cooldowns/costs, one test character (e.g. dash, blink, slow field, shield) |
-| **M3** | Enemies & damage | StatBlock, pools, armour/resist, status effects, 2 archetypes that chase and attack, per-enemy lifetime + despawn tell, player death |
+| **M2** | Abilities | 4 slots, targeting types + aim indicators per scheme, cooldowns/costs, `StatScaling`, movement override; the Knight's Q (without shockwave), W and R |
+| **M3** | Enemies & damage | StatBlock, pools, armour/resist, status effects, `Targetable` aggro, 2 archetypes that chase and attack, per-enemy lifetime + despawn tell, player death; Knight's Q shockwave and E decoy |
 | **M4** | **Core loop prototype** | ThreatDirector + curve, health crystals, a safehouse that ends the level, HUD (HP, cooldowns, threat). **Playtest checkpoint — iterate until it's fun** |
 | **M5** | Procedural levels | Seeded generator, runtime navmesh, POI placement, reachability checks, all driven by a `LevelTheme` (base zone only) |
 | **M6** | Items & chests | Item data, modifiers, effect hooks, loot tables, gold, 10–15 items |
@@ -189,7 +213,7 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 | **M10** | Content | 3+ characters, 6+ shared enemy archetypes, 3 destination zones (e.g. Inferno, Swamp, Graveyard), each with exclusives, variants and hazards, 40+ items |
 | **M11** | Platforms & polish | Gamepad UI navigation, touch tuning, mobile renderer/perf, remapping, audio, juice |
 
-## 8. Risks
+## 9. Risks
 
 - **Evasion isn't fun** → M4 playtest gate; enemies must have readable, telegraphed attacks so dodging is skill, not luck.
 - **Enemies feel unfair with no counterplay** → crowd-control abilities, despawn tells, and per-enemy lifetimes give the player tools and hope.
@@ -197,7 +221,12 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 - **Touch/gamepad rot while developing on PC** → all three schemes go through the same intent layer and are exercised every milestone.
 - **Mobile performance in 3D** → Mobile renderer, conservative lighting; test on a device before M11.
 
-## 9. Open questions
+## 10. Open questions
+
+- Knight Q: does the shockwave scale with **current** HP or **max** HP? And is it continuous (stronger the more HP), or does it switch on above a threshold?
+- Knight R: does it end on hitting an enemy as well as terrain? Does impact knock enemies back/stun them? Can it be recast to stop early? Max duration?
+- Knight W: what scales — amount, duration, both?
+- Does the Knight use a resource (e.g. stamina), or cooldowns only?
 
 
 - Meta-progression contents (Nexus unlocks).
