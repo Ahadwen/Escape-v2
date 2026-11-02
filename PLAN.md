@@ -8,6 +8,8 @@ Each level is procedurally generated and its **threat rises steadily over time**
 
 **Run structure:** Nexus (pick character, meta upgrades) → Level 1 → Safehouse → Level 2 → … → Level 5 → win. Death returns you to the Nexus.
 
+**Zones:** Level 1 is always the same neutral theme (stone paths and grass). Each run then drifts toward one **destination zone**, such as Inferno, Swamp or Graveyard. Levels 2–4 are progressively more zone-like, and level 5 is fully in the zone.
+
 ## 2. Core rules (decided)
 
 | Topic | Rule |
@@ -19,6 +21,7 @@ Each level is procedurally generated and its **threat rises steadily over time**
 | Safehouse | Entering a safehouse **ends the level**: enemies are gone, threat stops, the player can spend gold, then proceeds to the next level. You can't go back out. |
 | Between levels | HP is fully restored. Items and gold carry over. |
 | Death | Items and gold for the run are lost. Meta-progression (TBD) persists. |
+| Zones | Level 1 is the fixed neutral theme. Levels 2–5 blend toward the run's destination zone with increasing intensity: environment, hazards, zone-exclusive enemies, and zone variants of shared enemies. |
 | Health crystals | Restore a % of max HP. |
 | Chests | Contain items and/or gold. |
 
@@ -100,24 +103,52 @@ Touch UI   ─┘     cancel, interact           CastAbility(slot, aim)    asks 
 - **AI**: small state machine — wander → notice → chase → attack → lose interest — on nav agents. Responds to status effects (stunned, taunted, blinded).
 - **Lifetime**: per-enemy timer; telegraphs ~2s before despawning.
 - **Archetypes** should create distinct evasion problems: charger (telegraphed dashes), spitter (ranged, dodgeable projectiles), stalker (slow, relentless, ignores lose-interest), area denier (leaves hazards), pack hunters (flank).
-- **`ThreatDirector`** (per level): `threat = f(time, level)` from tunable `Curve` resources per level. Threat drives spawn budget, frequency, enemy mix, elite chance, and lifetime. Spawns off-screen, near but not on top of the player. Constraint enforced by a test: `threat(level N+1, t=0)` is clearly below `threat(level N, typical exit time)`.
+- **`ThreatDirector`** (per level): `threat = f(time, level)` from tunable `Curve` resources per level. Threat drives spawn budget, frequency, enemy mix, elite chance, and lifetime. The enemy mix comes from the level's zone-blended pool (see 6.6). Spawns off-screen, near but not on top of the player. Constraint enforced by a test: `threat(level N+1, t=0)` is clearly below `threat(level N, typical exit time)`.
 
-### 6.6 World & level generation
+### 6.6 Zones & theming
+
+A zone is pure data, and the rest of the game reads it through a single **`LevelTheme`** computed for each level. No system hard-codes "fire" or "swamp".
+
+- **`ZoneData`** (Resource):
+  - **Environment:** palette, lighting/`Environment`, fog, ground and prop materials, and a chunk/prop set for the generator.
+  - **Hazards:** environmental hazards, such as lava cracks, bog water that slows or fog that limits vision, each with a density.
+  - **Exclusive enemies:** zone-only enemies, each with the intensity at which it starts appearing.
+  - **Variants:** `EnemyVariant`s, which are modifiers applied to *shared* enemies (see below).
+  - Optionally zone-biased loot. For example, elemental-resist items show up more often in Inferno.
+- **`EnemyVariant`** (Resource): layered on top of a base `EnemyData`, so each enemy is defined once. A variant can:
+  - add stat modifiers
+  - change the damage type, for example physical to elemental
+  - add an on-hit status, such as burn, slow or poison
+  - add a behaviour, such as leaving a fire trail, reviving once when it despawns or emitting a poison cloud
+  - change visuals, such as a material swap, tint or particle attachment
+
+  Example: a base charger becomes a *burning charger* in Inferno (elemental damage, leaves fire on its dash path) or a *bog charger* in Swamp (slower, slows on hit).
+- **Intensity:** each level has a zone intensity from 0 to 1. The default is L1 = 0, L2 = 0.25, L3 = 0.5, L4 = 0.75, L5 = 1, and it's tunable. A **`ThemeResolver`** takes the base zone, the destination zone and the intensity and produces the `LevelTheme`:
+  - **Generator:** chunks and props are drawn from both zones, weighted by intensity.
+  - **Hazard density** scales with intensity.
+  - **Enemy pool:** shared enemies get the zone variant with a probability that scales with intensity, and exclusive enemies unlock at their threshold.
+  - **Environment:** lighting, fog and colour grading blend from base to zone.
+- **Level 1** uses the base zone (`neutral_grasslands`) at intensity 0 every run. That makes it a consistent on-ramp.
+- **Destination zone** is picked when the run starts (selection method still open, see §9) and stored in `RunState`.
+
+Elemental resistance becomes a strategic stat because of this. Once you know the run is heading into Inferno, you start valuing it.
+
+### 6.7 World & level generation
 
 - Seeded generator: layout graph → place modular chunks → bake navmesh → place points of interest.
-- Outputs a **`LevelLayout`** data object; a separate **`LevelBuilder`** instantiates scenes. Generation is testable without rendering.
+- Takes the `LevelTheme` as input; outputs a **`LevelLayout`** data object; a separate **`LevelBuilder`** instantiates scenes. Generation is testable without rendering.
 - POI rules: safehouses far from spawn (1–3 per level); crystals and chests spread with minimum spacing; every POI reachable.
 - **Safehouse**: an enterable trigger zone. Entering ends the level and opens the shop screen, then advances to the next level.
 
-### 6.7 Game flow & persistence
+### 6.8 Game flow & persistence
 
 - **`GameFlow`** (autoload): Nexus → Level ↔ Safehouse → … → Results → Nexus.
-- **`RunState`**: character, items, gold, level index, seed. Created at run start, discarded on death or win. HP restored on level start.
+- **`RunState`**: character, items, gold, level index, seed, destination zone. Created at run start, discarded on death or win. HP restored on level start.
 - **`MetaProgress`**: persistent save in `user://` (contents TBD).
 - **`EventBus`** (autoload): cross-domain events only (`player_died`, `level_completed`, `item_acquired`, `threat_tier_changed`). Local communication uses plain signals.
 - Autoloads kept minimal: `GameFlow`, `EventBus`, `Settings`, later `Audio`.
 
-### 6.8 Folder structure
+### 6.9 Folder structure
 
 ```
 res://
@@ -131,6 +162,7 @@ res://
   items/        # ItemData, effects, loot tables
   enemies/      # EnemyData, AI states, archetypes
   director/     # ThreatDirector, spawner, threat curves
+  zones/        # ZoneData, EnemyVariants, ThemeResolver; one subfolder per zone
   world/        # generator, builder, chunks, POIs (crystal, chest, safehouse)
   nexus/        # hub scene, character select, meta upgrades
   ui/           # HUD, shop, menus
@@ -149,12 +181,12 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 | **M2** | Abilities | 4 slots, targeting types + aim indicators per scheme, cooldowns/costs, one test character (e.g. dash, blink, slow field, shield) |
 | **M3** | Enemies & damage | StatBlock, pools, armour/resist, status effects, 2 archetypes that chase and attack, per-enemy lifetime + despawn tell, player death |
 | **M4** | **Core loop prototype** | ThreatDirector + curve, health crystals, a safehouse that ends the level, HUD (HP, cooldowns, threat). **Playtest checkpoint — iterate until it's fun** |
-| **M5** | Procedural levels | Seeded generator, runtime navmesh, POI placement, reachability checks |
+| **M5** | Procedural levels | Seeded generator, runtime navmesh, POI placement, reachability checks, all driven by a `LevelTheme` (base zone only) |
 | **M6** | Items & chests | Item data, modifiers, effect hooks, loot tables, gold, 10–15 items |
-| **M7** | Run structure | Safehouse shop, 5 levels with escalating curves, HP restore between levels, win/loss screens |
+| **M7** | Run structure & zones | Safehouse shop, 5 levels with escalating curves, HP restore between levels, win/loss screens. Zone framework (ZoneData, EnemyVariant, ThemeResolver, intensity blending) with one greybox destination zone, using colour, a hazard and one variant to prove the blend |
 | **M8** | Nexus & meta | Hub scene, character select, save system, meta-upgrade framework |
 | **M9** | Art pass | Lighting, materials, VFX, readable telegraphs, UI style on one biome |
-| **M10** | Content | 3+ characters, 6+ enemy archetypes, 40+ items, 5 level themes |
+| **M10** | Content | 3+ characters, 6+ shared enemy archetypes, 3 destination zones (e.g. Inferno, Swamp, Graveyard), each with exclusives, variants and hazards, 40+ items |
 | **M11** | Platforms & polish | Gamepad UI navigation, touch tuning, mobile renderer/perf, remapping, audio, juice |
 
 ## 8. Risks
@@ -166,6 +198,9 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 - **Mobile performance in 3D** → Mobile renderer, conservative lighting; test on a device before M11.
 
 ## 9. Open questions
+
+- How is the destination zone chosen? Random per run, picked in the Nexus, or picked at the level 1 safehouse (e.g. two exits/doors)?
+- Is level 1 a fixed hand-built layout, or procedurally generated in the fixed neutral theme?
 
 - Meta-progression contents (Nexus unlocks).
 - Number of characters at launch and their identities.
