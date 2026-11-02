@@ -8,7 +8,7 @@ Each level is procedurally generated and its **threat rises steadily over time**
 
 **Run structure:** Nexus (pick character, meta upgrades) → Level 1 → Safehouse → Level 2 → … → Level 5 → win. Death returns you to the Nexus.
 
-**Zones:** Level 1 is always the same neutral theme (stone paths and grass). Each run then drifts toward one **destination zone**, such as Inferno, Swamp or Graveyard. Levels 2–4 are progressively more zone-like, and level 5 is fully in the zone.
+**Zones:** Every level is procedurally generated. Level 1 always uses the same neutral theme (stone paths and grass). Each run then drifts toward one randomly chosen **destination zone**, such as Inferno, Swamp or Graveyard. Levels 2–4 are progressively more zone-like, and level 5 is fully in the zone.
 
 ## 2. Core rules (decided)
 
@@ -21,7 +21,7 @@ Each level is procedurally generated and its **threat rises steadily over time**
 | Safehouse | Entering a safehouse **ends the level**: enemies are gone, threat stops, the player can spend gold, then proceeds to the next level. You can't go back out. |
 | Between levels | HP is fully restored. Items and gold carry over. |
 | Death | Items and gold for the run are lost. Meta-progression (TBD) persists. |
-| Zones | Level 1 is the fixed neutral theme. Levels 2–5 blend toward the run's destination zone with increasing intensity: environment, hazards, zone-exclusive enemies, and zone variants of shared enemies. |
+| Zones | Every level is procedurally generated. Level 1 always uses the neutral theme. Levels 2–5 blend toward the run's destination zone, picked at random when the run starts, with increasing intensity: environment, hazards, zone-exclusive enemies, and zone variants of shared enemies. |
 | Health crystals | Restore a % of max HP. |
 | Chests | Contain items and/or gold. |
 
@@ -129,7 +129,7 @@ A zone is pure data, and the rest of the game reads it through a single **`Level
   - **Enemy pool:** shared enemies get the zone variant with a probability that scales with intensity, and exclusive enemies unlock at their threshold.
   - **Environment:** lighting, fog and colour grading blend from base to zone.
 - **Level 1** uses the base zone (`neutral_grasslands`) at intensity 0 every run. That makes it a consistent on-ramp.
-- **Destination zone** is picked when the run starts (selection method still open, see §9) and stored in `RunState`.
+- **Destination zone** is picked at random from the run seed when the run starts and stored in `RunState`. Picking it from the seed makes runs reproducible for debugging.
 
 Elemental resistance becomes a strategic stat because of this. Once you know the run is heading into Inferno, you start valuing it.
 
@@ -199,8 +199,6 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 
 ## 9. Open questions
 
-- How is the destination zone chosen? Random per run, picked in the Nexus, or picked at the level 1 safehouse (e.g. two exits/doors)?
-- Is level 1 a fixed hand-built layout, or procedurally generated in the fixed neutral theme?
 
 - Meta-progression contents (Nexus unlocks).
 - Number of characters at launch and their identities.
