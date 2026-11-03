@@ -76,7 +76,12 @@ func _fire() -> void:
 	_prime_line.clear()
 	var beam: LaserBeam = LaserBeam.new()
 	beam.configure(
-		_beam_from, _beam_to, _data.beam_half_width, _data.damage, _data.damage_type, enemy
+		_beam_from,
+		_beam_to,
+		_data.beam_half_width,
+		enemy.scaled_damage(_data.damage),
+		_data.damage_type,
+		enemy
 	)
 	enemy.get_parent().add_child(beam)
 	_timer = _data.attack_cooldown

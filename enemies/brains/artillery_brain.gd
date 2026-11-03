@@ -33,11 +33,11 @@ func _fire() -> void:
 		point,
 		_data.strike_radius,
 		_data.strike_wind_up,
-		_data.damage,
+		enemy.scaled_damage(_data.damage),
 		_data.damage_type,
 		enemy,
 		_data.linger_duration,
-		_data.linger_damage,
+		enemy.scaled_damage(_data.linger_damage),
 		_data.linger_interval
 	)
 	enemy.get_parent().add_child(strike)

@@ -173,7 +173,8 @@ func wander(delta: float) -> void:
 
 func deal_damage(to: Targetable) -> void:
 	if to != null and to.health != null:
-		to.health.take_damage(DamageEvent.new(data().damage, data().damage_type, enemy))
+		var amount: float = enemy.scaled_damage(data().damage)
+		to.health.take_damage(DamageEvent.new(amount, data().damage_type, enemy))
 
 
 func _update_target(delta: float) -> void:

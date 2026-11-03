@@ -14,7 +14,10 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if director == null:
 		return
-	text = "%s\nThreat %.1f" % [format_time(director.elapsed), director.threat]
+	var danger: float = director.profile.damage_multiplier_for(director.threat)
+	text = (
+		"%s\nThreat %.1f\nDanger x%.2f" % [format_time(director.elapsed), director.threat, danger]
+	)
 
 
 static func format_time(seconds: float) -> String:

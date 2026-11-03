@@ -25,6 +25,14 @@ extends Resource
 ## Below this speed the player counts as standing still (no ahead bias).
 @export var ahead_min_speed: float = 2.0
 
+@export_group("Danger scaling")
+## Enemies spawned at higher threat hit harder and move faster. Both scale
+## with threat above start_threat, up to a cap.
+@export var damage_per_threat: float = 0.08
+@export var max_damage_multiplier: float = 2.0
+@export var speed_per_threat: float = 0.03
+@export var max_speed_multiplier: float = 1.3
+
 @export_group("Enemies")
 @export var entries: Array[SpawnEntry] = []
 
@@ -35,6 +43,16 @@ func threat_at(seconds: float) -> float:
 
 func budget_for(threat: float) -> float:
 	return maxf(threat, 0.0) * budget_per_threat
+
+
+func damage_multiplier_for(threat: float) -> float:
+	var extra: float = maxf(threat - start_threat, 0.0) * damage_per_threat
+	return minf(1.0 + extra, max_damage_multiplier)
+
+
+func speed_multiplier_for(threat: float) -> float:
+	var extra: float = maxf(threat - start_threat, 0.0) * speed_per_threat
+	return minf(1.0 + extra, max_speed_multiplier)
 
 
 func spawn_interval_for(threat: float) -> float:

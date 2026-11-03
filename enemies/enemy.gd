@@ -12,9 +12,13 @@ const KNOCKBACK_SPEED: float = 20.0
 ## Contact reach beyond the collision radius.
 const CONTACT_MARGIN: float = 0.55
 const AGE_SPEED_SOURCE: StringName = &"age"
+const THREAT_SPEED_SOURCE: StringName = &"threat"
 const AGE_SPEED_REFRESH: float = 0.5
 
 @export var data: EnemyData
+## Set by whoever spawns the enemy (from threat) before it enters the tree.
+var damage_multiplier: float = 1.0
+var speed_multiplier: float = 1.0
 
 var brain: EnemyBrain
 var lifetime: float = 0.0
@@ -44,6 +48,15 @@ func _ready() -> void:
 		queue_free()
 		return
 	stats.initialize(data.get_base_stats())
+	if not is_equal_approx(speed_multiplier, 1.0):
+		stats.block.add_modifier(
+			StatModifier.new(
+				StatIds.MOVE_SPEED,
+				StatModifier.Type.PERCENT_MULT,
+				speed_multiplier - 1.0,
+				THREAT_SPEED_SOURCE
+			)
+		)
 	_apply_size()
 	var material: StandardMaterial3D = StandardMaterial3D.new()
 	material.albedo_color = data.color
@@ -112,6 +125,23 @@ func apply_status(effect: StatusEffect) -> void:
 		brain.interrupt()
 
 
+## Damage this enemy actually deals for a base amount from its data.
+func scaled_damage(base: float) -> float:
+	return base * damage_multiplier
+
+
+## Spawns a child enemy (e.g. a brood's mite) that inherits this enemy's
+## threat scaling. Returns it.
+func spawn_minion(minion_data: EnemyData, at: Vector3, scene: PackedScene) -> Enemy:
+	var minion: Enemy = scene.instantiate() as Enemy
+	minion.data = minion_data
+	minion.damage_multiplier = damage_multiplier
+	minion.speed_multiplier = speed_multiplier
+	minion.position = at
+	get_parent().add_child(minion)
+	return minion
+
+
 ## Where attacks (projectiles, beams) leave from.
 func attack_origin() -> Vector3:
 	return global_position
@@ -157,4 +187,4 @@ func _contact_damage(delta: float) -> void:
 		if _contact_cooldowns.has(id) or target.flat_distance_to(global_position) > reach:
 			continue
 		_contact_cooldowns[id] = data.contact_cooldown
-		AttackUtils.damage(target, data.contact_damage, data.damage_type, self)
+		AttackUtils.damage(target, scaled_damage(data.contact_damage), data.damage_type, self)

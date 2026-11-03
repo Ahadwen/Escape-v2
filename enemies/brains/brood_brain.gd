@@ -43,8 +43,4 @@ func _spawn_wave() -> void:
 		var point: Vector3 = NavigationServer3D.map_get_closest_point(
 			map, enemy.global_position + offset
 		)
-		var mite: Enemy = scene.instantiate() as Enemy
-		mite.data = _data.minion
-		mite.position = point
-		enemy.get_parent().add_child(mite)
-		_minions.append(mite)
+		_minions.append(enemy.spawn_minion(_data.minion, point, scene))

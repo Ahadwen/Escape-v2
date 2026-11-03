@@ -83,3 +83,21 @@ func test_spawn_angle_biased_ahead_when_moving() -> void:
 func test_spawn_angle_bias_roll_above_bias_is_random() -> void:
 	profile.ahead_bias = 0.5
 	assert_almost_eq(profile.spawn_angle(Vector3(0, 0, 8), 0.9, 0.5), PI)
+
+
+func test_danger_is_baseline_at_start_threat() -> void:
+	assert_almost_eq(profile.damage_multiplier_for(1.0), 1.0)
+	assert_almost_eq(profile.speed_multiplier_for(1.0), 1.0)
+
+
+func test_danger_grows_with_threat() -> void:
+	profile.damage_per_threat = 0.1
+	profile.speed_per_threat = 0.05
+	assert_almost_eq(profile.damage_multiplier_for(4.0), 1.3)
+	assert_almost_eq(profile.speed_multiplier_for(4.0), 1.15)
+
+
+func test_danger_is_capped() -> void:
+	profile.damage_per_threat = 0.5
+	profile.max_damage_multiplier = 2.0
+	assert_almost_eq(profile.damage_multiplier_for(100.0), 2.0)

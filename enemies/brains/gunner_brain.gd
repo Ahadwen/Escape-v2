@@ -56,7 +56,7 @@ func _fire() -> void:
 		enemy.attack_origin(),
 		_aim_direction,
 		_data.projectile_speed,
-		_data.damage,
+		enemy.scaled_damage(_data.damage),
 		_data.damage_type,
 		enemy,
 		_data.projectile_radius

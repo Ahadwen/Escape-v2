@@ -98,6 +98,8 @@ func _try_spawn() -> bool:
 func _spawn(entry: SpawnEntry, point: Vector3) -> void:
 	var enemy: Enemy = enemy_scene.instantiate() as Enemy
 	enemy.data = entry.enemy
+	enemy.damage_multiplier = profile.damage_multiplier_for(threat)
+	enemy.speed_multiplier = profile.speed_multiplier_for(threat)
 	enemy.position = point
 	enemy.despawned.connect(_on_enemy_despawned)
 	add_child(enemy)

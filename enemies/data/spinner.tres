@@ -4,19 +4,19 @@
 
 [resource]
 script = ExtResource("1_type")
-charge_speed = 19.0
+charge_speed = 22.0
 overshoot = 3.0
 max_charge_distance = 16.0
 lead_time = 0.35
-teeter_min = 0.9
-teeter_max = 1.4
+teeter_min = 0.7
+teeter_max = 1.1
 spin_speed = 22.0
 id = &"spinner"
 display_name = "Spinner"
 color = Color(0.95, 0.75, 0.2, 1)
 body_scale = Vector3(1.4, 0.55, 1.4)
 move_speed = 6.0
-contact_damage = 25.0
+contact_damage = 35.0
 contact_cooldown = 0.8
 sight_range = 20.0
 lose_interest_range = 30.0
