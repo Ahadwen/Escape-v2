@@ -144,6 +144,17 @@ func spawn_minion(minion_data: EnemyData, at: Vector3, scene: PackedScene) -> En
 	return minion
 
 
+## Wind-up tell on the body (a bright flash), for attacks without a ground
+## warning.
+func set_tell(on: bool) -> void:
+	var material: StandardMaterial3D = body_mesh.material_override as StandardMaterial3D
+	if material == null:
+		return
+	material.emission_enabled = on
+	material.emission = Color(1.0, 0.9, 0.6)
+	material.emission_energy_multiplier = 1.6
+
+
 ## Where attacks (projectiles, beams) leave from.
 func attack_origin() -> Vector3:
 	return global_position

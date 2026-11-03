@@ -11,6 +11,9 @@ extends Resource
 @export var max_range: float = 10.0
 ## Needs a clear line to the target (walls block it).
 @export var needs_line_of_sight: bool = false
+## Show a ground warning during the wind-up. Light attacks don't need one:
+## the hunter's body flashing is their tell.
+@export var show_warning: bool = true
 
 
 func can_use(brain: HunterBrain) -> bool:

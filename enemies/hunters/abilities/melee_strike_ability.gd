@@ -45,7 +45,9 @@ class Action:
 		enemy().movement.face_towards(_direction)
 		_origin = enemy().global_position
 		var reach: float = ability.radius + MeleeStrikeAbility.BODY_MARGIN
-		if ability.shape == MeleeStrikeAbility.Shape.CIRCLE:
+		if not ability.show_warning:
+			enemy().set_tell(true)
+		elif ability.shape == MeleeStrikeAbility.Shape.CIRCLE:
 			brain.warning.show_circle(_origin, reach)
 		else:
 			brain.warning.show_cone(_origin, _direction, reach, ability.angle_degrees)
@@ -64,9 +66,11 @@ class Action:
 
 	func cancel() -> void:
 		brain.warning.clear()
+		enemy().set_tell(false)
 
 	func _strike() -> void:
 		brain.warning.clear()
+		enemy().set_tell(false)
 		var reach: float = ability.radius + MeleeStrikeAbility.BODY_MARGIN
 		var amount: float = enemy().scaled_damage(ability.damage)
 		for target: Targetable in AttackUtils.player_targets(enemy().get_tree()):

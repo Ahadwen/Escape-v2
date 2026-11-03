@@ -8,6 +8,7 @@
 [sub_resource type="Resource" id="Ability_0"]
 script = ExtResource("strike")
 display_name = "Punch"
+show_warning = false
 cooldown = 4.0
 initial_cooldown = 1.0
 max_range = 2.5

@@ -5,7 +5,11 @@ extends HunterAbility
 ## stop it.
 
 @export var wind_up: float = 0.9
+## The aim tracks the target until this long before the rush, then locks.
+@export var lock_time: float = 0.3
+## Longest rush; it rushes a little past where it expects you to be.
 @export var distance: float = 16.0
+@export var overshoot: float = 3.0
 @export var speed: float = 26.0
 @export var width: float = 2.0
 @export var damage: float = 45.0
@@ -27,6 +31,7 @@ class Action:
 	var _phase: Phase = Phase.WIND_UP
 	var _timer: float = 0.0
 	var _direction: Vector3
+	var _length: float = 16.0
 	var _dash: DashMovement
 	var _hit: Array[Targetable] = []
 
@@ -36,23 +41,37 @@ class Action:
 
 	func start() -> void:
 		enemy().movement.stop()
-		_direction = brain.direction_to_predicted(ability.lead)
-		if _direction == Vector3.ZERO:
-			_direction = enemy().movement.get_facing()
-		enemy().movement.face_towards(_direction)
-		brain.warning.show_line(
-			enemy().global_position, _direction, ability.distance, ability.width
-		)
+		_aim()
+		brain.warning.show_line(enemy().global_position, _direction, _length, ability.width)
 		_timer = ability.wind_up
+
+	## Aims at where the target will be when the rush arrives.
+	func _aim() -> void:
+		var from: Vector3 = enemy().global_position
+		var arrival: float = maxf(_timer, 0.0) + brain.distance_to_target() / ability.speed
+		var point: Vector3 = brain.target.predicted_position(arrival) if brain.target else from
+		var offset: Vector3 = Vector3(point.x - from.x, 0.0, point.z - from.z)
+		if offset.length_squared() < 0.01:
+			_direction = enemy().movement.get_facing()
+			_length = ability.distance
+		else:
+			_direction = offset.normalized()
+			_length = minf(offset.length() + ability.overshoot, ability.distance)
+		enemy().movement.face_towards(_direction)
 
 	func tick(delta: float) -> bool:
 		match _phase:
 			Phase.WIND_UP:
 				_timer -= delta
+				if _timer > ability.lock_time:
+					_aim()
+					brain.warning.show_line(
+						enemy().global_position, _direction, _length, ability.width
+					)
 				brain.warning.set_progress(1.0 - _timer / ability.wind_up)
 				if _timer <= 0.0:
 					brain.warning.clear()
-					_dash = DashMovement.new(_direction, ability.distance, ability.speed, 0.15)
+					_dash = DashMovement.new(_direction, _length, ability.speed, 0.15)
 					enemy().movement.start_override(_dash)
 					_phase = Phase.RUSHING
 			Phase.RUSHING:

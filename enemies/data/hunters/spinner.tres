@@ -10,14 +10,14 @@ display_name = "Zoom"
 cooldown = 0.0
 initial_cooldown = 0.8
 max_range = 999.0
-aim_time = 0.4
+aim_time = 0.25
 start_speed = 6.0
 max_speed = 24.0
 acceleration = 30.0
 deceleration = 14.0
-turn_rate_degrees = 55.0
-drive_time = 1.6
-recovery = 0.6
+turn_rate_degrees = 110.0
+drive_time = 2.2
+recovery = 0.35
 
 [resource]
 script = ExtResource("hunter")
