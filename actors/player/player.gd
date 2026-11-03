@@ -18,6 +18,8 @@ var is_dead: bool = false
 @onready var status: StatusEffectHost = $StatusEffectHost
 @onready var controller: PlayerController = $PlayerController
 @onready var visual: Node3D = $Visual
+@onready var cards: CardInventory = $CardInventory
+@onready var wallet: Wallet = $Wallet
 
 
 func _ready() -> void:

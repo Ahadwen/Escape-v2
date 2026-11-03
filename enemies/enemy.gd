@@ -77,11 +77,13 @@ func _physics_process(delta: float) -> void:
 		despawn()
 		return
 	_update_age_speed(delta)
+	var scaled: float = delta * EnemyTime.scale()
+	movement.time_scale = EnemyTime.scale()
 	if status.is_stunned():
 		movement.stop()
 	else:
-		brain.tick(delta)
-	_contact_damage(delta)
+		brain.tick(scaled)
+	_contact_damage(scaled)
 
 
 func _process(_delta: float) -> void:

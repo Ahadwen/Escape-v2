@@ -34,10 +34,24 @@ const ABILITY_4: StringName = &"ability_4"
 const INTERACT: StringName = &"interact"
 const PAUSE: StringName = &"pause"
 
+# Aces. PC: keys 1-4 use ace stack 1-4 (in slot order).
+const USE_ACE_1: StringName = &"use_ace_1"
+const USE_ACE_2: StringName = &"use_ace_2"
+const USE_ACE_3: StringName = &"use_ace_3"
+const USE_ACE_4: StringName = &"use_ace_4"
+# Gamepad: D-pad left/right cycles the selected ace, B/Circle uses it.
+const ACE_PREVIOUS: StringName = &"ace_previous"
+const ACE_NEXT: StringName = &"ace_next"
+const USE_SELECTED_ACE: StringName = &"use_selected_ace"
+const ACE_KEY_COUNT: int = 4
+const USE_ACE_KEYS: Array[StringName] = [USE_ACE_1, USE_ACE_2, USE_ACE_3, USE_ACE_4]
+
 # Debug builds only: cycle PC -> gamepad -> touch scheme (disables auto-detect).
 const DEBUG_CYCLE_SCHEME: StringName = &"debug_cycle_input_scheme"
 # Debug builds only: spawn the next enemy type near the player.
 const DEBUG_SPAWN_ENEMY: StringName = &"debug_spawn_enemy"
+# Debug builds only: get a chest's worth of loot.
+const DEBUG_GIVE_LOOT: StringName = &"debug_give_loot"
 
 const ABILITY_SLOT_COUNT: int = 4
 
@@ -61,8 +75,16 @@ const ALL: Array[StringName] = [
 	ABILITY_4,
 	INTERACT,
 	PAUSE,
+	USE_ACE_1,
+	USE_ACE_2,
+	USE_ACE_3,
+	USE_ACE_4,
+	ACE_PREVIOUS,
+	ACE_NEXT,
+	USE_SELECTED_ACE,
 	DEBUG_CYCLE_SCHEME,
 	DEBUG_SPAWN_ENEMY,
+	DEBUG_GIVE_LOOT,
 ]
 
 

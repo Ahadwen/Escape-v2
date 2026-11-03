@@ -11,6 +11,8 @@ var remaining: float
 var stuns: bool = false
 ## While active, the actor takes no damage.
 var invulnerable: bool = false
+## If true, the host calls tick_host every physics frame.
+var ticks_with_host: bool = false
 
 
 func _init(p_id: StringName, p_duration: float) -> void:
@@ -24,6 +26,12 @@ func on_apply(_host: StatusEffectHost) -> void:
 
 
 func on_remove(_host: StatusEffectHost) -> void:
+	pass
+
+
+## Per-frame work that needs the host (e.g. healing). Only called when
+## ticks_with_host is true.
+func tick_host(_host: StatusEffectHost, _delta: float) -> void:
 	pass
 
 

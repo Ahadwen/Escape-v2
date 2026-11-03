@@ -5,6 +5,7 @@ extends Node
 ## loaded set changes). Remembers consumed POIs so they stay consumed.
 
 signal safehouse_entered(player: Player)
+signal crystal_consumed
 
 @export var profile: TerrainProfile
 @export var player: Node3D
@@ -12,6 +13,7 @@ signal safehouse_entered(player: Player)
 @export var nav_region: NavigationRegion3D
 @export var crystal_scene: PackedScene
 @export var safehouse_scene: PackedScene
+@export var chest_scene: PackedScene
 
 var run_seed: int = 0
 var level: int = 0
@@ -31,7 +33,7 @@ func start(p_seed: int, p_level: int = 0) -> void:
 	run_seed = p_seed
 	level = p_level
 	_generator = ChunkGenerator.new(profile, run_seed, level)
-	_builder = ChunkBuilder.new(crystal_scene, safehouse_scene, profile.obstacle_color)
+	_builder = ChunkBuilder.new(crystal_scene, safehouse_scene, chest_scene, profile.obstacle_color)
 	nav_region.bake_finished.connect(_on_bake_finished)
 	_update_chunks(true)
 	nav_region.bake_navigation_mesh(false)
@@ -93,7 +95,11 @@ func _is_consumed(id: String) -> bool:
 
 func _on_poi_built(node: Node3D, spec: ChunkLayout.PoiSpec) -> void:
 	if node is HealthCrystal:
-		(node as HealthCrystal).consumed.connect(_on_consumed.bind(spec.id))
+		var crystal: HealthCrystal = node as HealthCrystal
+		crystal.consumed.connect(_on_consumed.bind(spec.id))
+		crystal.consumed.connect(func() -> void: crystal_consumed.emit())
+	elif node is Chest:
+		(node as Chest).consumed.connect(_on_consumed.bind(spec.id))
 	elif node is Safehouse:
 		(node as Safehouse).entered.connect(_on_safehouse_entered)
 

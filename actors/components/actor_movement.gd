@@ -27,6 +27,8 @@ const WAYPOINT_REACHED_DISTANCE: float = 0.1
 @export var turn_sharpness: float = 16.0
 
 var mode: Mode = Mode.IDLE
+## Scales this actor's movement in time (1 = normal). Enemies follow EnemyTime.
+var time_scale: float = 1.0
 
 var _direction: Vector3 = Vector3.ZERO
 var _path: PackedVector3Array = PackedVector3Array()
@@ -136,9 +138,9 @@ func start_override(movement_override: MovementOverride) -> void:
 func _physics_process(delta: float) -> void:
 	var desired: Vector3
 	if _override != null:
-		desired = _override.compute_velocity(delta)
+		desired = _override.compute_velocity(delta * time_scale) * time_scale
 	else:
-		desired = _desired_velocity()
+		desired = _desired_velocity() * time_scale
 	body.velocity.x = desired.x
 	body.velocity.z = desired.z
 	if body.is_on_floor():

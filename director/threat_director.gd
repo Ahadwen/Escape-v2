@@ -26,6 +26,7 @@ var _far_check_timer: float = FAR_CHECK_INTERVAL
 
 
 func start() -> void:
+	EnemyTime.reset()
 	elapsed = 0.0
 	threat = profile.threat_at(0.0)
 	_spawn_timer = profile.initial_delay
@@ -70,6 +71,7 @@ func alive_cost() -> float:
 
 
 func _physics_process(delta: float) -> void:
+	EnemyTime.tick(delta)
 	if not running:
 		return
 	elapsed += delta

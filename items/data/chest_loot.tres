@@ -1,0 +1,10 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://items/loot_table.gd" id="1_loot"]
+[ext_resource type="Resource" path="res://items/data/card_library.tres" id="2_library"]
+
+[resource]
+script = ExtResource("1_loot")
+library = ExtResource("2_library")
+ace_chance = 0.15
+t1_rank_weights = PackedFloat32Array(5, 4, 3, 2, 1)

@@ -78,6 +78,8 @@ func _place_pois(
 		_add_poi(rng, layout, coord, ChunkLayout.POI_SAFEHOUSE, keepouts)
 	if coord != Vector2i.ZERO and rng.randf() < profile.crystal_chance:
 		_add_poi(rng, layout, coord, ChunkLayout.POI_CRYSTAL, keepouts)
+	if rng.randf() < profile.chest_chance:
+		_add_poi(rng, layout, coord, ChunkLayout.POI_CHEST, keepouts)
 
 
 func _add_poi(

@@ -7,6 +7,8 @@ signal effect_removed(effect: StatusEffect)
 
 ## Needed by effects that change stats (e.g. slows).
 @export var stats: StatsComponent
+## Needed by effects that heal (e.g. heal over time).
+@export var health: HealthComponent
 
 var _effects: Dictionary[StringName, StatusEffect] = {}
 
@@ -52,7 +54,12 @@ func is_invulnerable() -> bool:
 
 func tick(delta: float) -> void:
 	for id: StringName in _effects.keys():
-		if _effects.has(id) and _effects[id].tick(delta):
+		if not _effects.has(id):
+			continue
+		var effect: StatusEffect = _effects[id]
+		if effect.ticks_with_host:
+			effect.tick_host(self, delta)
+		if effect.tick(delta):
 			remove(id)
 
 

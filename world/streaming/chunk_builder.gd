@@ -5,6 +5,7 @@ extends RefCounted
 
 var crystal_scene: PackedScene
 var safehouse_scene: PackedScene
+var chest_scene: PackedScene
 var obstacle_color: Color
 
 var _meshes: Dictionary[StringName, BoxMesh] = {}
@@ -14,9 +15,12 @@ var _floor_shape: BoxShape3D
 var _floor_mesh: BoxMesh
 
 
-func _init(p_crystal: PackedScene, p_safehouse: PackedScene, p_obstacle_color: Color) -> void:
+func _init(
+	p_crystal: PackedScene, p_safehouse: PackedScene, p_chest: PackedScene, p_obstacle_color: Color
+) -> void:
 	crystal_scene = p_crystal
 	safehouse_scene = p_safehouse
+	chest_scene = p_chest
 	obstacle_color = p_obstacle_color
 	_obstacle_material = StandardMaterial3D.new()
 	_obstacle_material.albedo_color = obstacle_color
@@ -92,6 +96,8 @@ func _build_poi(poi: ChunkLayout.PoiSpec) -> Node3D:
 			scene = crystal_scene
 		ChunkLayout.POI_SAFEHOUSE:
 			scene = safehouse_scene
+		ChunkLayout.POI_CHEST:
+			scene = chest_scene
 	if scene == null:
 		return null
 	var node: Node3D = scene.instantiate() as Node3D

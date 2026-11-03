@@ -7,6 +7,10 @@ var index: int
 var data: AbilityData
 var cooldown_remaining: float = 0.0
 var execution: AbilityExecution
+## Applied to the cooldown when it starts (from ability haste). Set by the caster.
+var cooldown_multiplier: float = 1.0
+## If >= 0, the next cooldown is exactly this long instead (e.g. Flurry). Consumed.
+var next_cooldown_override: float = -1.0
 
 
 func _init(p_index: int) -> void:
@@ -69,4 +73,14 @@ func cancel() -> void:
 func _finish_if_done() -> void:
 	if execution != null and execution.finished:
 		execution = null
-		cooldown_remaining = data.cooldown if data != null else 0.0
+		cooldown_remaining = _next_cooldown()
+
+
+func _next_cooldown() -> float:
+	if data == null:
+		return 0.0
+	if next_cooldown_override >= 0.0:
+		var override: float = next_cooldown_override
+		next_cooldown_override = -1.0
+		return override
+	return data.cooldown * cooldown_multiplier

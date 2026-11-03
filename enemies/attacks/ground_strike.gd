@@ -74,7 +74,8 @@ func _ready() -> void:
 	add_child(_fill)
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(raw_delta: float) -> void:
+	var delta: float = raw_delta * EnemyTime.scale()
 	_time += delta
 	if not _detonated:
 		var t: float = clampf(_time / wind_up, 0.0, 1.0)

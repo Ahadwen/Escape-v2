@@ -9,6 +9,8 @@
 [ext_resource type="Script" path="res://actors/components/health_component.gd" id="7_health"]
 [ext_resource type="Script" path="res://actors/components/status_effect_host.gd" id="8_status"]
 [ext_resource type="Script" path="res://actors/components/targetable.gd" id="9_targetable"]
+[ext_resource type="Script" path="res://actors/components/card_inventory.gd" id="10_cards"]
+[ext_resource type="Script" path="res://actors/components/wallet.gd" id="11_wallet"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -52,9 +54,10 @@ mesh = SubResource("BoxMesh_nose")
 [node name="StatsComponent" type="Node" parent="."]
 script = ExtResource("4_stats")
 
-[node name="StatusEffectHost" type="Node" parent="." node_paths=PackedStringArray("stats")]
+[node name="StatusEffectHost" type="Node" parent="." node_paths=PackedStringArray("stats", "health")]
 script = ExtResource("8_status")
 stats = NodePath("../StatsComponent")
+health = NodePath("../HealthComponent")
 
 [node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("stats", "status")]
 script = ExtResource("7_health")
@@ -80,7 +83,15 @@ stats = NodePath("../StatsComponent")
 health = NodePath("../HealthComponent")
 status = NodePath("../StatusEffectHost")
 
-[node name="PlayerController" type="Node" parent="." node_paths=PackedStringArray("movement", "abilities")]
+[node name="CardInventory" type="Node" parent="." node_paths=PackedStringArray("stats")]
+script = ExtResource("10_cards")
+stats = NodePath("../StatsComponent")
+
+[node name="Wallet" type="Node" parent="."]
+script = ExtResource("11_wallet")
+
+[node name="PlayerController" type="Node" parent="." node_paths=PackedStringArray("movement", "abilities", "cards")]
 script = ExtResource("2_controller")
 movement = NodePath("../ActorMovement")
 abilities = NodePath("../AbilityCaster")
+cards = NodePath("../CardInventory")

@@ -56,7 +56,7 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 		return
 	var from: Vector3 = global_position
-	var to: Vector3 = from + velocity * delta
+	var to: Vector3 = from + velocity * delta * EnemyTime.scale()
 	var stop: Vector3 = AttackUtils.ray_to_wall(get_world_3d(), from, to)
 	global_position = stop
 	for target: Targetable in AttackUtils.player_targets(get_tree()):

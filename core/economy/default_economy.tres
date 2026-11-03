@@ -1,0 +1,10 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://core/economy/gold_economy.gd" id="1_economy"]
+
+[resource]
+script = ExtResource("1_economy")
+base_unit = 5
+card_pickup = 2.0
+chest_bonus_min = 0.0
+chest_bonus_max = 2.0

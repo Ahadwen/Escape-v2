@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://items/card_data.gd" id="1_card"]
+[ext_resource type="Script" path="res://items/aces/flurry_ace.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Ace_effect"]
+script = ExtResource("2_effect")
+
+[resource]
+script = ExtResource("1_card")
+suit = 2
+rank = 1
+title = "Flurry"
+description = "For 5 s, your next 4 casts each have only a 0.2 s cooldown."
+ace_effect = SubResource("Ace_effect")

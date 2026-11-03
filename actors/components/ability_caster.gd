@@ -16,6 +16,16 @@ const SLOT_COUNT: int = 4
 var slots: Array[AbilitySlot] = []
 
 var _aim: AimData = AimData.none()
+var _flurry_casts: int = 0
+var _flurry_time: float = 0.0
+var _flurry_cooldown: float = 0.2
+
+
+## For the next `seconds`, the next `casts` casts get a flat `cooldown`.
+func start_flurry(casts: int, seconds: float, cooldown: float) -> void:
+	_flurry_casts = casts
+	_flurry_time = seconds
+	_flurry_cooldown = cooldown
 
 
 func _init() -> void:
@@ -41,12 +51,19 @@ func try_cast(slot: int, aim: AimData) -> bool:
 	if ability_slot.data.requires_free_movement and movement != null and movement.has_override():
 		return false
 	update_aim(aim)
+	_refresh_haste()
+	var flurry: bool = _flurry_casts > 0 and _flurry_time > 0.0
+	if flurry:
+		ability_slot.next_cooldown_override = _flurry_cooldown
 	var context: CastContext = CastContext.new(
 		caster, movement, _stat_block(), _aim, health, status
 	)
 	if ability_slot.try_cast(context):
+		if flurry:
+			_flurry_casts -= 1
 		ability_cast.emit(slot)
 		return true
+	ability_slot.next_cooldown_override = -1.0
 	return false
 
 
@@ -62,8 +79,20 @@ func update_aim(aim: AimData) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _flurry_time > 0.0:
+		_flurry_time -= delta
+		if _flurry_time <= 0.0:
+			_flurry_casts = 0
+	_refresh_haste()
 	for ability_slot: AbilitySlot in slots:
 		ability_slot.tick(delta)
+
+
+func _refresh_haste() -> void:
+	var haste: float = stats.get_value(StatIds.ABILITY_HASTE) if stats != null else 0.0
+	var multiplier: float = StatIds.haste_multiplier(haste)
+	for ability_slot: AbilitySlot in slots:
+		ability_slot.cooldown_multiplier = multiplier
 
 
 func _stat_block() -> StatBlock:

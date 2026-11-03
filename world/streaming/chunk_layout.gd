@@ -35,6 +35,7 @@ class PoiSpec:
 
 const POI_CRYSTAL: StringName = &"crystal"
 const POI_SAFEHOUSE: StringName = &"safehouse"
+const POI_CHEST: StringName = &"chest"
 
 var coord: Vector2i
 var ground_color: Color

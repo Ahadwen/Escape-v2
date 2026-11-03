@@ -1,6 +1,7 @@
 class_name GamepadInputScheme
 extends InputScheme
-## Gamepad: left stick moves, right stick aims, LB/RB/LT/RT cast.
+## Gamepad: left stick moves, right stick aims, LB/RB/LT/RT cast, A/Cross
+## interacts, D-pad left/right selects an ace and B/Circle uses it.
 ## With the right stick centred, aim falls back to the left stick (so a charge
 ## can be steered with the movement stick), then to the player's facing.
 
@@ -32,6 +33,14 @@ func _physics_process(_delta: float) -> void:
 	for slot: int in InputActions.ABILITY_SLOT_COUNT:
 		if Input.is_action_just_pressed(InputActions.ability(slot)):
 			_emit(CastAbilityIntent.new(slot, aim))
+	if Input.is_action_just_pressed(InputActions.INTERACT):
+		_emit(InteractIntent.new())
+	if Input.is_action_just_pressed(InputActions.ACE_NEXT):
+		_emit(CycleAceIntent.new(1))
+	if Input.is_action_just_pressed(InputActions.ACE_PREVIOUS):
+		_emit(CycleAceIntent.new(-1))
+	if Input.is_action_just_pressed(InputActions.USE_SELECTED_ACE):
+		_emit(UseAceIntent.new(-1))
 
 
 func _on_deactivated() -> void:

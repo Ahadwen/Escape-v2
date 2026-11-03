@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://items/card_data.gd" id="1_card"]
+[ext_resource type="Script" path="res://items/card_stat.gd" id="2_stat"]
+
+[sub_resource type="Resource" id="Stat_0"]
+script = ExtResource("2_stat")
+stat = &"move_speed"
+value = 0.3
+
+[resource]
+script = ExtResource("1_card")
+suit = 3
+rank = 4
+stats = Array[ExtResource("2_stat")]([SubResource("Stat_0")])

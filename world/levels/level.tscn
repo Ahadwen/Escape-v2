@@ -20,6 +20,14 @@
 [ext_resource type="Script" path="res://world/streaming/world_streamer.gd" id="18_streamer"]
 [ext_resource type="Resource" path="res://world/streaming/default_terrain.tres" id="19_terrain"]
 [ext_resource type="Script" path="res://world/pois/discovery_registry.gd" id="20_registry"]
+[ext_resource type="PackedScene" path="res://world/pois/chest.tscn" id="21_chest"]
+[ext_resource type="Script" path="res://items/loot_service.gd" id="22_loot"]
+[ext_resource type="Resource" path="res://items/data/chest_loot.tres" id="23_loot_table"]
+[ext_resource type="Resource" path="res://core/economy/default_economy.tres" id="24_economy"]
+[ext_resource type="Script" path="res://ui/cards/card_pickup_screen.gd" id="25_pickup"]
+[ext_resource type="Script" path="res://ui/hud/card_bar.gd" id="26_card_bar"]
+[ext_resource type="Script" path="res://core/pause_controller.gd" id="27_pause"]
+[ext_resource type="Resource" path="res://items/data/card_library.tres" id="28_library"]
 
 [sub_resource type="Environment" id="Environment_level"]
 background_mode = 1
@@ -60,6 +68,7 @@ player = NodePath("../Player")
 nav_region = NodePath("../NavigationRegion3D")
 crystal_scene = ExtResource("14_crystal")
 safehouse_scene = ExtResource("15_safehouse")
+chest_scene = ExtResource("21_chest")
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 
@@ -164,6 +173,21 @@ theme_override_font_sizes/font_size = 40
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="CardBar" type="Control" parent="HUD" node_paths=PackedStringArray("cards", "wallet")]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -220.0
+offset_top = 50.0
+offset_right = 220.0
+offset_bottom = 98.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("26_card_bar")
+cards = NodePath("../../Player/CardInventory")
+wallet = NodePath("../../Player/Wallet")
+
 [node name="DebugOverlay" type="Label" parent="HUD" node_paths=PackedStringArray("input_router", "movement", "nav_region", "streamer")]
 offset_top = 60.0
 offset_right = 600.0
@@ -173,3 +197,24 @@ input_router = NodePath("../../InputRouter")
 movement = NodePath("../../Player/ActorMovement")
 nav_region = NodePath("../../NavigationRegion3D")
 streamer = NodePath("../../WorldStreamer")
+
+[node name="PickupLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="CardPickupScreen" type="Control" parent="PickupLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("25_pickup")
+
+[node name="LootService" type="Node" parent="." node_paths=PackedStringArray("pickup_screen")]
+script = ExtResource("22_loot")
+loot_table = ExtResource("23_loot_table")
+economy = ExtResource("24_economy")
+pickup_screen = NodePath("../PickupLayer/CardPickupScreen")
+
+[node name="PauseController" type="Node" parent="."]
+script = ExtResource("27_pause")
