@@ -49,9 +49,10 @@ func cancel() -> void:
 	_end()
 
 
-func _on_damage_negated(_event: DamageEvent) -> void:
-	# Only hits while the parry itself is up count (not other invulnerability).
-	if _succeeded or not context.status.has_effect(PARRY_ID):
+func _on_damage_negated(event: DamageEvent) -> void:
+	# Only direct hits while the parry itself is up count: not other
+	# invulnerability, and not beams or ground effects (blocked, but no payoff).
+	if _succeeded or not event.parryable or not context.status.has_effect(PARRY_ID):
 		return
 	_succeeded = true
 	context.status.remove(PARRY_ID)

@@ -54,13 +54,20 @@ static func player_targets(tree: SceneTree) -> Array[Targetable]:
 
 
 static func damage(
-	target: Targetable, amount: float, type: DamageEvent.DamageType, source: Node
+	target: Targetable,
+	amount: float,
+	type: DamageEvent.DamageType,
+	source: Node,
+	parryable: bool = true
 ) -> void:
 	if target.health != null:
-		target.health.take_damage(DamageEvent.new(amount, type, source))
+		var event: DamageEvent = DamageEvent.new(amount, type, source)
+		event.parryable = parryable
+		target.health.take_damage(event)
 
 
 ## Damages every player-faction target within radius of center. Returns hits.
+## Area damage (artillery, ground zones) can't be parried.
 static func damage_in_radius(
 	tree: SceneTree,
 	center: Vector3,
@@ -72,12 +79,13 @@ static func damage_in_radius(
 	var hits: int = 0
 	for target: Targetable in player_targets(tree):
 		if target.flat_distance_to(center) <= radius:
-			damage(target, amount, type, source)
+			damage(target, amount, type, source, false)
 			hits += 1
 	return hits
 
 
 ## Damages every player-faction target within half_width of the segment a-b.
+## Beam damage can't be parried.
 static func damage_on_segment(
 	tree: SceneTree,
 	a: Vector3,
@@ -90,6 +98,6 @@ static func damage_on_segment(
 	var hits: int = 0
 	for target: Targetable in player_targets(tree):
 		if point_segment_distance_flat(target.world_position(), a, b) <= half_width:
-			damage(target, amount, type, source)
+			damage(target, amount, type, source, false)
 			hits += 1
 	return hits

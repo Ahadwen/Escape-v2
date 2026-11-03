@@ -8,6 +8,10 @@ var amount: float
 var type: DamageType
 ## Who dealt it (an enemy, a hazard). May be null.
 var source: Node
+## Whether blocking this counts as a successful parry. Direct hits (melee,
+## contact, projectiles) do; beams and ground effects don't (they're still
+## blocked by invulnerability).
+var parryable: bool = true
 
 
 func _init(
