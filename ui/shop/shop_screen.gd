@@ -189,6 +189,9 @@ func _ingredient_status(plan: RecipePlan) -> String:
 			var stack: CardStack = _player.cards.stack_at(slot)
 			mark = "✓" if ingredient.matches(stack.card) else "(%s)" % stack.card.label()
 		parts.append("%s %s" % [ingredient.describe(), mark])
+	if plan.recipe.requires_suit:
+		var suit_mark: String = "✓" if plan.suit_satisfied else "✗"
+		parts.append("one %s %s" % [CardData.SUIT_GLYPHS[plan.recipe.required_suit], suit_mark])
 	return ", ".join(parts)
 
 

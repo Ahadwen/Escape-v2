@@ -33,7 +33,7 @@ Status: **in discussion.** *(yours)* = your idea, *(draft)* = mine, ⚠ = flagge
 
 5 card slots. Picking up a card **pauses the game** and opens the inventory (swap, rearrange, discard).
 
-**Recipes** (first pass): T2 = 2 specific cards, at least one of its own suit, plus gold. T3 = 3 cards including a T2, plus more gold. You must hold the components (or a wildcard: a joker at +50% gold each, or the Q♦ Forger wildcard).
+**Recipes** (first pass): T2 = two ranks in any suit, at least one card of its own suit, plus gold. T3 = its suit's T2 plus two ranks, plus more gold. You must hold the components (or a wildcard: a joker at +50% gold each, or the Q♦ Forger wildcard).
 
 **Safehouse lobby:** a small walkable scene between levels with a **shop** (lists every recipe you can complete right now, plus greyed-out near misses one card short; no rerolls), a **trader** (a few offers to swap one of your cards for one of the same or one-higher rank, never T3; reroll for gold), and the **exit door** to the next level.
 
@@ -112,38 +112,38 @@ Occupy a card slot and **stack without limit** in it. PC keys 1–4 use ace stac
 
 ## Recipes (first pass)
 
-T2 = an exact card of its suit + an exact card of a partner suit. T3 = its suit's T2 + an exact card of its suit + any card of a partner suit. Prices at the current economy (base unit 5 g); jokers +50% each.
+Recipes name **ranks, in any suit**, and need **at least one card of the result's suit** (a joker or the Forger wildcard can stand in for it). T3 recipes need that suit's T2 as an exact card. Prices at the current economy; jokers +50% each.
 
 | Card | Recipe | Price |
 |---|---|---|
-| 7♥ | 3♥ + 2♦ | 40 g |
-| 8♥ | 4♥ + 3♠ | 40 g |
-| 9♥ | 5♥ + 4♦ | 40 g |
-| 10♥ | 6♥ + 5♠ | 40 g |
-| 7♦ | 3♦ + 2♣ | 40 g |
-| 8♦ | 4♦ + 3♥ | 40 g |
-| 9♦ | 5♦ + 4♣ | 40 g |
-| 10♦ | 6♦ + 5♥ | 40 g |
-| 7♣ | 3♣ + 2♠ | 40 g |
-| 8♣ | 4♣ + 3♦ | 40 g |
-| 9♣ | 5♣ + 4♠ | 40 g |
-| 10♣ | 6♣ + 5♦ | 40 g |
-| 7♠ | 3♠ + 2♥ | 40 g |
-| 8♠ | 4♠ + 3♣ | 40 g |
-| 9♠ | 5♠ + 4♥ | 40 g |
-| 10♠ | 6♠ + 5♣ | 40 g |
-| J♥ | 7♥ + 6♥ + any ♣ | 100 g |
-| Q♥ | 8♥ + 5♥ + any ♣ | 100 g |
-| K♥ | 9♥ + 6♥ + any ♣ | 100 g |
-| J♦ | 7♦ + 6♦ + any ♠ | 100 g |
-| Q♦ | 8♦ + 5♦ + any ♠ | 100 g |
-| K♦ | 9♦ + 6♦ + any ♠ | 100 g |
-| J♣ | 7♣ + 6♣ + any ♥ | 100 g |
-| Q♣ | 8♣ + 5♣ + any ♥ | 100 g |
-| K♣ | 9♣ + 6♣ + any ♥ | 100 g |
-| J♠ | 7♠ + 6♠ + any ♦ | 100 g |
-| Q♠ | 8♠ + 5♠ + any ♦ | 100 g |
-| K♠ | 9♠ + 6♠ + any ♦ | 100 g |
+| 7♥ | a 3 + a 2, at least one ♥ | 40 g |
+| 8♥ | a 4 + a 3, at least one ♥ | 40 g |
+| 9♥ | a 5 + a 4, at least one ♥ | 40 g |
+| 10♥ | a 6 + a 5, at least one ♥ | 40 g |
+| 7♦ | a 3 + a 2, at least one ♦ | 40 g |
+| 8♦ | a 4 + a 3, at least one ♦ | 40 g |
+| 9♦ | a 5 + a 4, at least one ♦ | 40 g |
+| 10♦ | a 6 + a 5, at least one ♦ | 40 g |
+| 7♣ | a 3 + a 2, at least one ♣ | 40 g |
+| 8♣ | a 4 + a 3, at least one ♣ | 40 g |
+| 9♣ | a 5 + a 4, at least one ♣ | 40 g |
+| 10♣ | a 6 + a 5, at least one ♣ | 40 g |
+| 7♠ | a 3 + a 2, at least one ♠ | 40 g |
+| 8♠ | a 4 + a 3, at least one ♠ | 40 g |
+| 9♠ | a 5 + a 4, at least one ♠ | 40 g |
+| 10♠ | a 6 + a 5, at least one ♠ | 40 g |
+| J♥ | 7♥ + a 5 + a 4, at least one ♥ | 100 g |
+| Q♥ | 8♥ + a 6 + a 4, at least one ♥ | 100 g |
+| K♥ | 10♥ + a 6 + a 5, at least one ♥ | 100 g |
+| J♦ | 7♦ + a 5 + a 4, at least one ♦ | 100 g |
+| Q♦ | 8♦ + a 6 + a 4, at least one ♦ | 100 g |
+| K♦ | 10♦ + a 6 + a 5, at least one ♦ | 100 g |
+| J♣ | 7♣ + a 5 + a 4, at least one ♣ | 100 g |
+| Q♣ | 8♣ + a 6 + a 4, at least one ♣ | 100 g |
+| K♣ | 10♣ + a 6 + a 5, at least one ♣ | 100 g |
+| J♠ | 7♠ + a 5 + a 4, at least one ♠ | 100 g |
+| Q♠ | 8♠ + a 6 + a 4, at least one ♠ | 100 g |
+| K♠ | 10♠ + a 6 + a 5, at least one ♠ | 100 g |
 
 ## Open questions
 
