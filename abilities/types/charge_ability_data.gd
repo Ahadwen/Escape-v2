@@ -1,7 +1,7 @@
 class_name ChargeAbilityData
 extends AbilityData
-## Charge forward, accelerating and steerable, until hitting something or
-## running out of time.
+## Charge forward, accelerating and steerable, ploughing enemies aside, until
+## hitting a wall or running out of time.
 
 @export var start_speed: float = 6.0
 @export var max_speed: float = 16.0
@@ -10,6 +10,13 @@ extends AbilityData
 @export var turn_rate_degrees: float = 35.0
 ## Seconds.
 @export var max_duration: float = 3.0
+
+@export_group("Plough")
+## While charging, enemies within this radius are shoved out of the way
+## (the charge passes through enemies; only walls stop it).
+@export var plough_radius: float = 1.6
+@export var plough_knockback: float = 3.5
+@export var plough_stun: float = 0.4
 
 @export_group("Impact")
 @export var impact_radius: float = 2.5
