@@ -50,4 +50,4 @@ func _on_intent(intent: PlayerIntent) -> void:
 	if intent is AimIntent:
 		return
 	var script: Script = intent.get_script()
-	_last_intent = script.get_global_name() if script != null else "?"
+	_last_intent = String(script.get_global_name()) if script != null else "?"
