@@ -48,7 +48,7 @@ Larger and much faster than now, with real momentum.
 - **Re-aim:** after slowing, wobbles briefly, re-aims, and zooms again.
 - **Contact:** damage + knockback.
 
-### Hooker — Blitzcrank
+### Harpooner — Blitzcrank
 Nobody's favourite, but it raises the stakes.
 - Slow walker.
 - **Hook:** long, thin skillshot with a clear wind-up. If it hits, you're **pulled** to it. Long cooldown — a miss is your window.
