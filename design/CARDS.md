@@ -76,10 +76,10 @@ Base values for scale: 400 HP, 8 m/s move speed, 10 Will.
 | 7♣ | **Patience:** every 60 s, your next ability cast has double Will. *(yours)* |
 | 8♣ | **Alchemy:** using an Ace grants +8 Will for 10 s. *(yours)* |
 | 9♣ | **Desperation:** the lower your HP, the higher your Will (up to +12 near death). *(yours)* |
-| 10♣ | *(draft)* **Dilation:** enemy wind-ups within 5 m take 30% longer. |
+| 10♣ | **Dilation:** enemy projectiles within 5 m of you fly 40% slower, and ranged enemies near you take 30% longer to wind up. Melee is unaffected. *(yours)* |
 | J♣ | **Oathbound:** your R (ultimate) is disabled, but you gain +60% Will. *(yours)* |
-| Q♣ | *(draft)* **Resonance:** every ability cast pushes nearby enemies away; radius scales with Will. (The only push card.) |
-| K♣ | *(draft)* **Distracted:** an enemy that has chased you for 6 s loses interest for 3 s. |
+| Q♣ | *TBD* |
+| K♣ | *TBD* |
 
 ## T2 / T3 — Diamonds ♦ *(all draft — needs your input)*
 
