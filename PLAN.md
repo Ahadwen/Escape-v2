@@ -40,7 +40,7 @@ A simple, readable introductory kit: one displacement ability, one buff, one agg
 
 | Slot | Ability | Behaviour | Scaling |
 |---|---|---|---|
-| **Q** | **Dash** | Short dash in the aimed direction (`DIRECTION`, movement override). | Range scales a little with **Will**. The landing scales with **current HP**: above 50% HP, landing produces a shockwave (knockback + slow) whose radius and strength grow with HP. |
+| **Q** | **Blink** | Instant teleport in the aimed direction (`DIRECTION`), passing over walls. If the aimed spot is inside an obstacle, lands on whichever side is closer along the blink line. | Range scales a little with **Will**. The landing scales with **current HP**: above 50% HP, landing produces a shockwave (knockback + slow) whose radius and strength grow with HP. |
 | **W** | **Rally** (move-speed steroid) | Timed self-buff adding a move-speed modifier. Will → speed amount; fixed duration (~3s). |
 | **E** | **Decoy** | Places a decoy (`POINT`) with a high-priority `Targetable` that draws enemy aggro and absorbs hits until destroyed. | Decoy HP scales with **Will**. |
 | **R** | **Unstoppable Charge** | Invulnerable while charging forward, gaining speed over time; steerable with a limited turn rate; ends on collision with terrain or an enemy (impact knocks enemies back), or after a max duration (~3s). No early recast. | None for now. |
@@ -105,7 +105,7 @@ Touch UI   ─┘     cancel, interact           CastAbility(slot, aim)    asks 
 - **`AbilityBehaviour`**: the logic (dash, blink, decoy, slow field, shield, knockback…). Receives a `CastContext` (caster, aim, stat snapshot).
 - **`AbilitySlot`** ×4 on the player: cooldowns, cost checks, cast requests. Filled from the chosen character at run start.
 - **`StatScaling`** (Resource): maps a stat to an ability parameter through a `Curve` or linear coefficient, e.g. `dash_range = base + 0.5 × will`. Abilities declare their scalings as data, so tuning and item effects ("+30% Q range") never touch behaviour code.
-- **Movement override**: dashes and charges ask the actor's movement component for a temporary `MovementOverride` (own velocity, collision response, end condition). Normal movement intents are ignored until it ends. Every displacement ability uses this, so there's one source of truth for "who is moving the actor right now".
+- **Movement override**: dashes, charges and knockbacks ask the actor's movement component for a temporary `MovementOverride` (own velocity, collision response, end condition). Normal movement intents are ignored until it ends. Every displacement ability uses this, so there's one source of truth for "who is moving the actor right now".
 - **Ability phases**: an ability can be instant, timed (buff), or sustained (runs until an end condition). The slot tracks the phase so the HUD and input schemes know when an ability is "in progress".
 
 ### 7.3 Stats, resources, damage, status effects
@@ -202,9 +202,9 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 
 | # | Milestone | Done when |
 |---|---|---|
-| **M0** | Foundations | Folder layout, typed-GDScript settings, test framework, InputMap action list, export preset for PC |
-| **M1** | Move & input | Greybox arena, ortho camera, player capsule moves via PC and gamepad schemes; touch scheme working via emulated touch; auto device switching |
-| **M2** | Abilities | 4 slots, targeting types + aim indicators per scheme, cooldowns/costs, `StatScaling`, movement override; the Knight's Q (without shockwave), W and R |
+| **M0** ✅ | Foundations | Folder layout, typed-GDScript settings, test framework, InputMap action list, export preset for PC |
+| **M1** ✅ | Move & input | Greybox arena, ortho camera, player capsule moves via PC and gamepad schemes; touch scheme working via emulated touch; auto device switching |
+| **M2** ✅ | Abilities | 4 slots, targeting types + aim indicators per scheme, cooldowns/costs, `StatScaling`, movement override; the Knight's Q (without shockwave), W and R |
 | **M3** | Enemies & damage | StatBlock, pools, armour/resist, status effects, `Targetable` aggro, 2 archetypes that chase and attack, per-enemy lifetime + despawn tell, player death; Knight's Q shockwave and E decoy |
 | **M4** | **Core loop prototype** | ThreatDirector + curve, health crystals, a safehouse that ends the level, HUD (HP, cooldowns, threat). **Playtest checkpoint — iterate until it's fun** |
 | **M5** | Procedural levels | Seeded generator, runtime navmesh, POI placement, reachability checks, all driven by a `LevelTheme` (base zone only) |
