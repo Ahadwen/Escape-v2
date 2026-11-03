@@ -48,11 +48,14 @@ func test_damage_log_and_pay_hp() -> void:
 
 
 func test_gameplay_press_detection() -> void:
-	var key: InputEventKey = InputEventKey.new()
-	key.pressed = true
-	assert_true(PauseControllerScript.is_gameplay_press(key))
-	key.echo = true
-	assert_false(PauseControllerScript.is_gameplay_press(key))
+	var q: InputEventKey = InputEventKey.new()
+	q.physical_keycode = KEY_Q
+	q.pressed = true
+	assert_true(PauseControllerScript.is_gameplay_press(q), "Q (an ability) unpauses")
+	var alt: InputEventKey = InputEventKey.new()
+	alt.physical_keycode = KEY_ALT
+	alt.pressed = true
+	assert_false(PauseControllerScript.is_gameplay_press(alt), "Alt doesn't unpause")
 	var motion: InputEventMouseMotion = InputEventMouseMotion.new()
 	assert_false(PauseControllerScript.is_gameplay_press(motion))
 	var stick: InputEventJoypadMotion = InputEventJoypadMotion.new()

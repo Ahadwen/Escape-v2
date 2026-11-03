@@ -11,6 +11,15 @@ signal paused_changed(paused: bool)
 
 const GROUP: StringName = &"pause_controller"
 const STICK_THRESHOLD: float = 0.5
+## Actions that never count as "resume playing" input.
+const NON_GAMEPLAY_ACTIONS: Array[StringName] = [
+	InputActions.PAUSE,
+	InputActions.DEBUG_CYCLE_SCHEME,
+	InputActions.DEBUG_SPAWN_ENEMY,
+	InputActions.DEBUG_GIVE_LOOT,
+	InputActions.DEBUG_CARD_PICKER,
+	InputActions.DEBUG_NEXT_LEVEL,
+]
 
 var manual_paused: bool = false
 
@@ -99,13 +108,13 @@ func _input(event: InputEvent) -> void:
 
 
 static func is_gameplay_press(event: InputEvent) -> bool:
-	if event is InputEventKey:
-		var key: InputEventKey = event as InputEventKey
-		return key.pressed and not key.echo
-	if event is InputEventMouseButton:
-		return (event as InputEventMouseButton).pressed
-	if event is InputEventJoypadButton:
-		return (event as InputEventJoypadButton).pressed
+	# Only inputs bound to game actions count, so Alt-Tab, Cmd and other
+	# unbound keys don't unpause.
+	for action: StringName in InputActions.ALL:
+		if action in NON_GAMEPLAY_ACTIONS:
+			continue
+		if event.is_action_pressed(action, false, true):
+			return true
 	if event is InputEventJoypadMotion:
 		return absf((event as InputEventJoypadMotion).axis_value) > STICK_THRESHOLD
 	if event is InputEventScreenTouch:
