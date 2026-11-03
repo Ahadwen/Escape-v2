@@ -66,8 +66,10 @@ static func plough_direction(charge_direction: Vector3, center: Vector3, point: 
 	var forward: Vector3 = Vector3(charge_direction.x, 0.0, charge_direction.z).normalized()
 	var side: Vector3 = forward.cross(Vector3.UP)
 	var offset: Vector3 = Vector3(point.x - center.x, 0.0, point.z - center.z)
-	var sign: float = 1.0 if offset.dot(side) >= 0.0 else -1.0
-	var push: Vector3 = side * sign * (1.0 - PLOUGH_FORWARD_SHARE) + forward * PLOUGH_FORWARD_SHARE
+	var side_sign: float = 1.0 if offset.dot(side) >= 0.0 else -1.0
+	var push: Vector3 = (
+		side * side_sign * (1.0 - PLOUGH_FORWARD_SHARE) + forward * PLOUGH_FORWARD_SHARE
+	)
 	return push.normalized()
 
 
