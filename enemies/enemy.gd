@@ -7,7 +7,7 @@ signal despawned(enemy: Enemy)
 
 const GROUP: StringName = &"enemies"
 ## Speed of knockbacks applied to enemies, metres per second.
-const KNOCKBACK_SPEED: float = 14.0
+const KNOCKBACK_SPEED: float = 20.0
 
 @export var data: EnemyData
 

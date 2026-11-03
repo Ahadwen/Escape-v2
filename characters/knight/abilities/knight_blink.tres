@@ -6,7 +6,7 @@
 [sub_resource type="Resource" id="Resource_range"]
 script = ExtResource("2_scaling")
 stat = &"will"
-base_value = 5.0
+base_value = 7.0
 per_point = 0.05
 
 [resource]

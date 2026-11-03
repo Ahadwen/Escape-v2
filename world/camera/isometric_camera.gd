@@ -10,7 +10,7 @@ extends Camera3D
 ## framing of an orthographic camera; just keeps the scene in front of it.
 @export var distance: float = 30.0
 ## Orthographic view height in metres. Smaller = more zoomed in.
-@export var view_size: float = 22.0
+@export var view_size: float = 26.0
 @export var follow_sharpness: float = 10.0
 
 var _focus: Vector3 = Vector3.ZERO
