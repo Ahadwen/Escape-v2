@@ -98,12 +98,12 @@ Base values for scale: 400 HP, 8 m/s move speed, 10 Will.
 - Occupy a card slot, **stack up to 3** in that slot.
 - **Controls:** PC keys 1–4 use ace stacks in slot order. Gamepad: D-pad cycles the selected ace, Circle/B uses it. Touch: a compact ace widget near the ability sticks (tap to cycle) with a Use button.
 
-| Ace | Effect (draft) |
+| Ace | Effect |
 |---|---|
-| A♥ | Restore 30% HP. |
-| A♠ | Reset all non-ultimate cooldowns and gain a short speed burst. |
-| A♣ | +15 Will for 8 s. |
-| A♦ | Your next safehouse recipe costs 40% less. *(or a gold payout?)* |
+| A♥ | **Recover:** heal all damage taken in the last 1.5 s, as a heal over 6 s. Big value after a big hit; worthless after chip damage. *(yours)* |
+| A♠ | **Slow Time:** every enemy and enemy projectile slows by 50% for 3 s. *(yours; numbers draft)* |
+| A♣ | **Flurry:** for the next 5 s, your next 4 ability casts each have only a flat 0.2 s cooldown. *(yours)* |
+| A♦ | **Upgrade:** used on the card pickup screen: reroll the offered card into one a rank higher. *(yours)* |
 
 ## Open questions
 
