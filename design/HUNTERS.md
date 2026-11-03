@@ -10,6 +10,18 @@ Status: **in discussion.** Your ideas, organised; numbers are placeholders.
 - **Terrain matters.** Hunters track you by line of sight; break it and they search your last known position.
 - **Nothing can be killed** (core rule): hunters leave, they don't die.
 
+## Pursuit rule — hunters are faster than you
+
+Running in a straight line must never be a strategy. So:
+
+1. **While hunting, hunters are meaningfully faster than your *sustained* speed** (base + permanent card bonuses): ~20–30% faster. Stacking speed cards can't outgrow them — they scale with you.
+2. **Temporary bursts aren't matched** (blink, parry boost, charge, A♠, Momentum…), so they still open real distance.
+3. **Every ability commits them:** wind-ups, recoveries and reloads slow or stop them. Dodge, then run during the recovery.
+4. **Breaking line of sight** sends them to your last known position, then searching — slower than chasing you.
+5. **Their time on the hunt runs out:** you outlast hunters, you don't beat them.
+
+You can't outrun them; you out-dodge, out-think and outlast them.
+
 ## The hunt (director)
 
 | Rule | Draft |
@@ -57,6 +69,11 @@ Keeps long range, and won't let you just run it down.
 - **Beam:** a long, wide laser that **ignores walls**, with a clear charge-up line.
 - **Barrage:** marks a **cluster of circles** on the floor around you; they detonate in sequence — find the safe spots between them while dealing with everything else.
 - **Displace:** if you get too close, it **interrupts what it's doing and teleports** to a set distance away (cooldown).
+
+### Gunslinger — Jhin / Graves
+- **Runs alongside:** matches your pace at medium range, off to one side.
+- **Salvo:** five shots in rhythm; the **fifth is stronger** (bigger, faster, its own tell).
+- **Reload:** a visible pause after the salvo — your window.
 
 ### Broodmother — Elise / Zyra
 - Slow; keeps her distance.
