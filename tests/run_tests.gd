@@ -55,7 +55,7 @@ func _run_all() -> void:
 ## Runs every test_ method in one file. Returns (passed, failed).
 func _run_file(path: String) -> Vector2i:
 	var script: GDScript = load(path) as GDScript
-	if script == null:
+	if script == null or not script.can_instantiate():
 		_report("FAIL  %s: could not load script (see errors above)" % path)
 		return Vector2i(0, 1)
 
