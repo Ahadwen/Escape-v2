@@ -4,7 +4,7 @@
 
 A top-down isometric roguelike where **you cannot fight back**. Enemies can't be killed — only outmanoeuvred. You survive using movement, terrain, and four character abilities (mobility, defence, and crowd control) until each enemy's timer runs out and it despawns.
 
-Each level is procedurally generated and its **threat rises steadily over time**. Finding a safehouse poses the core question: *enter now and move on, or keep exploring for loot while the level gets more dangerous?*
+Each level is **infinite, procedurally generated terrain** that streams in around the player, and its **threat rises steadily over time**. Safehouses aren't marked: finding one is a discovery. Finding a safehouse poses the core question: *enter now and move on, or keep exploring for loot while the level gets more dangerous?*
 
 **Run structure:** Nexus (pick character, meta upgrades) → Level 1 → Safehouse → Level 2 → … → Level 5 → win. Death returns you to the Nexus.
 
@@ -161,9 +161,11 @@ Elemental resistance becomes a strategic stat because of this. Once you know the
 
 ### 7.7 World & level generation
 
-- Seeded generator: layout graph → place modular chunks → bake navmesh → place points of interest.
-- Takes the `LevelTheme` as input; outputs a **`LevelLayout`** data object; a separate **`LevelBuilder`** instantiates scenes. Generation is testable without rendering.
-- POI rules: safehouses far from spawn (1–3 per level); crystals and chests spread with minimum spacing; every POI reachable.
+- **Infinite, streamed terrain.** The world is a grid of chunks generated on demand around the player and freed behind them. Each chunk is generated deterministically from (run seed, level, chunk coordinate), so revisiting an area recreates it identically.
+- **`ChunkGenerator`** takes the `LevelTheme` and a chunk coordinate and outputs a **`ChunkLayout`** data object (ground, obstacles, points of interest); a separate **`ChunkBuilder`** instantiates it. Generation is testable without rendering.
+- **Navigation per chunk:** each chunk bakes its own navmesh from collision shapes (on a thread), and adjacent chunk navmeshes connect at their shared edges. Proven in M5.
+- **Points of interest** are rolled per chunk: health crystals and chests with minimum spacing; safehouses are rare, with their chance rising with distance from the level start (and a guaranteed-eventually rule so a level can't go on forever without one).
+- **Discovery, not markers.** Safehouses (and other POIs) aren't shown until the player has seen them — within a reveal radius or line of sight. Once discovered, an off-screen edge indicator points back to them, so the "leave now or push on" choice stays available.
 - **Safehouse**: an enterable trigger zone. Entering ends the level and opens the shop screen, then advances to the next level.
 
 ### 7.8 Game flow & persistence
@@ -206,8 +208,8 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 | **M1** ✅ | Move & input | Greybox arena, ortho camera, player capsule moves via PC and gamepad schemes; touch scheme working via emulated touch; auto device switching |
 | **M2** ✅ | Abilities | 4 slots, targeting types + aim indicators per scheme, cooldowns/costs, `StatScaling`, movement override; the Knight's Q (without shockwave), W and R |
 | **M3** ✅ | Enemies & damage | StatBlock, pools, armour/resist, status effects, `Targetable` aggro, 2 archetypes that chase and attack, per-enemy lifetime + despawn tell, player death; Knight's Q shockwave and E decoy |
-| **M4** | **Core loop prototype** | ThreatDirector + curve, health crystals, a safehouse that ends the level, HUD (HP, cooldowns, threat). **Playtest checkpoint — iterate until it's fun** |
-| **M5** | Procedural levels | Seeded generator, runtime navmesh, POI placement, reachability checks, all driven by a `LevelTheme` (base zone only) |
+| **M4** | **Core loop prototype** | ThreatDirector + curve, health crystals, a hidden safehouse that's revealed on discovery and ends the level, discovered-POI edge indicators, HUD (HP, cooldowns, threat, time). Tuned against V1's proven feel |
+| **M5** | Infinite terrain | Seeded chunk generation, streaming load/unload around the player, per-chunk navmesh baking and stitching, per-chunk POI rolls (crystals, safehouses), all driven by a `LevelTheme` (base zone only) |
 | **M6** | Items & chests | Item data, modifiers, effect hooks, loot tables, gold, 10–15 items |
 | **M7** | Run structure & zones | Safehouse shop, 5 levels with escalating curves, HP restore between levels, win/loss screens. Zone framework (ZoneData, EnemyVariant, ThemeResolver, intensity blending) with one greybox destination zone, using colour, a hazard and one variant to prove the blend |
 | **M8** | Nexus & meta | Hub scene, character select, save system, meta-upgrade framework |
@@ -217,9 +219,9 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 
 ## 9. Risks
 
-- **Evasion isn't fun** → M4 playtest gate; enemies must have readable, telegraphed attacks so dodging is skill, not luck.
+- **Evasion isn't fun** → already proven in V1; the risk is losing V1's feel in the port, so M4 is tuned against it. Enemies must have readable, telegraphed attacks so dodging is skill, not luck.
 - **Enemies feel unfair with no counterplay** → crowd-control abilities, despawn tells, and per-enemy lifetimes give the player tools and hope.
-- **Navmesh on procedural maps** → pre-baked chunk navmeshes or threaded runtime bake; prove in M5.
+- **Navmesh on streamed terrain** → per-chunk threaded bakes with edge connections, and no hitches while chunks load; prove in M5. Enemies near unloaded chunks need a rule (despawn, or keep their chunk alive).
 - **Touch/gamepad rot while developing on PC** → all three schemes go through the same intent layer and are exercised every milestone.
 - **Mobile performance in 3D** → Mobile renderer, conservative lighting; test on a device before M11.
 
