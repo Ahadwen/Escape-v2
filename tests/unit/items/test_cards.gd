@@ -54,8 +54,8 @@ func test_stats_from_several_cards_add_up() -> void:
 func test_swap_keeps_stats() -> void:
 	inventory.set_stack(0, CardStackScript.new(_card(0, 2, StatIds.ARMOUR, 4.0)))
 	inventory.swap(0, 4)
-	assert_null(inventory.get_stack(0))
-	assert_not_null(inventory.get_stack(4))
+	assert_null(inventory.stack_at(0))
+	assert_not_null(inventory.stack_at(4))
 	assert_almost_eq(stats.get_value(StatIds.ARMOUR), 14.0)
 
 
@@ -64,7 +64,7 @@ func test_aces_stack_in_one_slot() -> void:
 	inventory.set_stack(2, CardStackScript.new(ace))
 	assert_eq(inventory.stack_slot_for(ace), 2)
 	inventory.add_to_stack(2, 2)
-	assert_eq(inventory.get_stack(2).count, 3)
+	assert_eq(inventory.stack_at(2).count, 3)
 
 
 func test_non_aces_never_stack() -> void:
@@ -76,7 +76,7 @@ func test_non_aces_never_stack() -> void:
 func test_consuming_last_ace_empties_slot() -> void:
 	inventory.set_stack(1, CardStackScript.new(_card(2, 1), 1))
 	inventory.consume_one(1)
-	assert_null(inventory.get_stack(1))
+	assert_null(inventory.stack_at(1))
 
 
 func test_ace_index_follows_slot_order() -> void:
@@ -102,7 +102,7 @@ func test_pickup_screen_only_ace_cannot_be_used_in_field() -> void:
 	ace.ace_effect = UpgradeAceScript.new()
 	inventory.set_stack(0, CardStackScript.new(ace))
 	assert_false(inventory.use_ace(0, null))
-	assert_not_null(inventory.get_stack(0))
+	assert_not_null(inventory.stack_at(0))
 
 
 func test_tiers_and_labels() -> void:

@@ -59,7 +59,7 @@ func _refresh() -> void:
 		return
 	var ace_number: int = 0
 	for i: int in CardInventory.SLOT_COUNT:
-		var stack: CardStack = cards.get_stack(i)
+		var stack: CardStack = cards.stack_at(i)
 		var label: Label = _labels[i]
 		if stack == null:
 			label.text = "·"

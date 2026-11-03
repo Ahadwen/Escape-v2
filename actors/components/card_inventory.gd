@@ -19,7 +19,7 @@ func _init() -> void:
 	slots.resize(SLOT_COUNT)
 
 
-func get_stack(slot: int) -> CardStack:
+func stack_at(slot: int) -> CardStack:
 	return slots[slot] if slot >= 0 and slot < SLOT_COUNT else null
 
 
@@ -90,7 +90,7 @@ func cycle_selected_ace(step: int) -> void:
 
 ## Uses one ace from a slot. Returns true if one was consumed.
 func use_ace(slot: int, player: Player) -> bool:
-	var stack: CardStack = get_stack(slot)
+	var stack: CardStack = stack_at(slot)
 	if stack == null or not stack.card.is_ace() or stack.card.ace_effect == null:
 		return false
 	if stack.card.ace_effect.is_pickup_screen_only():

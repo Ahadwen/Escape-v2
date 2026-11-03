@@ -79,7 +79,7 @@ func open(player: Player, card: CardData, count: int = 1) -> void:
 	_player = player
 	_working.clear()
 	for i: int in CardInventory.SLOT_COUNT:
-		var stack: CardStack = player.cards.get_stack(i)
+		var stack: CardStack = player.cards.stack_at(i)
 		_working.append(CardStack.new(stack.card, stack.count) if stack != null else null)
 	_offered = CardStack.new(card, count)
 	_working.append(_offered)
