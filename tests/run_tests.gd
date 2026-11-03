@@ -17,6 +17,12 @@ var _failure_summary: PackedStringArray = PackedStringArray()
 
 
 func _initialize() -> void:
+	# Run once the tree is live, so nodes added by tests are really inside it
+	# (global transforms, groups and is_inside_tree() all work).
+	_run_all.call_deferred()
+
+
+func _run_all() -> void:
 	var filter: String = ""
 	var user_args: PackedStringArray = OS.get_cmdline_user_args()
 	if not user_args.is_empty():
