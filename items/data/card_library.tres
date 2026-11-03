@@ -45,16 +45,17 @@
 [ext_resource type="Resource" path="res://items/data/cards/jc.tres" id="c40"]
 [ext_resource type="Resource" path="res://items/data/cards/jd.tres" id="c41"]
 [ext_resource type="Resource" path="res://items/data/cards/jh.tres" id="c42"]
-[ext_resource type="Resource" path="res://items/data/cards/js.tres" id="c43"]
-[ext_resource type="Resource" path="res://items/data/cards/kc.tres" id="c44"]
-[ext_resource type="Resource" path="res://items/data/cards/kd.tres" id="c45"]
-[ext_resource type="Resource" path="res://items/data/cards/kh.tres" id="c46"]
-[ext_resource type="Resource" path="res://items/data/cards/ks.tres" id="c47"]
-[ext_resource type="Resource" path="res://items/data/cards/qc.tres" id="c48"]
-[ext_resource type="Resource" path="res://items/data/cards/qd.tres" id="c49"]
-[ext_resource type="Resource" path="res://items/data/cards/qh.tres" id="c50"]
-[ext_resource type="Resource" path="res://items/data/cards/qs.tres" id="c51"]
+[ext_resource type="Resource" path="res://items/data/cards/joker.tres" id="c43"]
+[ext_resource type="Resource" path="res://items/data/cards/js.tres" id="c44"]
+[ext_resource type="Resource" path="res://items/data/cards/kc.tres" id="c45"]
+[ext_resource type="Resource" path="res://items/data/cards/kd.tres" id="c46"]
+[ext_resource type="Resource" path="res://items/data/cards/kh.tres" id="c47"]
+[ext_resource type="Resource" path="res://items/data/cards/ks.tres" id="c48"]
+[ext_resource type="Resource" path="res://items/data/cards/qc.tres" id="c49"]
+[ext_resource type="Resource" path="res://items/data/cards/qd.tres" id="c50"]
+[ext_resource type="Resource" path="res://items/data/cards/qh.tres" id="c51"]
+[ext_resource type="Resource" path="res://items/data/cards/qs.tres" id="c52"]
 
 [resource]
 script = ExtResource("1_library")
-cards = Array[ExtResource("2_card")]([ExtResource("c0"), ExtResource("c1"), ExtResource("c2"), ExtResource("c3"), ExtResource("c4"), ExtResource("c5"), ExtResource("c6"), ExtResource("c7"), ExtResource("c8"), ExtResource("c9"), ExtResource("c10"), ExtResource("c11"), ExtResource("c12"), ExtResource("c13"), ExtResource("c14"), ExtResource("c15"), ExtResource("c16"), ExtResource("c17"), ExtResource("c18"), ExtResource("c19"), ExtResource("c20"), ExtResource("c21"), ExtResource("c22"), ExtResource("c23"), ExtResource("c24"), ExtResource("c25"), ExtResource("c26"), ExtResource("c27"), ExtResource("c28"), ExtResource("c29"), ExtResource("c30"), ExtResource("c31"), ExtResource("c32"), ExtResource("c33"), ExtResource("c34"), ExtResource("c35"), ExtResource("c36"), ExtResource("c37"), ExtResource("c38"), ExtResource("c39"), ExtResource("c40"), ExtResource("c41"), ExtResource("c42"), ExtResource("c43"), ExtResource("c44"), ExtResource("c45"), ExtResource("c46"), ExtResource("c47"), ExtResource("c48"), ExtResource("c49"), ExtResource("c50"), ExtResource("c51")])
+cards = Array[ExtResource("2_card")]([ExtResource("c0"), ExtResource("c1"), ExtResource("c2"), ExtResource("c3"), ExtResource("c4"), ExtResource("c5"), ExtResource("c6"), ExtResource("c7"), ExtResource("c8"), ExtResource("c9"), ExtResource("c10"), ExtResource("c11"), ExtResource("c12"), ExtResource("c13"), ExtResource("c14"), ExtResource("c15"), ExtResource("c16"), ExtResource("c17"), ExtResource("c18"), ExtResource("c19"), ExtResource("c20"), ExtResource("c21"), ExtResource("c22"), ExtResource("c23"), ExtResource("c24"), ExtResource("c25"), ExtResource("c26"), ExtResource("c27"), ExtResource("c28"), ExtResource("c29"), ExtResource("c30"), ExtResource("c31"), ExtResource("c32"), ExtResource("c33"), ExtResource("c34"), ExtResource("c35"), ExtResource("c36"), ExtResource("c37"), ExtResource("c38"), ExtResource("c39"), ExtResource("c40"), ExtResource("c41"), ExtResource("c42"), ExtResource("c43"), ExtResource("c44"), ExtResource("c45"), ExtResource("c46"), ExtResource("c47"), ExtResource("c48"), ExtResource("c49"), ExtResource("c50"), ExtResource("c51"), ExtResource("c52")])

@@ -7,7 +7,14 @@ extends Resource
 
 func find(suit: CardData.Suit, rank: int) -> CardData:
 	for card: CardData in cards:
-		if card.suit == suit and card.rank == rank:
+		if not card.joker and card.suit == suit and card.rank == rank:
+			return card
+	return null
+
+
+func joker() -> CardData:
+	for card: CardData in cards:
+		if card.joker:
 			return card
 	return null
 

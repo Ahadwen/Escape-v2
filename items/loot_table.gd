@@ -5,6 +5,7 @@ extends Resource
 
 @export var library: CardLibrary
 @export_range(0.0, 1.0) var ace_chance: float = 0.15
+@export_range(0.0, 1.0) var joker_chance: float = 0.05
 ## Relative weight of each T1 rank, index 0 = rank 2 ... index 4 = rank 6.
 @export var t1_rank_weights: PackedFloat32Array = PackedFloat32Array([5.0, 4.0, 3.0, 2.0, 1.0])
 
@@ -12,6 +13,8 @@ extends Resource
 func roll() -> CardData:
 	if library == null:
 		return null
+	if randf() < joker_chance and library.joker() != null:
+		return library.joker()
 	if randf() < ace_chance:
 		var aces: Array[CardData] = library.cards_of_tier(0)
 		if not aces.is_empty():

@@ -73,7 +73,7 @@ func test_ability_tags_and_duration_scale() -> void:
 func test_all_cards_in_library_load() -> void:
 	var library: CardLibrary = load("res://items/data/card_library.tres") as CardLibrary
 	assert_not_null(library)
-	assert_eq(library.cards.size(), 52)
+	assert_eq(library.cards.size(), 53)
 	for card: CardData in library.cards:
 		assert_not_null(card, "a card failed to load")
 	for tier: int in [1, 2, 3]:

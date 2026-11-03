@@ -108,6 +108,41 @@ Occupy a card slot and **stack without limit** in it. PC keys 1–4 use ace stac
 | A♣ | **Flurry:** for the next 5 s, your next 4 ability casts each have only a flat 0.2 s cooldown. *(yours)* |
 | A♦ | **Upgrade:** used on the card pickup screen: reroll the offered card into one a rank higher. *(yours)* |
 
+## Recipes (first pass)
+
+T2 = an exact card of its suit + an exact card of a partner suit. T3 = its suit's T2 + an exact card of its suit + any card of a partner suit. Prices at the current economy (base unit 5 g); jokers +50% each.
+
+| Card | Recipe | Price |
+|---|---|---|
+| 7♥ | 3♥ + 2♦ | 40 g |
+| 8♥ | 4♥ + 3♠ | 40 g |
+| 9♥ | 5♥ + 4♦ | 40 g |
+| 10♥ | 6♥ + 5♠ | 40 g |
+| 7♦ | 3♦ + 2♣ | 40 g |
+| 8♦ | 4♦ + 3♥ | 40 g |
+| 9♦ | 5♦ + 4♣ | 40 g |
+| 10♦ | 6♦ + 5♥ | 40 g |
+| 7♣ | 3♣ + 2♠ | 40 g |
+| 8♣ | 4♣ + 3♦ | 40 g |
+| 9♣ | 5♣ + 4♠ | 40 g |
+| 10♣ | 6♣ + 5♦ | 40 g |
+| 7♠ | 3♠ + 2♥ | 40 g |
+| 8♠ | 4♠ + 3♣ | 40 g |
+| 9♠ | 5♠ + 4♥ | 40 g |
+| 10♠ | 6♠ + 5♣ | 40 g |
+| J♥ | 7♥ + 6♥ + any ♣ | 100 g |
+| Q♥ | 8♥ + 5♥ + any ♣ | 100 g |
+| K♥ | 9♥ + 6♥ + any ♣ | 100 g |
+| J♦ | 7♦ + 6♦ + any ♠ | 100 g |
+| Q♦ | 8♦ + 5♦ + any ♠ | 100 g |
+| K♦ | 9♦ + 6♦ + any ♠ | 100 g |
+| J♣ | 7♣ + 6♣ + any ♥ | 100 g |
+| Q♣ | 8♣ + 5♣ + any ♥ | 100 g |
+| K♣ | 9♣ + 6♣ + any ♥ | 100 g |
+| J♠ | 7♠ + 6♠ + any ♦ | 100 g |
+| Q♠ | 8♠ + 5♠ + any ♦ | 100 g |
+| K♠ | 9♠ + 6♠ + any ♦ | 100 g |
+
 ## Open questions
 
 - The gold economy as a whole (sources, sinks, prices, scaling).

@@ -10,6 +10,12 @@ extends Resource
 @export var chest_bonus_min: float = 0.0
 @export var chest_bonus_max: float = 2.0
 
+@export_group("Safehouse (in base units)")
+## Recipe prices are set per recipe, in units (see RecipeData.gold_units).
+@export var reroll: float = 3.0
+## Each joker used in a recipe adds this fraction to its price.
+@export var joker_surcharge: float = 0.5
+
 
 func units(amount: float) -> int:
 	return roundi(amount * base_unit)

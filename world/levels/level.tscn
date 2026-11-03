@@ -30,6 +30,8 @@
 [ext_resource type="Resource" path="res://items/data/card_library.tres" id="28_library"]
 [ext_resource type="Script" path="res://ui/hud/interact_prompt.gd" id="29_prompt"]
 [ext_resource type="Script" path="res://ui/debug/debug_card_picker.gd" id="30_picker"]
+[ext_resource type="Script" path="res://ui/forge/forge_screen.gd" id="31_forge"]
+[ext_resource type="Resource" path="res://items/data/recipe_book.tres" id="32_recipes"]
 
 [sub_resource type="Environment" id="Environment_level"]
 background_mode = 1
@@ -215,6 +217,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("25_pickup")
+
+[node name="ForgeScreen" type="Control" parent="PickupLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("31_forge")
+recipe_book = ExtResource("32_recipes")
+economy = ExtResource("24_economy")
 
 [node name="DebugCardPicker" type="Control" parent="PickupLayer"]
 layout_mode = 3

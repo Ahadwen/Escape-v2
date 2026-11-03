@@ -26,6 +26,8 @@ const SUIT_COLORS: Array[Color] = [
 @export var ace_effect: AceEffect
 ## T2/T3: what the card does beyond its stats.
 @export var effect: CardEffect
+## Jokers: no suit or stats; stand in for one recipe ingredient (for more gold).
+@export var joker: bool = false
 
 
 static func rank_text(value: int) -> String:
@@ -42,15 +44,24 @@ static func rank_text(value: int) -> String:
 
 
 func label() -> String:
+	if joker:
+		return "Joker"
 	return "%s%s" % [rank_text(rank), SUIT_GLYPHS[suit]]
 
 
 func is_ace() -> bool:
-	return rank == ACE
+	return rank == ACE and not joker
 
 
-## 0 = ace, 1 = 2–6, 2 = 7–10, 3 = J–K.
+## Same card identity (suit and rank), even across different resource copies.
+func same_card(other: CardData) -> bool:
+	return other != null and other.joker == joker and other.suit == suit and other.rank == rank
+
+
+## -1 = joker, 0 = ace, 1 = 2–6, 2 = 7–10, 3 = J–K.
 func tier() -> int:
+	if joker:
+		return -1
 	if rank == ACE:
 		return 0
 	if rank <= 6:
@@ -61,7 +72,7 @@ func tier() -> int:
 
 
 func color() -> Color:
-	return SUIT_COLORS[suit]
+	return Color(0.75, 0.5, 0.95) if joker else SUIT_COLORS[suit]
 
 
 func stat_lines() -> PackedStringArray:

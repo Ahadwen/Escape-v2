@@ -25,6 +25,7 @@ var _finished: bool = false
 @onready var _pickup_screen: CardPickupScreen = $PickupLayer/CardPickupScreen
 @onready var _pause: PauseController = $PauseController
 @onready var _interact_prompt: InteractPrompt = $HUD/InteractPrompt
+@onready var _forge: ForgeScreen = $PickupLayer/ForgeScreen
 
 
 func _ready() -> void:
@@ -76,6 +77,8 @@ func _on_safehouse_entered(_who: Player) -> void:
 	_player.abilities.cancel_all()
 	_player.movement.stop()
 	_aim_presenter.clear_preview()
+	_forge.open(_player)
+	await _forge.left
 	_show_message("Escaped in %s" % RunInfo.format_time(_director.elapsed))
 	await get_tree().create_timer(RESTART_DELAY_ESCAPE).timeout
 	get_tree().reload_current_scene()

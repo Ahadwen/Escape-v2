@@ -1,0 +1,498 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://items/recipes/recipe_book.gd" id="book"]
+[ext_resource type="Script" path="res://items/recipes/recipe_data.gd" id="recipe"]
+[ext_resource type="Script" path="res://items/recipes/recipe_ingredient.gd" id="ing"]
+[ext_resource type="Resource" path="res://items/data/cards/3h.tres" id="card_3h"]
+[ext_resource type="Resource" path="res://items/data/cards/2d.tres" id="card_2d"]
+[ext_resource type="Resource" path="res://items/data/cards/7h.tres" id="card_7h"]
+[ext_resource type="Resource" path="res://items/data/cards/4h.tres" id="card_4h"]
+[ext_resource type="Resource" path="res://items/data/cards/3s.tres" id="card_3s"]
+[ext_resource type="Resource" path="res://items/data/cards/8h.tres" id="card_8h"]
+[ext_resource type="Resource" path="res://items/data/cards/5h.tres" id="card_5h"]
+[ext_resource type="Resource" path="res://items/data/cards/4d.tres" id="card_4d"]
+[ext_resource type="Resource" path="res://items/data/cards/9h.tres" id="card_9h"]
+[ext_resource type="Resource" path="res://items/data/cards/6h.tres" id="card_6h"]
+[ext_resource type="Resource" path="res://items/data/cards/5s.tres" id="card_5s"]
+[ext_resource type="Resource" path="res://items/data/cards/10h.tres" id="card_10h"]
+[ext_resource type="Resource" path="res://items/data/cards/3d.tres" id="card_3d"]
+[ext_resource type="Resource" path="res://items/data/cards/2c.tres" id="card_2c"]
+[ext_resource type="Resource" path="res://items/data/cards/7d.tres" id="card_7d"]
+[ext_resource type="Resource" path="res://items/data/cards/8d.tres" id="card_8d"]
+[ext_resource type="Resource" path="res://items/data/cards/5d.tres" id="card_5d"]
+[ext_resource type="Resource" path="res://items/data/cards/4c.tres" id="card_4c"]
+[ext_resource type="Resource" path="res://items/data/cards/9d.tres" id="card_9d"]
+[ext_resource type="Resource" path="res://items/data/cards/6d.tres" id="card_6d"]
+[ext_resource type="Resource" path="res://items/data/cards/10d.tres" id="card_10d"]
+[ext_resource type="Resource" path="res://items/data/cards/3c.tres" id="card_3c"]
+[ext_resource type="Resource" path="res://items/data/cards/2s.tres" id="card_2s"]
+[ext_resource type="Resource" path="res://items/data/cards/7c.tres" id="card_7c"]
+[ext_resource type="Resource" path="res://items/data/cards/8c.tres" id="card_8c"]
+[ext_resource type="Resource" path="res://items/data/cards/5c.tres" id="card_5c"]
+[ext_resource type="Resource" path="res://items/data/cards/4s.tres" id="card_4s"]
+[ext_resource type="Resource" path="res://items/data/cards/9c.tres" id="card_9c"]
+[ext_resource type="Resource" path="res://items/data/cards/6c.tres" id="card_6c"]
+[ext_resource type="Resource" path="res://items/data/cards/10c.tres" id="card_10c"]
+[ext_resource type="Resource" path="res://items/data/cards/2h.tres" id="card_2h"]
+[ext_resource type="Resource" path="res://items/data/cards/7s.tres" id="card_7s"]
+[ext_resource type="Resource" path="res://items/data/cards/8s.tres" id="card_8s"]
+[ext_resource type="Resource" path="res://items/data/cards/9s.tres" id="card_9s"]
+[ext_resource type="Resource" path="res://items/data/cards/6s.tres" id="card_6s"]
+[ext_resource type="Resource" path="res://items/data/cards/10s.tres" id="card_10s"]
+[ext_resource type="Resource" path="res://items/data/cards/jh.tres" id="card_jh"]
+[ext_resource type="Resource" path="res://items/data/cards/qh.tres" id="card_qh"]
+[ext_resource type="Resource" path="res://items/data/cards/kh.tres" id="card_kh"]
+[ext_resource type="Resource" path="res://items/data/cards/jd.tres" id="card_jd"]
+[ext_resource type="Resource" path="res://items/data/cards/qd.tres" id="card_qd"]
+[ext_resource type="Resource" path="res://items/data/cards/kd.tres" id="card_kd"]
+[ext_resource type="Resource" path="res://items/data/cards/jc.tres" id="card_jc"]
+[ext_resource type="Resource" path="res://items/data/cards/qc.tres" id="card_qc"]
+[ext_resource type="Resource" path="res://items/data/cards/kc.tres" id="card_kc"]
+[ext_resource type="Resource" path="res://items/data/cards/js.tres" id="card_js"]
+[ext_resource type="Resource" path="res://items/data/cards/qs.tres" id="card_qs"]
+[ext_resource type="Resource" path="res://items/data/cards/ks.tres" id="card_ks"]
+
+[sub_resource type="Resource" id="Ingredient_1"]
+script = ExtResource("ing")
+card = ExtResource("card_3h")
+
+[sub_resource type="Resource" id="Ingredient_2"]
+script = ExtResource("ing")
+card = ExtResource("card_2d")
+
+[sub_resource type="Resource" id="Ingredient_3"]
+script = ExtResource("ing")
+card = ExtResource("card_4h")
+
+[sub_resource type="Resource" id="Ingredient_4"]
+script = ExtResource("ing")
+card = ExtResource("card_3s")
+
+[sub_resource type="Resource" id="Ingredient_5"]
+script = ExtResource("ing")
+card = ExtResource("card_5h")
+
+[sub_resource type="Resource" id="Ingredient_6"]
+script = ExtResource("ing")
+card = ExtResource("card_4d")
+
+[sub_resource type="Resource" id="Ingredient_7"]
+script = ExtResource("ing")
+card = ExtResource("card_6h")
+
+[sub_resource type="Resource" id="Ingredient_8"]
+script = ExtResource("ing")
+card = ExtResource("card_5s")
+
+[sub_resource type="Resource" id="Ingredient_9"]
+script = ExtResource("ing")
+card = ExtResource("card_3d")
+
+[sub_resource type="Resource" id="Ingredient_10"]
+script = ExtResource("ing")
+card = ExtResource("card_2c")
+
+[sub_resource type="Resource" id="Ingredient_11"]
+script = ExtResource("ing")
+card = ExtResource("card_4d")
+
+[sub_resource type="Resource" id="Ingredient_12"]
+script = ExtResource("ing")
+card = ExtResource("card_3h")
+
+[sub_resource type="Resource" id="Ingredient_13"]
+script = ExtResource("ing")
+card = ExtResource("card_5d")
+
+[sub_resource type="Resource" id="Ingredient_14"]
+script = ExtResource("ing")
+card = ExtResource("card_4c")
+
+[sub_resource type="Resource" id="Ingredient_15"]
+script = ExtResource("ing")
+card = ExtResource("card_6d")
+
+[sub_resource type="Resource" id="Ingredient_16"]
+script = ExtResource("ing")
+card = ExtResource("card_5h")
+
+[sub_resource type="Resource" id="Ingredient_17"]
+script = ExtResource("ing")
+card = ExtResource("card_3c")
+
+[sub_resource type="Resource" id="Ingredient_18"]
+script = ExtResource("ing")
+card = ExtResource("card_2s")
+
+[sub_resource type="Resource" id="Ingredient_19"]
+script = ExtResource("ing")
+card = ExtResource("card_4c")
+
+[sub_resource type="Resource" id="Ingredient_20"]
+script = ExtResource("ing")
+card = ExtResource("card_3d")
+
+[sub_resource type="Resource" id="Ingredient_21"]
+script = ExtResource("ing")
+card = ExtResource("card_5c")
+
+[sub_resource type="Resource" id="Ingredient_22"]
+script = ExtResource("ing")
+card = ExtResource("card_4s")
+
+[sub_resource type="Resource" id="Ingredient_23"]
+script = ExtResource("ing")
+card = ExtResource("card_6c")
+
+[sub_resource type="Resource" id="Ingredient_24"]
+script = ExtResource("ing")
+card = ExtResource("card_5d")
+
+[sub_resource type="Resource" id="Ingredient_25"]
+script = ExtResource("ing")
+card = ExtResource("card_3s")
+
+[sub_resource type="Resource" id="Ingredient_26"]
+script = ExtResource("ing")
+card = ExtResource("card_2h")
+
+[sub_resource type="Resource" id="Ingredient_27"]
+script = ExtResource("ing")
+card = ExtResource("card_4s")
+
+[sub_resource type="Resource" id="Ingredient_28"]
+script = ExtResource("ing")
+card = ExtResource("card_3c")
+
+[sub_resource type="Resource" id="Ingredient_29"]
+script = ExtResource("ing")
+card = ExtResource("card_5s")
+
+[sub_resource type="Resource" id="Ingredient_30"]
+script = ExtResource("ing")
+card = ExtResource("card_4h")
+
+[sub_resource type="Resource" id="Ingredient_31"]
+script = ExtResource("ing")
+card = ExtResource("card_6s")
+
+[sub_resource type="Resource" id="Ingredient_32"]
+script = ExtResource("ing")
+card = ExtResource("card_5c")
+
+[sub_resource type="Resource" id="Ingredient_33"]
+script = ExtResource("ing")
+card = ExtResource("card_7h")
+
+[sub_resource type="Resource" id="Ingredient_34"]
+script = ExtResource("ing")
+card = ExtResource("card_6h")
+
+[sub_resource type="Resource" id="Ingredient_35"]
+script = ExtResource("ing")
+suit = 2
+
+[sub_resource type="Resource" id="Ingredient_36"]
+script = ExtResource("ing")
+card = ExtResource("card_8h")
+
+[sub_resource type="Resource" id="Ingredient_37"]
+script = ExtResource("ing")
+card = ExtResource("card_5h")
+
+[sub_resource type="Resource" id="Ingredient_38"]
+script = ExtResource("ing")
+suit = 2
+
+[sub_resource type="Resource" id="Ingredient_39"]
+script = ExtResource("ing")
+card = ExtResource("card_9h")
+
+[sub_resource type="Resource" id="Ingredient_40"]
+script = ExtResource("ing")
+card = ExtResource("card_6h")
+
+[sub_resource type="Resource" id="Ingredient_41"]
+script = ExtResource("ing")
+suit = 2
+
+[sub_resource type="Resource" id="Ingredient_42"]
+script = ExtResource("ing")
+card = ExtResource("card_7d")
+
+[sub_resource type="Resource" id="Ingredient_43"]
+script = ExtResource("ing")
+card = ExtResource("card_6d")
+
+[sub_resource type="Resource" id="Ingredient_44"]
+script = ExtResource("ing")
+suit = 3
+
+[sub_resource type="Resource" id="Ingredient_45"]
+script = ExtResource("ing")
+card = ExtResource("card_8d")
+
+[sub_resource type="Resource" id="Ingredient_46"]
+script = ExtResource("ing")
+card = ExtResource("card_5d")
+
+[sub_resource type="Resource" id="Ingredient_47"]
+script = ExtResource("ing")
+suit = 3
+
+[sub_resource type="Resource" id="Ingredient_48"]
+script = ExtResource("ing")
+card = ExtResource("card_9d")
+
+[sub_resource type="Resource" id="Ingredient_49"]
+script = ExtResource("ing")
+card = ExtResource("card_6d")
+
+[sub_resource type="Resource" id="Ingredient_50"]
+script = ExtResource("ing")
+suit = 3
+
+[sub_resource type="Resource" id="Ingredient_51"]
+script = ExtResource("ing")
+card = ExtResource("card_7c")
+
+[sub_resource type="Resource" id="Ingredient_52"]
+script = ExtResource("ing")
+card = ExtResource("card_6c")
+
+[sub_resource type="Resource" id="Ingredient_53"]
+script = ExtResource("ing")
+suit = 0
+
+[sub_resource type="Resource" id="Ingredient_54"]
+script = ExtResource("ing")
+card = ExtResource("card_8c")
+
+[sub_resource type="Resource" id="Ingredient_55"]
+script = ExtResource("ing")
+card = ExtResource("card_5c")
+
+[sub_resource type="Resource" id="Ingredient_56"]
+script = ExtResource("ing")
+suit = 0
+
+[sub_resource type="Resource" id="Ingredient_57"]
+script = ExtResource("ing")
+card = ExtResource("card_9c")
+
+[sub_resource type="Resource" id="Ingredient_58"]
+script = ExtResource("ing")
+card = ExtResource("card_6c")
+
+[sub_resource type="Resource" id="Ingredient_59"]
+script = ExtResource("ing")
+suit = 0
+
+[sub_resource type="Resource" id="Ingredient_60"]
+script = ExtResource("ing")
+card = ExtResource("card_7s")
+
+[sub_resource type="Resource" id="Ingredient_61"]
+script = ExtResource("ing")
+card = ExtResource("card_6s")
+
+[sub_resource type="Resource" id="Ingredient_62"]
+script = ExtResource("ing")
+suit = 1
+
+[sub_resource type="Resource" id="Ingredient_63"]
+script = ExtResource("ing")
+card = ExtResource("card_8s")
+
+[sub_resource type="Resource" id="Ingredient_64"]
+script = ExtResource("ing")
+card = ExtResource("card_5s")
+
+[sub_resource type="Resource" id="Ingredient_65"]
+script = ExtResource("ing")
+suit = 1
+
+[sub_resource type="Resource" id="Ingredient_66"]
+script = ExtResource("ing")
+card = ExtResource("card_9s")
+
+[sub_resource type="Resource" id="Ingredient_67"]
+script = ExtResource("ing")
+card = ExtResource("card_6s")
+
+[sub_resource type="Resource" id="Ingredient_68"]
+script = ExtResource("ing")
+suit = 1
+
+[sub_resource type="Resource" id="Recipe_7h"]
+script = ExtResource("recipe")
+result = ExtResource("card_7h")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_1"), SubResource("Ingredient_2")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_8h"]
+script = ExtResource("recipe")
+result = ExtResource("card_8h")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_3"), SubResource("Ingredient_4")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_9h"]
+script = ExtResource("recipe")
+result = ExtResource("card_9h")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_5"), SubResource("Ingredient_6")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_10h"]
+script = ExtResource("recipe")
+result = ExtResource("card_10h")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_7"), SubResource("Ingredient_8")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_7d"]
+script = ExtResource("recipe")
+result = ExtResource("card_7d")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_9"), SubResource("Ingredient_10")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_8d"]
+script = ExtResource("recipe")
+result = ExtResource("card_8d")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_11"), SubResource("Ingredient_12")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_9d"]
+script = ExtResource("recipe")
+result = ExtResource("card_9d")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_13"), SubResource("Ingredient_14")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_10d"]
+script = ExtResource("recipe")
+result = ExtResource("card_10d")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_15"), SubResource("Ingredient_16")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_7c"]
+script = ExtResource("recipe")
+result = ExtResource("card_7c")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_17"), SubResource("Ingredient_18")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_8c"]
+script = ExtResource("recipe")
+result = ExtResource("card_8c")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_19"), SubResource("Ingredient_20")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_9c"]
+script = ExtResource("recipe")
+result = ExtResource("card_9c")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_21"), SubResource("Ingredient_22")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_10c"]
+script = ExtResource("recipe")
+result = ExtResource("card_10c")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_23"), SubResource("Ingredient_24")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_7s"]
+script = ExtResource("recipe")
+result = ExtResource("card_7s")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_25"), SubResource("Ingredient_26")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_8s"]
+script = ExtResource("recipe")
+result = ExtResource("card_8s")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_27"), SubResource("Ingredient_28")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_9s"]
+script = ExtResource("recipe")
+result = ExtResource("card_9s")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_29"), SubResource("Ingredient_30")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_10s"]
+script = ExtResource("recipe")
+result = ExtResource("card_10s")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_31"), SubResource("Ingredient_32")])
+gold_units = 8.0
+
+[sub_resource type="Resource" id="Recipe_jh"]
+script = ExtResource("recipe")
+result = ExtResource("card_jh")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_33"), SubResource("Ingredient_34"), SubResource("Ingredient_35")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_qh"]
+script = ExtResource("recipe")
+result = ExtResource("card_qh")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_36"), SubResource("Ingredient_37"), SubResource("Ingredient_38")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_kh"]
+script = ExtResource("recipe")
+result = ExtResource("card_kh")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_39"), SubResource("Ingredient_40"), SubResource("Ingredient_41")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_jd"]
+script = ExtResource("recipe")
+result = ExtResource("card_jd")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_42"), SubResource("Ingredient_43"), SubResource("Ingredient_44")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_qd"]
+script = ExtResource("recipe")
+result = ExtResource("card_qd")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_45"), SubResource("Ingredient_46"), SubResource("Ingredient_47")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_kd"]
+script = ExtResource("recipe")
+result = ExtResource("card_kd")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_48"), SubResource("Ingredient_49"), SubResource("Ingredient_50")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_jc"]
+script = ExtResource("recipe")
+result = ExtResource("card_jc")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_51"), SubResource("Ingredient_52"), SubResource("Ingredient_53")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_qc"]
+script = ExtResource("recipe")
+result = ExtResource("card_qc")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_54"), SubResource("Ingredient_55"), SubResource("Ingredient_56")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_kc"]
+script = ExtResource("recipe")
+result = ExtResource("card_kc")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_57"), SubResource("Ingredient_58"), SubResource("Ingredient_59")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_js"]
+script = ExtResource("recipe")
+result = ExtResource("card_js")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_60"), SubResource("Ingredient_61"), SubResource("Ingredient_62")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_qs"]
+script = ExtResource("recipe")
+result = ExtResource("card_qs")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_63"), SubResource("Ingredient_64"), SubResource("Ingredient_65")])
+gold_units = 20.0
+
+[sub_resource type="Resource" id="Recipe_ks"]
+script = ExtResource("recipe")
+result = ExtResource("card_ks")
+ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_66"), SubResource("Ingredient_67"), SubResource("Ingredient_68")])
+gold_units = 20.0
+
+[resource]
+script = ExtResource("book")
+recipes = Array[ExtResource("recipe")]([SubResource("Recipe_7h"), SubResource("Recipe_8h"), SubResource("Recipe_9h"), SubResource("Recipe_10h"), SubResource("Recipe_7d"), SubResource("Recipe_8d"), SubResource("Recipe_9d"), SubResource("Recipe_10d"), SubResource("Recipe_7c"), SubResource("Recipe_8c"), SubResource("Recipe_9c"), SubResource("Recipe_10c"), SubResource("Recipe_7s"), SubResource("Recipe_8s"), SubResource("Recipe_9s"), SubResource("Recipe_10s"), SubResource("Recipe_jh"), SubResource("Recipe_qh"), SubResource("Recipe_kh"), SubResource("Recipe_jd"), SubResource("Recipe_qd"), SubResource("Recipe_kd"), SubResource("Recipe_jc"), SubResource("Recipe_qc"), SubResource("Recipe_kc"), SubResource("Recipe_js"), SubResource("Recipe_qs"), SubResource("Recipe_ks")])
+progress_weight = 4.0
