@@ -21,7 +21,7 @@ extends Resource
 
 @export_group("Points of interest")
 @export_range(0.0, 1.0) var crystal_chance: float = 0.3
-@export_range(0.0, 1.0) var chest_chance: float = 0.45
+@export_range(0.0, 1.0) var chest_chance: float = 0.07
 ## No safehouses within this many chunks of the start.
 @export var safehouse_min_distance: int = 3
 ## Safehouse chance per chunk grows by this much per chunk of distance beyond

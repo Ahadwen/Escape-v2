@@ -4,9 +4,11 @@ extends EnemyData
 ## then charges again. Damages anything it touches.
 
 @export var charge_speed: float = 19.0
-## Charges this far past the aimed point.
-@export var overshoot: float = 3.0
-@export var max_charge_distance: float = 16.0
+## Keeps going this much further than the aimed point (0.5 = +50%).
+@export var overshoot_ratio: float = 0.5
+@export var max_charge_distance: float = 24.0
+## Slows down over this final fraction of the charge.
+@export var decay_fraction: float = 0.2
 ## How far ahead to aim, in seconds of target movement.
 @export var lead_time: float = 0.35
 @export var teeter_min: float = 0.9

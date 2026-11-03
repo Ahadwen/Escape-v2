@@ -56,8 +56,9 @@ func _begin_charge() -> void:
 	if direction == Vector3.ZERO:
 		_timer = 0.3
 		return
-	var distance: float = minf(distance_to_target() + _data.overshoot, _data.max_charge_distance)
-	_dash = DashMovement.new(direction, distance, _data.charge_speed)
+	var aimed: float = distance_to_target()
+	var distance: float = minf(aimed * (1.0 + _data.overshoot_ratio), _data.max_charge_distance)
+	_dash = DashMovement.new(direction, distance, _data.charge_speed, _data.decay_fraction)
 	enemy.movement.start_override(_dash)
 	state = State.CHARGING
 

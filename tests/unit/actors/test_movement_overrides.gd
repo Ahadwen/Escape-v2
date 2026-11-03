@@ -72,3 +72,25 @@ func test_charge_without_steer_goes_straight() -> void:
 	var charge: ChargeMovement = ChargeMovementScript.new(Vector3.RIGHT, 6.0, 16.0, 0.0, 1.0, 10.0)
 	charge.compute_velocity(0.5)
 	assert_almost_eq(charge.direction.x, 1.0, 0.001)
+
+
+func test_dash_decay_slows_only_the_final_part() -> void:
+	var dash: DashMovement = DashMovementScript.new(Vector3.RIGHT, 10.0, 20.0, 0.2, 0.25)
+	assert_almost_eq(dash.current_speed(), 20.0)
+	dash.remaining_distance = 2.0
+	assert_almost_eq(dash.current_speed(), 20.0)
+	dash.remaining_distance = 1.0
+	assert_almost_eq(dash.current_speed(), 12.5)
+	dash.remaining_distance = 0.0
+	assert_almost_eq(dash.current_speed(), 5.0)
+
+
+func test_decaying_dash_still_covers_full_distance() -> void:
+	var dash: DashMovement = DashMovementScript.new(Vector3.RIGHT, 10.0, 20.0, 0.2, 0.25)
+	var travelled: float = 0.0
+	for i: int in 600:
+		var velocity: Vector3 = dash.compute_velocity(DT)
+		if dash.finished:
+			break
+		travelled += velocity.x * DT
+	assert_almost_eq(travelled, 10.0, 0.001)

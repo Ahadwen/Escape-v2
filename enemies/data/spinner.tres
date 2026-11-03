@@ -5,8 +5,9 @@
 [resource]
 script = ExtResource("1_type")
 charge_speed = 22.0
-overshoot = 3.0
-max_charge_distance = 16.0
+overshoot_ratio = 0.5
+decay_fraction = 0.2
+max_charge_distance = 24.0
 lead_time = 0.35
 teeter_min = 0.7
 teeter_max = 1.1
