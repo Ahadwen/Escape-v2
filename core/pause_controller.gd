@@ -108,6 +108,9 @@ func _input(event: InputEvent) -> void:
 
 
 static func is_gameplay_press(event: InputEvent) -> bool:
+	# Sticks: only a clear push counts (not drift or a nudge near the deadzone).
+	if event is InputEventJoypadMotion:
+		return absf((event as InputEventJoypadMotion).axis_value) > STICK_THRESHOLD
 	# Only inputs bound to game actions count, so Alt-Tab, Cmd and other
 	# unbound keys don't unpause.
 	for action: StringName in InputActions.ALL:
@@ -115,8 +118,6 @@ static func is_gameplay_press(event: InputEvent) -> bool:
 			continue
 		if event.is_action_pressed(action, false, true):
 			return true
-	if event is InputEventJoypadMotion:
-		return absf((event as InputEventJoypadMotion).axis_value) > STICK_THRESHOLD
 	if event is InputEventScreenTouch:
 		return (event as InputEventScreenTouch).pressed
 	return false
