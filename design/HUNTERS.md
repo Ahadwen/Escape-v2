@@ -7,20 +7,20 @@ Status: **in discussion.** Your ideas, organised; numbers are placeholders.
 - **Few but strong.** A handful of hunters with real kits, not a swarm. Feels like being hunted through the jungle at low HP.
 - **Finesse and fairness.** Every attack has a clear tell and can be dodged; cooldowns are the player's windows to escape.
 - **A rotating cast.** Each hunter stays on the hunt for a while, then breaks off and another arrives.
-- **Terrain matters.** Hunters track you by line of sight; break it and they search your last known position.
+- **Terrain matters.** Hunters always know where you are, but must path around walls, so terrain is how you make distance; cover blocks their shots.
 - **Nothing can be killed** (core rule): hunters leave, they don't die.
 
-## Pursuit rule — hunters are faster than you
+## Pursuit rule — you can't outrun them forever
 
-Running in a straight line must never be a strategy. So:
+Running in a straight line must never be a strategy, but speed should still help.
 
-1. **While hunting, hunters are meaningfully faster than your *sustained* speed** (base + permanent card bonuses): ~20–30% faster. Stacking speed cards can't outgrow them — they scale with you.
-2. **Temporary bursts aren't matched** (blink, parry boost, charge, A♠, Momentum…), so they still open real distance.
-3. **Every ability commits them:** wind-ups, recoveries and reloads slow or stop them. Dodge, then run during the recovery.
-4. **Breaking line of sight** sends them to your last known position, then searching — slower than chasing you.
-5. **Their time on the hunt runs out:** you outlast hunters, you don't beat them.
-
-You can't outrun them; you out-dodge, out-think and outlast them.
+1. **Hunters always know where you are.** No searching or losing you.
+2. **Walls are how you make distance:** hunters path around obstacles, so going over or through somewhere they can't follow directly (blink, Ghostwalk) gains real ground.
+3. **Line of sight matters for their ranged attacks:** the Trapper and Gunslinger need a clear shot, so cover protects you from them (the Artillerist's beam ignores walls).
+4. **Hunters have their own speed, faster than your base,** and **never drop below your sustained speed + ~10%** (base + permanent card bonuses). Speed cards slow how fast you're closed down and help you keep the space your abilities make, but never let you outrun a hunter indefinitely.
+5. **Temporary bursts aren't matched** (blink, parry boost, charge, A♠, Momentum…), so they open real distance.
+6. **Every ability commits them:** wind-ups, recoveries and reloads slow or stop them. Dodge, then gain ground during the recovery.
+7. **Their time on the hunt runs out:** you outlast hunters, you don't beat them.
 
 ## The hunt (director)
 
