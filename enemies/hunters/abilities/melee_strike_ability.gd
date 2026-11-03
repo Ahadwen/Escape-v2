@@ -18,6 +18,11 @@ const BODY_MARGIN: float = 0.4
 @export var stun: float = 0.0
 ## Aim a little ahead of a moving target (seconds).
 @export var lead: float = 0.15
+## Keeps tracking (aim and position) until this long before the hit, then
+## locks — so it's dodged by moving at the right moment, not by running.
+@export var lock_time: float = 0.15
+## While winding up, keeps closing in at this fraction of its speed.
+@export_range(0.0, 2.0) var advance_speed_ratio: float = 1.3
 
 
 func create_action(brain: HunterBrain) -> HunterAction:
@@ -38,24 +43,38 @@ class Action:
 		ability = p_ability
 
 	func start() -> void:
-		enemy().movement.stop()
-		_direction = brain.direction_to_predicted(ability.lead)
+		_timer = ability.wind_up
+		_track()
+		if not ability.show_warning:
+			enemy().set_tell(true)
+		else:
+			_show()
+
+	## Aim and position follow the target until the lock.
+	func _track() -> void:
+		_direction = brain.direction_to_predicted(ability.lead + maxf(_timer, 0.0))
 		if _direction == Vector3.ZERO:
 			_direction = enemy().movement.get_facing()
 		enemy().movement.face_towards(_direction)
 		_origin = enemy().global_position
+
+	func _show() -> void:
 		var reach: float = ability.radius + MeleeStrikeAbility.BODY_MARGIN
-		if not ability.show_warning:
-			enemy().set_tell(true)
-		elif ability.shape == MeleeStrikeAbility.Shape.CIRCLE:
+		if ability.shape == MeleeStrikeAbility.Shape.CIRCLE:
 			brain.warning.show_circle(_origin, reach)
 		else:
 			brain.warning.show_cone(_origin, _direction, reach, ability.angle_degrees)
-		_timer = ability.wind_up
 
 	func tick(delta: float) -> bool:
 		_timer -= delta
 		if _striking:
+			if _timer > ability.lock_time:
+				_advance()
+				_track()
+				if ability.show_warning:
+					_show()
+			else:
+				enemy().movement.stop()
 			brain.warning.set_progress(1.0 - _timer / ability.wind_up)
 			if _timer <= 0.0:
 				_strike()
@@ -63,6 +82,17 @@ class Action:
 				_timer = ability.recovery
 			return false
 		return _timer <= 0.0
+
+	## Keep closing in during the wind-up (stopping just inside reach).
+	func _advance() -> void:
+		var movement: ActorMovement = enemy().movement
+		if ability.advance_speed_ratio <= 0.0 or brain.target == null:
+			movement.stop()
+			return
+		if brain.distance_to_target() <= ability.radius * 0.6:
+			movement.stop()
+			return
+		movement.move_in_direction(brain.direction_to_target() * ability.advance_speed_ratio)
 
 	func cancel() -> void:
 		brain.warning.clear()

@@ -15,6 +15,8 @@ extends HunterAbility
 @export var stun_after_pull: float = 0.5
 @export var recovery: float = 0.7
 @export var lead: float = 0.2
+## Tracks the target until this long before firing, then locks.
+@export var lock_time: float = 0.25
 
 
 func create_action(brain: HunterBrain) -> HunterAction:
@@ -39,17 +41,24 @@ class Action:
 
 	func start() -> void:
 		enemy().movement.stop()
-		_direction = brain.direction_to_predicted(ability.lead)
+		_timer = ability.wind_up
+		_aim()
+
+	## Leads to where the target will be when the hook gets there.
+	func _aim() -> void:
+		var flight: float = brain.distance_to_target() / ability.projectile_speed
+		_direction = brain.direction_to_predicted(maxf(_timer, 0.0) + flight + ability.lead)
 		if _direction == Vector3.ZERO:
 			_direction = enemy().movement.get_facing()
 		enemy().movement.face_towards(_direction)
 		brain.warning.show_line(enemy().global_position, _direction, ability.range_m, ability.width)
-		_timer = ability.wind_up
 
 	func tick(delta: float) -> bool:
 		match _phase:
 			Phase.WIND_UP:
 				_timer -= delta
+				if _timer > ability.lock_time:
+					_aim()
 				brain.warning.set_progress(1.0 - _timer / ability.wind_up)
 				if _timer <= 0.0:
 					brain.warning.clear()

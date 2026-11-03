@@ -56,8 +56,8 @@ func _on_intent(intent: PlayerIntent) -> void:
 func _streamer_line() -> String:
 	if streamer == null:
 		return ""
-	var level_node: Node = get_tree().current_scene
-	var theme: LevelTheme = level_node.get("theme") as LevelTheme
+	var level_node: Node = owner if owner != null else get_tree().current_scene
+	var theme: LevelTheme = level_node.get("theme") as LevelTheme if level_node != null else null
 	var zone_text: String = "no theme"
 	if theme != null:
 		zone_text = "zone %s  intensity %.2f" % [theme.zone.id, theme.intensity]

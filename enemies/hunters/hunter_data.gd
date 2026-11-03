@@ -10,7 +10,7 @@ extends EnemyData
 ## not temporary boosts) times this. 0 = no floor.
 @export var speed_floor_ratio: float = 1.1
 ## Further than this from the target, the hunter sprints to catch up ...
-@export var catch_up_distance: float = 16.0
+@export var catch_up_distance: float = 7.0
 ## ... at this multiple of its pursuit speed.
 @export var catch_up_multiplier: float = 1.5
 ## Spinning visual (Spinner).

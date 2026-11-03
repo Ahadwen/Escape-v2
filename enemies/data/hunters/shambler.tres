@@ -16,7 +16,7 @@ radius = 2.0
 angle_degrees = 100.0
 wind_up = 0.55
 recovery = 0.6
-damage = 30.0
+damage = 60.0
 
 [resource]
 script = ExtResource("hunter")
@@ -28,7 +28,7 @@ id = &"shambler"
 display_name = "Shambler"
 color = Color(0.5, 0.55, 0.45, 1)
 move_speed = 6.5
-speed_floor_ratio = 1.0
+speed_floor_ratio = 1.15
 lifetime_min = 30.0
 lifetime_max = 45.0
 threat_cost = 1.0

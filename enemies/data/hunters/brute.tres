@@ -15,7 +15,7 @@ shape = 1
 radius = 3.2
 wind_up = 0.7
 recovery = 0.8
-damage = 40.0
+damage = 90.0
 stun = 0.6
 
 [sub_resource type="Resource" id="Ability_1"]
@@ -32,9 +32,9 @@ overshoot = 3.0
 lock_time = 0.3
 speed = 26.0
 width = 2.0
-damage = 45.0
+damage = 100.0
 stun = 0.8
-recovery = 0.9
+recovery = 0.5
 
 [resource]
 script = ExtResource("hunter")

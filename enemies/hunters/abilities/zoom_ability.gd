@@ -59,7 +59,7 @@ class Action:
 					enemy().movement.start_override(_movement)
 					_phase = Phase.ZOOM
 			Phase.ZOOM:
-				_movement.steer_direction = brain.direction_to_target()
+				_movement.steer_direction = brain.direction_to_predicted(0.4)
 				if _movement.finished:
 					_phase = Phase.WOBBLE
 					_timer = ability.recovery
