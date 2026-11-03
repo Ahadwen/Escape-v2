@@ -12,12 +12,12 @@ per_point = 0.02
 [resource]
 script = ExtResource("1_parry")
 window = 0.4
-knockback_radius = 3.5
+knockback_radius = 4.5
 knockback_distance = 4.0
 stun_duration = 0.6
 speed_scaling = SubResource("Resource_speed")
 speed_duration = 3.0
-success_grace = 0.25
+success_grace = 0.75
 id = &"knight_parry"
 display_name = "Parry"
 targeting = 1

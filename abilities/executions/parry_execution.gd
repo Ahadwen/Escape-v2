@@ -33,7 +33,7 @@ func start() -> void:
 	# Rooted while parrying.
 	if context.movement != null:
 		_hold = HoldMovement.new(_data.window)
-		context.movement.start_override(_hold)
+		context.movement.start_override(_hold, true)
 	FxRing.spawn(
 		context.caster.get_parent(), context.origin(), WINDOW_COLOR, 0.9, 1.3, _data.window
 	)
@@ -72,6 +72,7 @@ func _on_damage_negated(event: DamageEvent) -> void:
 		_data.knockback_distance,
 		func() -> StatusEffect: return StunEffect.new(stun, &"parry_stun")
 	)
+	AreaEffects.destroy_projectiles(context.caster.get_tree(), center, _data.knockback_radius)
 	FxRing.spawn(
 		context.caster.get_parent(), center, SUCCESS_COLOR, 0.8, _data.knockback_radius, 0.3
 	)

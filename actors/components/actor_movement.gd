@@ -125,13 +125,15 @@ func has_override() -> bool:
 	return _override != null
 
 
-## Starts a movement override, replacing any current one. Cancels a path
-## being followed; stick steering resumes when the override ends.
-func start_override(movement_override: MovementOverride) -> void:
+## Starts a movement override, replacing any current one. By default cancels
+## a path being followed (it was planned from where the dash started); stick
+## steering always resumes when the override ends. Pass keep_path = true for
+## overrides that don't move the actor (e.g. a hold), so the path resumes.
+func start_override(movement_override: MovementOverride, keep_path: bool = false) -> void:
 	if _override != null:
 		_override.cancel()
 	_override = movement_override
-	if mode == Mode.TO_POINT:
+	if mode == Mode.TO_POINT and not keep_path:
 		mode = Mode.IDLE
 
 

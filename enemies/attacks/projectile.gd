@@ -3,6 +3,7 @@ extends Node3D
 ## A straight-line shot. Stops at walls; hits the first player-faction target
 ## it touches.
 
+const GROUP: StringName = &"enemy_projectiles"
 ## Extra reach so the shot connects with a body, not just its centre point.
 const TARGET_RADIUS: float = 0.4
 
@@ -32,6 +33,10 @@ func configure(
 	damage_type = p_type
 	source = p_source
 	radius = p_radius
+
+
+func _enter_tree() -> void:
+	add_to_group(GROUP)
 
 
 func _ready() -> void:

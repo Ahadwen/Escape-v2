@@ -39,3 +39,19 @@ static func knock_back(
 			var effect: StatusEffect = make_effect.call()
 			enemy.apply_status(effect)
 	return enemies.size()
+
+
+## Removes enemy projectiles within radius of center. Returns how many.
+static func destroy_projectiles(tree: SceneTree, center: Vector3, radius: float) -> int:
+	var count: int = 0
+	for node: Node in tree.get_nodes_in_group(Projectile.GROUP):
+		var shot: Node3D = node as Node3D
+		if shot == null:
+			continue
+		var offset: Vector2 = Vector2(
+			shot.global_position.x - center.x, shot.global_position.z - center.z
+		)
+		if offset.length() <= radius:
+			shot.queue_free()
+			count += 1
+	return count
