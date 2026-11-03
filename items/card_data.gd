@@ -71,6 +71,13 @@ func tier() -> int:
 	return 3
 
 
+## Trade value: the rank, with J/Q/K as 11/12/13. Jokers and aces: 0.
+func value() -> int:
+	if joker or is_ace():
+		return 0
+	return rank
+
+
 func color() -> Color:
 	return Color(0.75, 0.5, 0.95) if joker else SUIT_COLORS[suit]
 

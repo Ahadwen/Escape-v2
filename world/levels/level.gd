@@ -1,14 +1,13 @@
 extends Node3D
 ## One level: streamed infinite terrain, the threat director, and the player.
-## Ends when the player reaches a safehouse or dies, then restarts.
-## (M7 adds the shop and moving on to the next level.)
+## Reaching a safehouse saves the run and moves to the safehouse lobby;
+## dying ends the run (a new one starts at level 1).
 
 const RESTART_DELAY_DEATH: float = 2.5
-const RESTART_DELAY_ESCAPE: float = 4.0
+const SAFEHOUSE_DELAY: float = 1.5
 
 ## 0 = random seed each run.
 @export var fixed_seed: int = 0
-@export var level_index: int = 0
 @export var card_library: CardLibrary = preload("res://items/data/card_library.tres")
 
 var _finished: bool = false
@@ -25,12 +24,15 @@ var _finished: bool = false
 @onready var _pickup_screen: CardPickupScreen = $PickupLayer/CardPickupScreen
 @onready var _pause: PauseController = $PauseController
 @onready var _interact_prompt: InteractPrompt = $HUD/InteractPrompt
-@onready var _forge: ForgeScreen = $PickupLayer/ForgeScreen
+@onready var _level_label: Label = $HUD/LevelLabel
 
 
 func _ready() -> void:
-	var run_seed: int = fixed_seed if fixed_seed != 0 else randi()
-	_streamer.start(run_seed, level_index)
+	if not RunState.active:
+		RunState.start_new_run(fixed_seed if fixed_seed != 0 else randi())
+	var level: int = RunState.level_index
+	_level_label.text = "Level %d of %d" % [level + 1, RunState.LEVEL_COUNT]
+	_streamer.start(RunState.run_seed, level)
 	_streamer.safehouse_entered.connect(_on_safehouse_entered)
 	_streamer.crystal_consumed.connect(_on_crystal_consumed)
 	_pickup_screen.set_library(card_library)
@@ -42,12 +44,13 @@ func _ready() -> void:
 	_on_scheme_changed(_input_router.active_kind)
 	_player.died.connect(_on_player_died)
 	_message.visible = false
+	RunState.apply_to(_player)
 	_player.wallet.add(roundi(_player.stats.get_value(StatIds.GOLD_PER_LEVEL)))
 	_player.events.level_started.emit()
 	# Let the navigation map sync before the director queries it.
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	_director.start()
+	_director.start(level)
 
 
 func _on_scheme_changed(kind: InputRouter.SchemeKind) -> void:
@@ -77,11 +80,10 @@ func _on_safehouse_entered(_who: Player) -> void:
 	_player.abilities.cancel_all()
 	_player.movement.stop()
 	_aim_presenter.clear_preview()
-	_forge.open(_player)
-	await _forge.left
-	_show_message("Escaped in %s" % RunInfo.format_time(_director.elapsed))
-	await get_tree().create_timer(RESTART_DELAY_ESCAPE).timeout
-	get_tree().reload_current_scene()
+	_show_message("Safehouse reached in %s" % RunInfo.format_time(_director.elapsed))
+	RunState.save_from(_player)
+	await get_tree().create_timer(SAFEHOUSE_DELAY).timeout
+	get_tree().change_scene_to_file(RunState.SAFEHOUSE_SCENE)
 
 
 func _on_player_died() -> void:
@@ -91,6 +93,7 @@ func _on_player_died() -> void:
 	_director.stop(false)
 	_aim_presenter.clear_preview()
 	_show_message("Caught after %s" % RunInfo.format_time(_director.elapsed))
+	RunState.end_run()
 	await get_tree().create_timer(RESTART_DELAY_DEATH).timeout
 	get_tree().reload_current_scene()
 

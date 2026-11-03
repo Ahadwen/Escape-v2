@@ -22,7 +22,7 @@ const EXTRA_ACE_STACKS: StringName = &"extra_ace_stacks"
 ## Fraction added to durations of things abilities create (0.3 = +30%).
 const ABILITY_DURATION: StringName = &"ability_duration"
 ## Safehouse shop (M6c).
-const EXTRA_RECIPE_OFFERS: StringName = &"extra_recipe_offers"
+const EXTRA_TRADE_OFFERS: StringName = &"extra_trade_offers"
 const FREE_REROLLS: StringName = &"free_rerolls"
 const FORGE_WILDCARDS: StringName = &"forge_wildcards"
 
@@ -42,8 +42,8 @@ const DISPLAY_NAMES: Dictionary[StringName, String] = {
 	SAFEHOUSE_INTEREST: "gold interest at each safehouse",
 	EXTRA_ACE_STACKS: "Ace stacks per pickup",
 	ABILITY_DURATION: "ability effect duration",
-	EXTRA_RECIPE_OFFERS: "recipe offered at safehouses",
-	FREE_REROLLS: "free reroll per safehouse",
+	EXTRA_TRADE_OFFERS: "trade offered at safehouses",
+	FREE_REROLLS: "free trader reroll per safehouse",
 	FORGE_WILDCARDS: "card usable as a wildcard per safehouse",
 }
 

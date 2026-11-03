@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/safehouse/station.gd" id="1_station"]
+[ext_resource type="Script" path="res://world/interaction/interactable.gd" id="2_interactable"]
+
+[node name="Station" type="Node3D"]
+script = ExtResource("1_station")
+
+[node name="Interactable" type="Node" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("2_interactable")
+target = NodePath("..")

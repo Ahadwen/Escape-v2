@@ -33,7 +33,9 @@ Status: **in discussion.** *(yours)* = your idea, *(draft)* = mine, ⚠ = flagge
 
 5 card slots. Picking up a card **pauses the game** and opens the inventory (swap, rearrange, discard).
 
-**Recipes** (first pass): T2 = 2 specific cards, at least one of its own suit, plus gold. T3 = 3 cards including a T2, plus more gold. Jokers stand in for one ingredient at +50% gold. The safehouse offers 3 random recipes per visit, weighted towards ones you're close to completing.
+**Recipes** (first pass): T2 = 2 specific cards, at least one of its own suit, plus gold. T3 = 3 cards including a T2, plus more gold. You must hold the components (or a wildcard: a joker at +50% gold each, or the Q♦ Forger wildcard).
+
+**Safehouse lobby:** a small walkable scene between levels with a **shop** (lists every recipe you can complete right now, plus greyed-out near misses one card short; no rerolls), a **trader** (a few offers to swap one of your cards for one of the same or one-higher rank, never T3; reroll for gold), and the **exit door** to the next level.
 
 **T2s don't drop from chests** except under special conditions. **No set bonuses for now.**
 
@@ -93,7 +95,7 @@ Status: **in discussion.** *(yours)* = your idea, *(draft)* = mine, ⚠ = flagge
 | 8♦ | +4 gold per pickup | **Apothecary:** picking up an Ace grants double the stacks. *(yours)* |
 | 9♦ | +4 armour | **Hoard:** +1 armour per 25 gold held (cap +20). |
 | 10♦ | +4 gold per pickup | **Hazard Pay:** every minute survived pays gold, scaling with threat. |
-| J♦ | −10 gold on recipes, +5 gold per pickup | **Patron:** the safehouse offers one extra recipe; your first reroll each visit is free. |
+| J♦ | −10 gold on recipes, +5 gold per pickup | **Patron:** the safehouse trader offers one extra trade, and your first trader reroll each visit is free. |
 | Q♦ | −10 gold on recipes | **Forger:** once per safehouse visit, one of your cards may stand in as a wildcard ingredient for a recipe. *(yours)* |
 | K♦ | — (grows) | **Absorb:** when you find a T1 card you may consume it instead of picking it up; its flat stats are permanently added to this card. *(yours)* |
 

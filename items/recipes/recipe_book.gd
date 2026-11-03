@@ -15,7 +15,7 @@ func pick_offers(
 	var pool: Array[RecipeData] = []
 	var weights: Array[float] = []
 	for recipe: RecipeData in recipes:
-		if recipe in exclude or _holds(stacks, recipe.result):
+		if recipe in exclude or holds_card(stacks, recipe.result):
 			continue
 		pool.append(recipe)
 		var plan: RecipePlan = RecipePlan.build(recipe, stacks, allow_wildcard)
@@ -38,7 +38,7 @@ func pick_offers(
 	return picked
 
 
-static func _holds(stacks: Array[CardStack], card: CardData) -> bool:
+static func holds_card(stacks: Array[CardStack], card: CardData) -> bool:
 	for stack: CardStack in stacks:
 		if stack != null and stack.card.same_card(card):
 			return true

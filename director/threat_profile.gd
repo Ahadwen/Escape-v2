@@ -3,12 +3,19 @@ extends Resource
 ## How threat grows over a level and how it turns into spawns. Pure data and
 ## pure functions, so the whole curve is unit-testable and tunable as data.
 ##
-## threat(t)        = start_threat + threat_per_minute * minutes
+## threat(t)        = level start + level rate * minutes, where each level
+##                    starts and ramps a bit higher than the last
+##                    (but well below where the previous level would be)
 ## alive budget     = threat * budget_per_threat   (sum of alive enemies' threat_cost)
 ## spawn interval   = max(min_spawn_interval, base_spawn_interval / threat)
 
 @export var start_threat: float = 1.0
 @export var threat_per_minute: float = 0.6
+## Added to start_threat for each level after the first.
+@export var level_start_step: float = 1.0
+## threat_per_minute grows by this fraction for each level after the first.
+@export var level_rate_step: float = 0.2
+
 ## Threat cost of enemies allowed alive at once, per point of threat.
 @export var budget_per_threat: float = 2.0
 @export var base_spawn_interval: float = 6.0
@@ -39,9 +46,20 @@ extends Resource
 @export_group("Enemies")
 @export var entries: Array[SpawnEntry] = []
 
+## Which level (0-based) the curve is for. Set by the director.
+var level: int = 0
+
+
+func level_start_threat() -> float:
+	return start_threat + level_start_step * level
+
+
+func level_threat_per_minute() -> float:
+	return threat_per_minute * (1.0 + level_rate_step * level)
+
 
 func threat_at(seconds: float) -> float:
-	return start_threat + threat_per_minute * seconds / 60.0
+	return level_start_threat() + level_threat_per_minute() * seconds / 60.0
 
 
 func budget_for(threat: float) -> float:

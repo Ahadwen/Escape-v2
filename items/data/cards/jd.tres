@@ -15,7 +15,7 @@ value = 5.0
 
 [sub_resource type="Resource" id="Stat_2"]
 script = ExtResource("2_stat")
-stat = &"extra_recipe_offers"
+stat = &"extra_trade_offers"
 value = 1.0
 
 [sub_resource type="Resource" id="Stat_3"]
@@ -28,5 +28,5 @@ script = ExtResource("1_card")
 suit = 1
 rank = 11
 title = "Patron"
-description = "Safehouses offer an extra recipe and a free reroll."
+description = "The safehouse trader offers an extra trade, and your first trader reroll each visit is free."
 stats = Array[ExtResource("2_stat")]([SubResource("Stat_0"), SubResource("Stat_1"), SubResource("Stat_2"), SubResource("Stat_3")])

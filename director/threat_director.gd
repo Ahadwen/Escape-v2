@@ -26,7 +26,9 @@ var _debug_index: int = 0
 var _far_check_timer: float = FAR_CHECK_INTERVAL
 
 
-func start() -> void:
+func start(level: int = 0) -> void:
+	profile = profile.duplicate()
+	profile.level = level
 	EnemyTime.reset()
 	DilationField.clear()
 	elapsed = 0.0

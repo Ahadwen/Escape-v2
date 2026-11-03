@@ -1,0 +1,266 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/safehouse/safehouse_lobby.gd" id="1_lobby"]
+[ext_resource type="Script" path="res://world/camera/isometric_camera.gd" id="2_camera"]
+[ext_resource type="Script" path="res://ui/feedback/move_marker.gd" id="3_marker"]
+[ext_resource type="PackedScene" path="res://actors/player/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://input/input_router.tscn" id="5_input"]
+[ext_resource type="Script" path="res://ui/feedback/aim_indicator.gd" id="6_aim_indicator"]
+[ext_resource type="Script" path="res://ui/feedback/aim_preview_presenter.gd" id="7_aim_presenter"]
+[ext_resource type="Script" path="res://ui/hud/ability_bar.gd" id="8_ability_bar"]
+[ext_resource type="Script" path="res://ui/hud/health_bar.gd" id="10_health_bar"]
+[ext_resource type="Script" path="res://ui/hud/card_bar.gd" id="11_card_bar"]
+[ext_resource type="Script" path="res://ui/hud/interact_prompt.gd" id="12_prompt"]
+[ext_resource type="Script" path="res://core/pause_controller.gd" id="13_pause"]
+[ext_resource type="Script" path="res://ui/shop/shop_screen.gd" id="14_shop"]
+[ext_resource type="Script" path="res://ui/shop/trader_screen.gd" id="15_trader"]
+[ext_resource type="Resource" path="res://items/data/recipe_book.tres" id="16_recipes"]
+[ext_resource type="Resource" path="res://core/economy/default_economy.tres" id="17_economy"]
+[ext_resource type="Resource" path="res://items/data/card_library.tres" id="18_library"]
+[ext_resource type="PackedScene" path="res://world/safehouse/station.tscn" id="19_station"]
+
+[sub_resource type="Environment" id="Environment_lobby"]
+background_mode = 1
+background_color = Color(0.08, 0.09, 0.12, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.8, 0.75, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 2
+ssao_enabled = true
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_lobby"]
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 17
+agent_radius = 0.5
+agent_max_climb = 0.25
+
+[sub_resource type="StandardMaterial3D" id="Material_floor"]
+albedo_color = Color(0.45, 0.4, 0.33, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_wall"]
+albedo_color = Color(0.35, 0.33, 0.36, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+material = SubResource("Material_floor")
+size = Vector3(24, 1, 16)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(24, 1, 16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_long"]
+material = SubResource("Material_wall")
+size = Vector3(25, 3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_long"]
+size = Vector3(25, 3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_short"]
+material = SubResource("Material_wall")
+size = Vector3(1, 3, 17)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_short"]
+size = Vector3(1, 3, 17)
+
+[node name="SafehouseLobby" type="Node3D"]
+script = ExtResource("1_lobby")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_lobby")
+
+[node name="Lamp" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
+light_color = Color(1, 0.85, 0.65, 1)
+light_energy = 2.0
+omni_range = 18.0
+shadow_enabled = true
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.573576, 0.819152, 0, -0.819152, 0.573576, 0, 10, 0)
+light_energy = 0.5
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_lobby")
+
+[node name="Floor" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+collision_layer = 16
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/Floor"]
+mesh = SubResource("BoxMesh_floor")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="WallNorth" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -8.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/WallNorth"]
+mesh = SubResource("BoxMesh_wall_long")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/WallNorth"]
+shape = SubResource("BoxShape3D_wall_long")
+
+[node name="WallSouth" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 8.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/WallSouth"]
+mesh = SubResource("BoxMesh_wall_long")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/WallSouth"]
+shape = SubResource("BoxShape3D_wall_long")
+
+[node name="WallEast" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, 1.5, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/WallEast"]
+mesh = SubResource("BoxMesh_wall_short")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/WallEast"]
+shape = SubResource("BoxShape3D_wall_short")
+
+[node name="WallWest" type="StaticBody3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5, 1.5, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="NavigationRegion3D/WallWest"]
+mesh = SubResource("BoxMesh_wall_short")
+
+[node name="Collision" type="CollisionShape3D" parent="NavigationRegion3D/WallWest"]
+shape = SubResource("BoxShape3D_wall_short")
+
+[node name="ShopCounter" parent="NavigationRegion3D" instance=ExtResource("19_station")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -4)
+title = "Shop"
+prompt = "Shop"
+color = Color(0.85, 0.7, 0.3, 1)
+size = Vector3(3, 1.2, 1.4)
+
+[node name="TraderStall" parent="NavigationRegion3D" instance=ExtResource("19_station")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -4)
+title = "Trader"
+prompt = "Trade"
+color = Color(0.6, 0.4, 0.8, 1)
+size = Vector3(2.4, 1.2, 1.4)
+
+[node name="ExitDoor" parent="NavigationRegion3D" instance=ExtResource("19_station")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.2)
+title = "Exit"
+prompt = "Next level"
+color = Color(0.35, 0.65, 0.95, 1)
+size = Vector3(2.4, 2.6, 0.6)
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+
+[node name="IsometricCamera" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("2_camera")
+target = NodePath("../Player")
+view_size = 20.0
+
+[node name="MoveMarker" type="Node3D" parent="."]
+script = ExtResource("3_marker")
+
+[node name="AimIndicator" type="Node3D" parent="."]
+script = ExtResource("6_aim_indicator")
+
+[node name="AimPreviewPresenter" type="Node" parent="." node_paths=PackedStringArray("abilities", "movement", "indicator")]
+script = ExtResource("7_aim_presenter")
+abilities = NodePath("../Player/AbilityCaster")
+movement = NodePath("../Player/ActorMovement")
+indicator = NodePath("../AimIndicator")
+
+[node name="InputRouter" parent="." node_paths=PackedStringArray("camera", "aim_origin") instance=ExtResource("5_input")]
+camera = NodePath("../IsometricCamera")
+aim_origin = NodePath("../Player")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="InteractPrompt" type="Label" parent="HUD" node_paths=PackedStringArray("player")]
+script = ExtResource("12_prompt")
+player = NodePath("../../Player")
+
+[node name="HealthBar" type="Control" parent="HUD" node_paths=PackedStringArray("health")]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 16.0
+offset_right = 160.0
+offset_bottom = 44.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("10_health_bar")
+health = NodePath("../../Player/HealthComponent")
+
+[node name="CardBar" type="Control" parent="HUD" node_paths=PackedStringArray("cards", "wallet")]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -220.0
+offset_top = 50.0
+offset_right = 220.0
+offset_bottom = 98.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("11_card_bar")
+cards = NodePath("../../Player/CardInventory")
+wallet = NodePath("../../Player/Wallet")
+
+[node name="AbilityBar" type="Control" parent="HUD" node_paths=PackedStringArray("abilities")]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("8_ability_bar")
+abilities = NodePath("../../Player/AbilityCaster")
+
+[node name="LevelLabel" type="Label" parent="HUD"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -460.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 48.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 2
+
+[node name="MenuLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="ShopScreen" type="Control" parent="MenuLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_shop")
+recipe_book = ExtResource("16_recipes")
+economy = ExtResource("17_economy")
+
+[node name="TraderScreen" type="Control" parent="MenuLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("15_trader")
+library = ExtResource("18_library")
+economy = ExtResource("17_economy")
+
+[node name="PauseController" type="Node" parent="."]
+script = ExtResource("13_pause")

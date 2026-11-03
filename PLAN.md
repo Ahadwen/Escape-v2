@@ -18,7 +18,7 @@ Each level is **infinite, procedurally generated terrain** that streams in aroun
 | Enemies | Each enemy spawns with its **own lifetime** and despawns when it expires (with a visible tell shortly before). |
 | Threat | Driven by **time** in the level. Resets at the start of each level. |
 | Difficulty curve | Each level starts at a higher baseline and ramps faster than the last, **but** the start of level N+1 is noticeably easier than the end of level N — lingering is always punished, moving on is a relief. |
-| Safehouse | Entering a safehouse **ends the level**: enemies are gone, threat stops, the player can spend gold, then proceeds to the next level. You can't go back out. |
+| Safehouse | Entering a safehouse **ends the level** and loads the **safehouse lobby**: a small walkable scene with a shop (recipes you can complete), a trader, and the exit door to the next level. You can't go back out. 5 levels per run; the 5th safehouse's door is the way out. |
 | Between levels | HP is fully restored. Items and gold carry over. |
 | Death | Items and gold for the run are lost. Meta-progression (TBD) persists. |
 | Zones | Every level is procedurally generated. Level 1 always uses the neutral theme. Levels 2–5 blend toward the run's destination zone, picked at random when the run starts, with increasing intensity: environment, hazards, zone-exclusive enemies, and zone variants of shared enemies. |

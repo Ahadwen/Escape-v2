@@ -204,3 +204,28 @@ func test_aces_and_jokers_never_match_ingredients() -> void:
 	assert_false(ingredient.matches(_card(0, 1)))
 	assert_false(ingredient.matches(_joker()))
 	assert_true(ingredient.matches(_card(0, 9)))
+
+
+func test_trade_candidates_same_or_one_higher_and_never_t3() -> void:
+	var trader: GDScript = load("res://ui/shop/trader_screen.gd")
+	var four_h: CardData = _card(0, 4)
+	var all_cards: Array[CardData] = [
+		four_h, _card(1, 4), _card(2, 5), _card(3, 6), _card(0, 3), _card(0, 1), _joker()
+	]
+	var found: Array[CardData] = trader.candidates_for(four_h, all_cards)
+	assert_eq(found.size(), 2)
+	for card: CardData in found:
+		assert_true(card.rank == 4 or card.rank == 5)
+		assert_false(card.same_card(four_h))
+	var ten_s: CardData = _card(3, 10)
+	var with_jack: Array[CardData] = [_card(0, 11), _card(1, 10)]
+	var from_ten: Array[CardData] = trader.candidates_for(ten_s, with_jack)
+	assert_eq(from_ten.size(), 1)
+	assert_eq(from_ten[0].rank, 10)
+
+
+func test_card_value() -> void:
+	assert_eq(_card(0, 7).value(), 7)
+	assert_eq(_card(0, 12).value(), 12)
+	assert_eq(_card(0, 1).value(), 0)
+	assert_eq(_joker().value(), 0)

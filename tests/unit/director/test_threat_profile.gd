@@ -101,3 +101,16 @@ func test_danger_is_capped() -> void:
 	profile.damage_per_threat = 0.5
 	profile.max_damage_multiplier = 2.0
 	assert_almost_eq(profile.damage_multiplier_for(100.0), 2.0)
+
+
+func test_each_level_starts_higher_and_ramps_faster() -> void:
+	profile.level_start_step = 1.0
+	profile.level_rate_step = 0.2
+	profile.level = 0
+	var level1_start: float = profile.threat_at(0.0)
+	var level1_after_4_min: float = profile.threat_at(240.0)
+	profile.level = 1
+	assert_almost_eq(profile.threat_at(0.0), level1_start + 1.0)
+	assert_almost_eq(profile.level_threat_per_minute(), 0.72)
+	# The next level's start is easier than staying put in the last one.
+	assert_true(profile.threat_at(0.0) < level1_after_4_min)
