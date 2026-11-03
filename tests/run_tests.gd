@@ -12,6 +12,9 @@ const TestCase := preload("res://tests/framework/test_case.gd")
 const TEST_ROOT := "res://tests"
 const SKIP_DIRS: Array[String] = ["framework"]
 
+## Every failure, repeated in a summary at the end of the run.
+var _failure_summary: PackedStringArray = PackedStringArray()
+
 
 func _initialize() -> void:
 	var filter: String = ""
@@ -34,6 +37,11 @@ func _initialize() -> void:
 		failed += result.y
 
 	print("")
+	if not _failure_summary.is_empty():
+		print("Failures:")
+		for line: String in _failure_summary:
+			print("  " + line)
+		print("")
 	print("%d passed, %d failed" % [passed, failed])
 	quit(1 if failed > 0 or passed == 0 else 0)
 
@@ -42,12 +50,12 @@ func _initialize() -> void:
 func _run_file(path: String) -> Vector2i:
 	var script: GDScript = load(path) as GDScript
 	if script == null:
-		printerr("FAIL  %s: could not load script" % path)
+		_report("FAIL  %s: could not load script (see errors above)" % path)
 		return Vector2i(0, 1)
 
 	var instance: Object = script.new()
 	if not instance is TestCase:
-		printerr("FAIL  %s: does not extend tests/framework/test_case.gd" % path)
+		_report("FAIL  %s: does not extend tests/framework/test_case.gd" % path)
 		return Vector2i(0, 1)
 	var test_case: TestCase = instance as TestCase
 
@@ -74,11 +82,17 @@ func _run_file(path: String) -> Vector2i:
 			print("  PASS  %s" % method_name)
 		else:
 			failed += 1
-			printerr("  FAIL  %s" % method_name)
+			print("  FAIL  %s" % method_name)
 			for failure: String in failures:
-				printerr("        %s" % failure)
+				print("        %s" % failure)
+				_failure_summary.append("%s :: %s: %s" % [path, method_name, failure])
 
 	return Vector2i(passed, failed)
+
+
+func _report(line: String) -> void:
+	print(line)
+	_failure_summary.append(line)
 
 
 func _collect_test_files(dir_path: String, out: Array[String]) -> void:
