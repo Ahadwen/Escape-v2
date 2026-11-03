@@ -60,12 +60,12 @@ Status: **in discussion.** *(yours)* = your idea, *(draft)* = mine, ⚠ = flagge
 | Card | Stats | Effect |
 |---|---|---|
 | 7♠ | +0.3 m/s | **Flight Response:** reaching low HP gives a big speed burst (long cooldown). *(yours)* |
-| 8♠ | +10 ability haste | ⚠ **Reset:** every 45 s, your next non-ultimate ability doesn't trigger its cooldown. *(yours — now the same as your new 10♠ idea; one of them needs replacing)* |
+| 8♠ | +10 ability haste | **Perfect Timing:** casting an ability within 0.3 s of its cooldown finishing makes its next cooldown 25% shorter. *(yours; bonus draft)* |
 | 9♠ | +0.3 m/s | **Momentum:** after any movement ability, +1.5 m/s for 2 s. *(draft)* |
 | 10♠ | +10 ability haste | **Free Cast:** once a minute, a non-ultimate ability doesn't trigger its cooldown. *(yours)* |
 | J♠ | +0.4 m/s | **In the Thick of It:** +move speed and armour for each enemy within 4 m (cap 5). *(yours)* |
 | Q♠ | +15 ability haste | **Phase:** after any ability, pass through enemies and their projectiles for 1 s. *(draft)* |
-| K♠ | +0.4 m/s, +10 haste | ⚠ **Slipstream:** moving without stopping for 2 s grants +20% move speed until you stop. *(draft — weak for a king)* |
+| K♠ | +0.4 m/s, +10 haste | **Ghostwalk:** while any active speed boost is running (from abilities or Aces), you pass through walls. When it ends inside an obstacle, you dash to the nearest walkable spot. *(yours)* |
 
 ## ♣ Clubs — Will and control moments
 
@@ -104,7 +104,7 @@ Occupy a card slot and **stack up to 3** in it. PC keys 1–4 use ace stacks in 
 
 ## Open questions
 
-- ⚠ 4♦, 7♦, 8♦, 8♠/10♠ duplicate, K♠.
+- ⚠ 4♦, 7♦, 8♦.
 - Recipe rule details: ingredients per T2 / T3, suit requirements, gold prices, joker surcharge.
 - Set bonus thresholds and effects.
 - Do T2s drop from chests, and how rarely?
