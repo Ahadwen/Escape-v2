@@ -23,7 +23,6 @@ func _process(_delta: float) -> void:
 	var polygons: int = 0
 	if nav_region != null and nav_region.navigation_mesh != null:
 		polygons = nav_region.navigation_mesh.get_polygon_count()
-	var agent: NavigationAgent3D = movement.nav_agent
 	text = (
 		"\n"
 		. join(
@@ -36,10 +35,7 @@ func _process(_delta: float) -> void:
 				),
 				"speed: %.2f" % movement.current_speed(),
 				"navmesh polygons: %d" % polygons,
-				(
-					"nav target: %s  finished: %s"
-					% [agent.target_position, agent.is_navigation_finished()]
-				),
+				"path points left: %d" % movement.path_points_remaining(),
 				"joypads: %s" % str(Input.get_connected_joypads()),
 			]
 		)

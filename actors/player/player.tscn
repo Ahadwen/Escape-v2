@@ -46,18 +46,12 @@ mesh = SubResource("CapsuleMesh_body")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.42)
 mesh = SubResource("BoxMesh_nose")
 
-[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-path_desired_distance = 0.15
-target_desired_distance = 0.15
-radius = 0.4
-
 [node name="StatsComponent" type="Node" parent="."]
 script = ExtResource("4_stats")
 
-[node name="ActorMovement" type="Node" parent="." node_paths=PackedStringArray("body", "nav_agent", "visual", "stats")]
+[node name="ActorMovement" type="Node" parent="." node_paths=PackedStringArray("body", "visual", "stats")]
 script = ExtResource("1_movement")
 body = NodePath("..")
-nav_agent = NodePath("../NavigationAgent3D")
 visual = NodePath("../Visual")
 stats = NodePath("../StatsComponent")
 

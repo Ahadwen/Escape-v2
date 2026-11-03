@@ -2,6 +2,8 @@ class_name ActorMovement
 extends Node
 ## Moves a CharacterBody3D either along a navigation path to a point or in a
 ## steered direction, and turns its visual to face where it's going.
+## Paths come from the NavigationServer; waypoints are judged reached by flat
+## (XZ) distance, so the navmesh sitting slightly above the feet doesn't matter.
 ## A MovementOverride (dash, charge, knockback) takes priority while active.
 ## Shared by the player and (later) enemies.
 
@@ -9,8 +11,12 @@ signal arrived
 
 enum Mode { IDLE, TO_POINT, DIRECTION }
 
+## Flat distance at which a path waypoint counts as reached.
+const WAYPOINT_REACHED_DISTANCE: float = 0.1
+
 @export var body: CharacterBody3D
-@export var nav_agent: NavigationAgent3D
+## Navigation layers used when pathing.
+@export_flags_3d_navigation var navigation_layers: int = 1
 ## Node rotated to face movement. Rotating a child keeps collision unaffected.
 @export var visual: Node3D
 ## Optional. If set, speed comes from its move_speed stat.
@@ -23,6 +29,8 @@ enum Mode { IDLE, TO_POINT, DIRECTION }
 var mode: Mode = Mode.IDLE
 
 var _direction: Vector3 = Vector3.ZERO
+var _path: PackedVector3Array = PackedVector3Array()
+var _path_index: int = 0
 var _override: MovementOverride
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
@@ -32,9 +40,33 @@ static func yaw_for_direction(direction: Vector3) -> float:
 	return atan2(-direction.x, -direction.z)
 
 
+## Index of the first waypoint at or after `index` that is further than
+## `reached_distance` from `position`, measured flat. Returns path.size() if
+## all are reached.
+static func next_waypoint_index(
+	path: PackedVector3Array, index: int, position: Vector3, reached_distance: float
+) -> int:
+	var i: int = index
+	while i < path.size():
+		var offset: Vector2 = Vector2(path[i].x - position.x, path[i].z - position.z)
+		if offset.length() > reached_distance:
+			break
+		i += 1
+	return i
+
+
 func move_to(point: Vector3) -> void:
-	nav_agent.target_position = point
-	mode = Mode.TO_POINT
+	var map: RID = body.get_world_3d().navigation_map
+	_path = NavigationServer3D.map_get_path(
+		map, body.global_position, point, true, navigation_layers
+	)
+	_path_index = 0
+	mode = Mode.TO_POINT if not _path.is_empty() else Mode.IDLE
+
+
+## Remaining waypoints on the current path (for debugging/UI).
+func path_points_remaining() -> int:
+	return maxi(_path.size() - _path_index, 0) if mode == Mode.TO_POINT else 0
 
 
 ## Steer in a world direction (length 0..1 scales speed). A zero vector stops
@@ -104,15 +136,20 @@ func _physics_process(delta: float) -> void:
 func _desired_velocity() -> Vector3:
 	match mode:
 		Mode.TO_POINT:
-			if nav_agent.is_navigation_finished():
+			var position: Vector3 = body.global_position
+			_path_index = next_waypoint_index(
+				_path, _path_index, position, WAYPOINT_REACHED_DISTANCE
+			)
+			if _path_index >= _path.size():
 				mode = Mode.IDLE
 				arrived.emit()
 				return Vector3.ZERO
-			var to_next: Vector3 = nav_agent.get_next_path_position() - body.global_position
+			var to_next: Vector3 = _path[_path_index] - position
 			to_next.y = 0.0
-			if to_next.length_squared() < 0.0001:
-				return Vector3.ZERO
-			return to_next.normalized() * current_speed()
+			var distance: float = to_next.length()
+			# Don't overshoot the waypoint on the last frame of approach.
+			var speed: float = minf(current_speed(), distance / get_physics_process_delta_time())
+			return to_next / distance * speed
 		Mode.DIRECTION:
 			return _direction * current_speed()
 	return Vector3.ZERO
