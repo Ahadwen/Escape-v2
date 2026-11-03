@@ -65,3 +65,21 @@ func test_budget_excludes_expensive_entries() -> void:
 
 func test_nothing_fits_returns_null() -> void:
 	assert_null(profile.pick_entry(2.0, 0.5, 0.5))
+
+
+func test_spawn_angle_ignores_heading_when_standing_still() -> void:
+	profile.ahead_bias = 1.0
+	assert_almost_eq(profile.spawn_angle(Vector3.ZERO, 0.0, 0.25), TAU * 0.25)
+
+
+func test_spawn_angle_biased_ahead_when_moving() -> void:
+	profile.ahead_bias = 1.0
+	# Moving +Z: angle should be within 60 degrees of PI/2.
+	for spread: float in [0.0, 0.5, 1.0]:
+		var angle: float = profile.spawn_angle(Vector3(0, 0, 8), 0.0, spread)
+		assert_true(absf(angle_difference(angle, PI / 2.0)) <= PI / 3.0 + 0.001, "angle %f" % angle)
+
+
+func test_spawn_angle_bias_roll_above_bias_is_random() -> void:
+	profile.ahead_bias = 0.5
+	assert_almost_eq(profile.spawn_angle(Vector3(0, 0, 8), 0.9, 0.5), PI)

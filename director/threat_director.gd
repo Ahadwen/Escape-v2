@@ -20,6 +20,7 @@ var running: bool = false
 
 var _spawn_timer: float = 0.0
 var _alive: Array[Enemy] = []
+var _debug_index: int = 0
 
 
 func start() -> void:
@@ -30,14 +31,32 @@ func start() -> void:
 	threat_changed.emit(threat)
 
 
-## Stops spawning and the threat clock. Optionally despawns everything.
+## Stops spawning and the threat clock. Optionally despawns every enemy,
+## including ones spawned by other enemies (e.g. mites).
 func stop(despawn_all: bool = false) -> void:
 	running = false
 	if despawn_all:
-		for enemy: Enemy in _alive.duplicate():
-			if is_instance_valid(enemy):
+		for node: Node in get_tree().get_nodes_in_group(Enemy.GROUP):
+			var enemy: Enemy = node as Enemy
+			if enemy != null:
 				enemy.despawn()
 		_alive.clear()
+
+
+## Debug builds: F2 spawns the next enemy type from the profile near the
+## player, ignoring threat, budget and visibility.
+func _unhandled_input(event: InputEvent) -> void:
+	if not OS.is_debug_build() or not event.is_action_pressed(InputActions.DEBUG_SPAWN_ENEMY):
+		return
+	if profile.entries.is_empty() or player == null:
+		return
+	var entry: SpawnEntry = profile.entries[_debug_index % profile.entries.size()]
+	_debug_index += 1
+	var map: RID = player.get_world_3d().navigation_map
+	var angle: float = randf() * TAU
+	var guess: Vector3 = player.global_position + Vector3(cos(angle), 0.0, sin(angle)) * 12.0
+	_spawn(entry, NavigationServer3D.map_get_closest_point(map, guess))
+	print("Debug spawn: %s" % entry.enemy.display_name)
 
 
 func alive_cost() -> float:
@@ -72,13 +91,17 @@ func _try_spawn() -> bool:
 	var point: Variant = _find_spawn_point()
 	if point == null:
 		return false
+	_spawn(entry, point)
+	return true
+
+
+func _spawn(entry: SpawnEntry, point: Vector3) -> void:
 	var enemy: Enemy = enemy_scene.instantiate() as Enemy
 	enemy.data = entry.enemy
 	enemy.position = point
 	enemy.despawned.connect(_on_enemy_despawned)
 	add_child(enemy)
 	_alive.append(enemy)
-	return true
 
 
 func _find_spawn_point() -> Variant:
@@ -86,8 +109,11 @@ func _find_spawn_point() -> Variant:
 		return null
 	var map: RID = player.get_world_3d().navigation_map
 	var origin: Vector3 = player.global_position
+	var heading: Vector3 = Vector3.ZERO
+	if player is CharacterBody3D:
+		heading = (player as CharacterBody3D).velocity
 	for i: int in SPAWN_ATTEMPTS:
-		var angle: float = randf() * TAU
+		var angle: float = profile.spawn_angle(heading, randf(), randf())
 		var distance: float = randf_range(profile.spawn_distance_min, profile.spawn_distance_max)
 		var guess: Vector3 = origin + Vector3(cos(angle), 0.0, sin(angle)) * distance
 		var point: Vector3 = NavigationServer3D.map_get_closest_point(map, guess)

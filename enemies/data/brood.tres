@@ -1,0 +1,25 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/types/brood_enemy_data.gd" id="1_type"]
+[ext_resource type="Resource" path="res://enemies/data/mite.tres" id="2_mite"]
+
+[resource]
+script = ExtResource("1_type")
+minion = ExtResource("2_mite")
+first_spawn_delay = 1.5
+spawn_interval = 1.6
+spawn_count = 3
+max_minions = 10
+spawn_radius = 1.8
+id = &"brood"
+display_name = "Brood"
+color = Color(0.4, 0.55, 0.3, 1)
+body_scale = Vector3(1.9, 1.35, 1.9)
+move_speed = 3.2
+contact_damage = 20.0
+contact_cooldown = 1.0
+sight_range = 22.0
+lose_interest_range = 0.0
+lifetime_min = 16.0
+lifetime_max = 22.0
+threat_cost = 3.0

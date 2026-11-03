@@ -36,6 +36,8 @@ const PAUSE: StringName = &"pause"
 
 # Debug builds only: cycle PC -> gamepad -> touch scheme (disables auto-detect).
 const DEBUG_CYCLE_SCHEME: StringName = &"debug_cycle_input_scheme"
+# Debug builds only: spawn the next enemy type near the player.
+const DEBUG_SPAWN_ENEMY: StringName = &"debug_spawn_enemy"
 
 const ABILITY_SLOT_COUNT: int = 4
 
@@ -60,6 +62,7 @@ const ALL: Array[StringName] = [
 	INTERACT,
 	PAUSE,
 	DEBUG_CYCLE_SCHEME,
+	DEBUG_SPAWN_ENEMY,
 ]
 
 

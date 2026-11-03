@@ -7,6 +7,8 @@ extends Resource
 @export var id: StringName
 @export var display_name: String
 @export var color: Color = Color(0.85, 0.3, 0.3)
+## Model and collision size relative to the base enemy (x/z width, y height).
+@export var body_scale: Vector3 = Vector3.ONE
 
 @export_group("Stats")
 @export var move_speed: float = 4.0
@@ -19,6 +21,11 @@ extends Resource
 ## Seconds between attacks.
 @export var attack_cooldown: float = 1.2
 
+## Damage dealt to player-faction targets the enemy touches. 0 = none.
+@export var contact_damage: float = 0.0
+## Seconds before the same target can take contact damage again.
+@export var contact_cooldown: float = 0.7
+
 @export_group("Awareness")
 ## Notices targets within this distance.
 @export var sight_range: float = 14.0
@@ -30,6 +37,9 @@ extends Resource
 @export var lifetime_max: float = 22.0
 ## Seconds of visible warning before despawning.
 @export var despawn_warning: float = 2.0
+## Extra move speed gained over the enemy's life (0.25 = +25% by the end), so
+## old enemies are more dangerous than fresh ones.
+@export var speed_gain_over_life: float = 0.25
 
 @export_group("Director")
 ## How much of the threat budget one of these costs (used in M4).

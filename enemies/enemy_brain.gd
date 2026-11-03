@@ -133,6 +133,34 @@ func hit_targets_in_radius(radius: float, already_hit: Array[Targetable]) -> voi
 			deal_damage(candidate)
 
 
+## Ranged behaviour: back off when closer than min_distance, close in when
+## further than max_distance, hold position in between.
+func keep_distance(delta: float, min_distance: float, max_distance: float) -> void:
+	var distance: float = distance_to_target()
+	if distance > max_distance:
+		chase(delta)
+		return
+	if distance >= min_distance:
+		enemy.movement.stop()
+		_repath_timer = 0.0
+		return
+	_repath_timer -= delta
+	if _repath_timer > 0.0:
+		return
+	_repath_timer = REPATH_INTERVAL
+	var away: Vector3 = -direction_to_target()
+	var retreat: Vector3 = enemy.global_position + away * (min_distance - distance + 2.0)
+	enemy.movement.move_to(retreat)
+
+
+func has_line_of_sight_to_target() -> bool:
+	if target == null:
+		return false
+	return AttackUtils.has_line_of_sight(
+		enemy.get_world_3d(), enemy.global_position, target.world_position()
+	)
+
+
 func wander(delta: float) -> void:
 	_wander_timer -= delta
 	if _wander_timer > 0.0:

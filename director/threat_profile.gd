@@ -19,6 +19,11 @@ extends Resource
 @export_group("Placement")
 @export var spawn_distance_min: float = 18.0
 @export var spawn_distance_max: float = 26.0
+## Chance a spawn is placed ahead of the player's direction of travel
+## (within ±60°) rather than anywhere around them. Stops "just walk away".
+@export_range(0.0, 1.0) var ahead_bias: float = 0.65
+## Below this speed the player counts as standing still (no ahead bias).
+@export var ahead_min_speed: float = 2.0
 
 @export_group("Enemies")
 @export var entries: Array[SpawnEntry] = []
@@ -36,6 +41,15 @@ func spawn_interval_for(threat: float) -> float:
 	if threat <= 0.0:
 		return base_spawn_interval
 	return maxf(min_spawn_interval, base_spawn_interval / threat)
+
+
+## Angle (radians, around Y from +X) for a spawn. heading is the player's flat
+## velocity; rolls are in [0, 1).
+func spawn_angle(heading: Vector3, bias_roll: float, spread_roll: float) -> float:
+	var flat: Vector2 = Vector2(heading.x, heading.z)
+	if flat.length() >= ahead_min_speed and bias_roll < ahead_bias:
+		return flat.angle() + lerpf(-PI / 3.0, PI / 3.0, spread_roll)
+	return spread_roll * TAU
 
 
 ## Picks an entry allowed at this threat that fits in budget_left, weighted.

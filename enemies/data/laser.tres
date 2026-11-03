@@ -1,0 +1,23 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/types/laser_enemy_data.gd" id="1_type"]
+
+[resource]
+script = ExtResource("1_type")
+fire_range = 15.0
+prime_time = 0.65
+beam_length = 24.0
+beam_half_width = 0.35
+lead_time = 0.3
+id = &"laser"
+display_name = "Laser"
+color = Color(0.8, 0.3, 0.85, 1)
+move_speed = 5.0
+damage = 50.0
+damage_type = 1
+attack_cooldown = 2.2
+sight_range = 22.0
+lose_interest_range = 28.0
+lifetime_min = 14.0
+lifetime_max = 20.0
+threat_cost = 2.0
