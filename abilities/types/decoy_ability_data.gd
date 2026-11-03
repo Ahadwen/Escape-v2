@@ -1,6 +1,8 @@
 class_name DecoyAbilityData
 extends AbilityData
-## Place a decoy at the aimed point. Enemies prefer it over the player.
+## Drop a decoy. With SELF targeting (the default) it appears where the caster
+## stands; with POINT targeting it goes to the aimed point within range.
+## Enemies prefer it over the player.
 
 @export var decoy_scene: PackedScene
 ## Decoy HP. Typically scales with Will.
@@ -10,7 +12,7 @@ extends AbilityData
 
 
 func _init() -> void:
-	targeting = Targeting.POINT
+	targeting = Targeting.SELF
 
 
 func create_execution(context: CastContext) -> AbilityExecution:
