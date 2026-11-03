@@ -56,7 +56,20 @@ func _on_intent(intent: PlayerIntent) -> void:
 func _streamer_line() -> String:
 	if streamer == null:
 		return ""
+	var level_node: Node = get_tree().current_scene
+	var theme: LevelTheme = level_node.get("theme") as LevelTheme
+	var zone_text: String = "no theme"
+	if theme != null:
+		zone_text = "zone %s  intensity %.2f" % [theme.zone.id, theme.intensity]
+	var burning: bool = movement.body.get_node("StatusEffectHost").has_effect(BurnEffect.ID)
 	return (
-		"seed %d  chunk %s  loaded %d"
-		% [streamer.run_seed, streamer.current_chunk(), streamer.loaded_count()]
+		"level %d  %s  burning %s\nseed %d  chunk %s  loaded %d"
+		% [
+			RunState.level_index + 1,
+			zone_text,
+			burning,
+			streamer.run_seed,
+			streamer.current_chunk(),
+			streamer.loaded_count()
+		]
 	)
