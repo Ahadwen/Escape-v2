@@ -6,6 +6,9 @@
 [ext_resource type="Script" path="res://actors/components/stats_component.gd" id="4_stats"]
 [ext_resource type="Script" path="res://actors/components/ability_caster.gd" id="5_caster"]
 [ext_resource type="Resource" path="res://characters/knight/knight.tres" id="6_knight"]
+[ext_resource type="Script" path="res://actors/components/health_component.gd" id="7_health"]
+[ext_resource type="Script" path="res://actors/components/status_effect_host.gd" id="8_status"]
+[ext_resource type="Script" path="res://actors/components/targetable.gd" id="9_targetable"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -28,7 +31,7 @@ size = Vector3(0.22, 0.22, 0.4)
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
-collision_mask = 1
+collision_mask = 5
 script = ExtResource("3_player")
 character = ExtResource("6_knight")
 
@@ -49,17 +52,33 @@ mesh = SubResource("BoxMesh_nose")
 [node name="StatsComponent" type="Node" parent="."]
 script = ExtResource("4_stats")
 
+[node name="StatusEffectHost" type="Node" parent="." node_paths=PackedStringArray("stats")]
+script = ExtResource("8_status")
+stats = NodePath("../StatsComponent")
+
+[node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("stats", "status")]
+script = ExtResource("7_health")
+stats = NodePath("../StatsComponent")
+status = NodePath("../StatusEffectHost")
+
+[node name="Targetable" type="Node" parent="." node_paths=PackedStringArray("body", "health")]
+script = ExtResource("9_targetable")
+body = NodePath("..")
+health = NodePath("../HealthComponent")
+
 [node name="ActorMovement" type="Node" parent="." node_paths=PackedStringArray("body", "visual", "stats")]
 script = ExtResource("1_movement")
 body = NodePath("..")
 visual = NodePath("../Visual")
 stats = NodePath("../StatsComponent")
 
-[node name="AbilityCaster" type="Node" parent="." node_paths=PackedStringArray("caster", "movement", "stats")]
+[node name="AbilityCaster" type="Node" parent="." node_paths=PackedStringArray("caster", "movement", "stats", "health", "status")]
 script = ExtResource("5_caster")
 caster = NodePath("..")
 movement = NodePath("../ActorMovement")
 stats = NodePath("../StatsComponent")
+health = NodePath("../HealthComponent")
+status = NodePath("../StatusEffectHost")
 
 [node name="PlayerController" type="Node" parent="." node_paths=PackedStringArray("movement", "abilities")]
 script = ExtResource("2_controller")

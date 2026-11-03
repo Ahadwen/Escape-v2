@@ -6,8 +6,13 @@ extends Node
 @export var movement: ActorMovement
 @export var abilities: AbilityCaster
 
+## When false (e.g. dead), all intents are ignored.
+var enabled: bool = true
+
 
 func handle_intent(intent: PlayerIntent) -> void:
+	if not enabled:
+		return
 	if intent is MoveToPointIntent:
 		movement.move_to((intent as MoveToPointIntent).point)
 	elif intent is MoveDirectionIntent:

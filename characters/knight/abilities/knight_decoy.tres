@@ -1,0 +1,28 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://abilities/types/decoy_ability_data.gd" id="1_decoy"]
+[ext_resource type="Script" path="res://stats/stat_scaling.gd" id="2_scaling"]
+[ext_resource type="PackedScene" path="res://actors/decoy/decoy.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="Resource_range"]
+script = ExtResource("2_scaling")
+stat = &"will"
+base_value = 6.0
+per_point = 0.0
+
+[sub_resource type="Resource" id="Resource_hp"]
+script = ExtResource("2_scaling")
+stat = &"will"
+base_value = 80.0
+per_point = 8.0
+
+[resource]
+script = ExtResource("1_decoy")
+decoy_scene = ExtResource("3_scene")
+hp_scaling = SubResource("Resource_hp")
+lifetime = 4.0
+id = &"knight_decoy"
+display_name = "Decoy"
+targeting = 3
+cooldown = 14.0
+range_scaling = SubResource("Resource_range")

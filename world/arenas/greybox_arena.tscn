@@ -9,6 +9,12 @@
 [ext_resource type="Script" path="res://ui/feedback/aim_preview_presenter.gd" id="7_aim_presenter"]
 [ext_resource type="Script" path="res://ui/hud/ability_bar.gd" id="8_ability_bar"]
 [ext_resource type="Script" path="res://ui/debug/debug_overlay.gd" id="9_debug_overlay"]
+[ext_resource type="Script" path="res://ui/hud/health_bar.gd" id="10_health_bar"]
+[ext_resource type="Script" path="res://director/debug_spawner.gd" id="11_spawner"]
+[ext_resource type="PackedScene" path="res://enemies/enemy.tscn" id="12_enemy"]
+[ext_resource type="Resource" path="res://enemies/data/chaser.tres" id="13_chaser"]
+[ext_resource type="Resource" path="res://enemies/data/charger.tres" id="14_charger"]
+[ext_resource type="Script" path="res://enemies/enemy_data.gd" id="15_enemy_data"]
 
 [sub_resource type="Environment" id="Environment_arena"]
 background_mode = 1
@@ -250,3 +256,43 @@ script = ExtResource("9_debug_overlay")
 input_router = NodePath("../../InputRouter")
 movement = NodePath("../../Player/ActorMovement")
 nav_region = NodePath("../../NavigationRegion3D")
+
+[node name="HealthBar" type="Control" parent="HUD" node_paths=PackedStringArray("health")]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 16.0
+offset_right = 160.0
+offset_bottom = 44.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("10_health_bar")
+health = NodePath("../../Player/HealthComponent")
+
+[node name="DeathLabel" type="Label" parent="HUD"]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -40.0
+offset_right = 240.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 40
+text = "Caught. Restarting..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DebugSpawner" type="Node" parent="." node_paths=PackedStringArray("player")]
+script = ExtResource("11_spawner")
+enemy_scene = ExtResource("12_enemy")
+enemy_types = Array[ExtResource("15_enemy_data")]([ExtResource("13_chaser"), ExtResource("14_charger")])
+player = NodePath("../Player")
+

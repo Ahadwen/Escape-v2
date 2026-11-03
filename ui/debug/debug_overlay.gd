@@ -37,6 +37,7 @@ func _process(_delta: float) -> void:
 				"navmesh polygons: %d" % polygons,
 				"path points left: %d" % movement.path_points_remaining(),
 				"joypads: %s" % str(Input.get_connected_joypads()),
+				"enemies: %d" % get_tree().get_nodes_in_group(Enemy.GROUP).size(),
 			]
 		)
 	)

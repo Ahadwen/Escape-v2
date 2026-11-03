@@ -1,0 +1,20 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/types/chaser_enemy_data.gd" id="1_chaser"]
+
+[resource]
+script = ExtResource("1_chaser")
+attack_range = 1.4
+wind_up = 0.35
+id = &"chaser"
+display_name = "Chaser"
+color = Color(0.55, 0.3, 0.75, 1)
+move_speed = 3.8
+damage = 30.0
+attack_cooldown = 1.2
+sight_range = 14.0
+lose_interest_range = 0.0
+lifetime_min = 15.0
+lifetime_max = 22.0
+despawn_warning = 2.0
+threat_cost = 1.0

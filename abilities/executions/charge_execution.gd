@@ -1,6 +1,9 @@
 class_name ChargeExecution
 extends AbilityExecution
-## TODO(M3): invulnerable while charging; knock back enemies on impact.
+## Invulnerable while charging. Hitting a wall or an enemy ends the charge
+## and knocks nearby enemies back, briefly stunning them.
+
+const INVULNERABLE_ID: StringName = &"charge_invulnerable"
 
 var _data: ChargeAbilityData
 var _movement: ChargeMovement
@@ -21,6 +24,9 @@ func start() -> void:
 		_data.max_duration
 	)
 	_movement.ended.connect(_on_movement_ended)
+	_movement.impacted.connect(_on_impacted)
+	if context.status != null:
+		context.status.apply(InvulnerableEffect.new(_data.max_duration + 0.5, INVULNERABLE_ID))
 	context.movement.start_override(_movement)
 
 
@@ -34,5 +40,18 @@ func cancel() -> void:
 		_movement.cancel()
 
 
+func _on_impacted(position: Vector3) -> void:
+	var stun: float = _data.impact_stun
+	AreaEffects.knock_back(
+		context.caster.get_tree(),
+		position,
+		_data.impact_radius,
+		_data.impact_knockback,
+		func() -> StatusEffect: return StunEffect.new(stun, &"charge_impact")
+	)
+
+
 func _on_movement_ended() -> void:
+	if context.status != null:
+		context.status.remove(INVULNERABLE_ID)
 	finished = true

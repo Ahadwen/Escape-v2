@@ -72,10 +72,16 @@ func teleport(point: Vector3, face_direction: Vector3 = Vector3.ZERO) -> void:
 	body.reset_physics_interpolation()
 	if mode == Mode.TO_POINT:
 		mode = Mode.IDLE
-	var flat: Vector3 = Vector3(face_direction.x, 0.0, face_direction.z)
+	face_towards(face_direction)
+	if visual != null:
+		visual.reset_physics_interpolation()
+
+
+## Instantly turns the visual to face a flat direction (ignored if zero).
+func face_towards(direction: Vector3) -> void:
+	var flat: Vector3 = Vector3(direction.x, 0.0, direction.z)
 	if visual != null and flat.length_squared() > 0.0001:
 		visual.rotation.y = yaw_for_direction(flat)
-		visual.reset_physics_interpolation()
 
 
 ## Remaining waypoints on the current path (for debugging/UI).

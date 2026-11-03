@@ -31,6 +31,32 @@ func start() -> void:
 	var snapped: Vector3 = NavigationServer3D.map_get_closest_point(_map, point)
 	context.movement.teleport(snapped, direction)
 	landed.emit(snapped)
+	_shockwave(snapped)
+
+
+func _shockwave(at: Vector3) -> void:
+	if context.health == null:
+		return
+	var strength: float = BlinkAbilityData.shockwave_strength(
+		context.health.pool.fraction(), _data.shockwave_hp_threshold
+	)
+	if strength < 0.0:
+		return
+	var radius: float = lerpf(_data.shockwave_radius_min, _data.shockwave_radius_max, strength)
+	var knockback: float = lerpf(
+		_data.shockwave_knockback_min, _data.shockwave_knockback_max, strength
+	)
+	var slow_duration: float = lerpf(
+		_data.shockwave_slow_duration_min, _data.shockwave_slow_duration_max, strength
+	)
+	var slow: float = _data.shockwave_slow
+	AreaEffects.knock_back(
+		context.caster.get_tree(),
+		at,
+		radius,
+		knockback,
+		func() -> StatusEffect: return SlowEffect.new(slow, slow_duration, &"blink_shockwave")
+	)
 
 
 func _is_walkable(point: Vector3) -> bool:

@@ -11,6 +11,11 @@ extends AbilityData
 ## Seconds.
 @export var max_duration: float = 3.0
 
+@export_group("Impact")
+@export var impact_radius: float = 2.5
+@export var impact_knockback: float = 3.0
+@export var impact_stun: float = 0.5
+
 
 func _init() -> void:
 	targeting = Targeting.DIRECTION

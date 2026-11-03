@@ -10,6 +10,8 @@ const SLOT_COUNT: int = 4
 @export var caster: Node3D
 @export var movement: ActorMovement
 @export var stats: StatsComponent
+@export var health: HealthComponent
+@export var status: StatusEffectHost
 
 var slots: Array[AbilitySlot] = []
 
@@ -39,11 +41,18 @@ func try_cast(slot: int, aim: AimData) -> bool:
 	if ability_slot.data.requires_free_movement and movement != null and movement.has_override():
 		return false
 	update_aim(aim)
-	var context: CastContext = CastContext.new(caster, movement, _stat_block(), _aim)
+	var context: CastContext = CastContext.new(
+		caster, movement, _stat_block(), _aim, health, status
+	)
 	if ability_slot.try_cast(context):
 		ability_cast.emit(slot)
 		return true
 	return false
+
+
+func cancel_all() -> void:
+	for ability_slot: AbilitySlot in slots:
+		ability_slot.cancel()
 
 
 func update_aim(aim: AimData) -> void:

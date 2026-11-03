@@ -7,13 +7,26 @@ var caster: Node3D
 var movement: ActorMovement
 var stats: StatBlock
 var aim: AimData
+## Optional.
+var health: HealthComponent
+## Optional.
+var status: StatusEffectHost
 
 
-func _init(p_caster: Node3D, p_movement: ActorMovement, p_stats: StatBlock, p_aim: AimData) -> void:
+func _init(
+	p_caster: Node3D,
+	p_movement: ActorMovement,
+	p_stats: StatBlock,
+	p_aim: AimData,
+	p_health: HealthComponent = null,
+	p_status: StatusEffectHost = null
+) -> void:
 	caster = p_caster
 	movement = p_movement
 	stats = p_stats
 	aim = p_aim if p_aim != null else AimData.none()
+	health = p_health
+	status = p_status
 
 
 func origin() -> Vector3:
