@@ -5,6 +5,8 @@ extends CharacterBody3D
 
 signal died
 
+const GROUP: StringName = &"player"
+
 @export var character: CharacterData
 
 var is_dead: bool = false
@@ -19,6 +21,7 @@ var is_dead: bool = false
 
 
 func _ready() -> void:
+	add_to_group(GROUP)
 	health.died.connect(_on_died)
 	if character == null:
 		push_warning("Player has no CharacterData assigned.")

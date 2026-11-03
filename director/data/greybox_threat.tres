@@ -1,0 +1,30 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://director/threat_profile.gd" id="1_profile"]
+[ext_resource type="Script" path="res://director/spawn_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://enemies/data/chaser.tres" id="3_chaser"]
+[ext_resource type="Resource" path="res://enemies/data/charger.tres" id="4_charger"]
+
+[sub_resource type="Resource" id="Resource_chaser"]
+script = ExtResource("2_entry")
+enemy = ExtResource("3_chaser")
+weight = 3.0
+min_threat = 0.0
+
+[sub_resource type="Resource" id="Resource_charger"]
+script = ExtResource("2_entry")
+enemy = ExtResource("4_charger")
+weight = 2.0
+min_threat = 1.5
+
+[resource]
+script = ExtResource("1_profile")
+start_threat = 1.0
+threat_per_minute = 0.6
+budget_per_threat = 2.0
+base_spawn_interval = 6.0
+min_spawn_interval = 1.5
+initial_delay = 3.0
+spawn_distance_min = 18.0
+spawn_distance_max = 26.0
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_chaser"), SubResource("Resource_charger")])

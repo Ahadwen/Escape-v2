@@ -1,0 +1,104 @@
+class_name ThreatDirector
+extends Node
+## Raises threat over the level and spawns enemies to match it, off-screen
+## and near the player. Tracks the threat cost of enemies alive.
+
+signal threat_changed(threat: float)
+
+const SPAWN_ATTEMPTS: int = 12
+const RETRY_DELAY: float = 0.5
+
+@export var profile: ThreatProfile
+@export var enemy_scene: PackedScene
+@export var player: Node3D
+## Used to keep spawns off-screen.
+@export var camera: Camera3D
+
+var elapsed: float = 0.0
+var threat: float = 0.0
+var running: bool = false
+
+var _spawn_timer: float = 0.0
+var _alive: Array[Enemy] = []
+
+
+func start() -> void:
+	elapsed = 0.0
+	threat = profile.threat_at(0.0)
+	_spawn_timer = profile.initial_delay
+	running = true
+	threat_changed.emit(threat)
+
+
+## Stops spawning and the threat clock. Optionally despawns everything.
+func stop(despawn_all: bool = false) -> void:
+	running = false
+	if despawn_all:
+		for enemy: Enemy in _alive.duplicate():
+			if is_instance_valid(enemy):
+				enemy.despawn()
+		_alive.clear()
+
+
+func alive_cost() -> float:
+	var total: float = 0.0
+	for enemy: Enemy in _alive:
+		if is_instance_valid(enemy) and enemy.data != null:
+			total += enemy.data.threat_cost
+	return total
+
+
+func _physics_process(delta: float) -> void:
+	if not running:
+		return
+	elapsed += delta
+	var new_threat: float = profile.threat_at(elapsed)
+	if not is_equal_approx(new_threat, threat):
+		threat = new_threat
+		threat_changed.emit(threat)
+	_spawn_timer -= delta
+	if _spawn_timer <= 0.0:
+		_spawn_timer = profile.spawn_interval_for(threat)
+		if not _try_spawn():
+			_spawn_timer = minf(_spawn_timer, RETRY_DELAY)
+
+
+func _try_spawn() -> bool:
+	var budget_left: float = profile.budget_for(threat) - alive_cost()
+	var entry: SpawnEntry = profile.pick_entry(threat, budget_left, randf())
+	if entry == null:
+		# Budget full: not a failure, just wait for the next interval.
+		return true
+	var point: Variant = _find_spawn_point()
+	if point == null:
+		return false
+	var enemy: Enemy = enemy_scene.instantiate() as Enemy
+	enemy.data = entry.enemy
+	enemy.position = point
+	enemy.despawned.connect(_on_enemy_despawned)
+	add_child(enemy)
+	_alive.append(enemy)
+	return true
+
+
+func _find_spawn_point() -> Variant:
+	if player == null:
+		return null
+	var map: RID = player.get_world_3d().navigation_map
+	var origin: Vector3 = player.global_position
+	for i: int in SPAWN_ATTEMPTS:
+		var angle: float = randf() * TAU
+		var distance: float = randf_range(profile.spawn_distance_min, profile.spawn_distance_max)
+		var guess: Vector3 = origin + Vector3(cos(angle), 0.0, sin(angle)) * distance
+		var point: Vector3 = NavigationServer3D.map_get_closest_point(map, guess)
+		var flat: float = Vector2(point.x - origin.x, point.z - origin.z).length()
+		if flat < profile.spawn_distance_min * 0.75:
+			continue
+		if camera != null and camera.is_position_in_frustum(point + Vector3.UP):
+			continue
+		return point
+	return null
+
+
+func _on_enemy_despawned(enemy: Enemy) -> void:
+	_alive.erase(enemy)
