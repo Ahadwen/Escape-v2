@@ -17,7 +17,7 @@ extends AbilityData
 @export var speed_duration: float = 3.0
 ## Extra invulnerability after a successful parry, so follow-up hits don't
 ## land in the same instant.
-@export var success_grace: float = 0.75
+@export var success_grace: float = 0.4
 
 
 func _init() -> void:
