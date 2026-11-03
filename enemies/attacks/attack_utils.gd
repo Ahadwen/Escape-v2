@@ -74,6 +74,44 @@ static func damage(
 		target.health.take_damage(event)
 
 
+## Applies a status (stun, root, slow) to a target unless it's invulnerable.
+static func apply_status(target: Targetable, effect: StatusEffect) -> bool:
+	var host: StatusEffectHost = _host(target)
+	if host == null or host.is_invulnerable():
+		return false
+	host.apply(effect)
+	return true
+
+
+## Moves a target along a direction (pull or push) unless it's invulnerable.
+static func displace(target: Targetable, direction: Vector3, distance: float, speed: float) -> bool:
+	var host: StatusEffectHost = _host(target)
+	if host != null and host.is_invulnerable():
+		return false
+	var movement: ActorMovement = target.body.get_node_or_null("ActorMovement") as ActorMovement
+	if movement == null or distance <= 0.05:
+		return false
+	movement.start_override(DashMovement.new(direction, distance, speed))
+	return true
+
+
+static func _host(target: Targetable) -> StatusEffectHost:
+	return target.body.get_node_or_null("StatusEffectHost") as StatusEffectHost
+
+
+## True if `point` is in a cone (flat) of `radius` and `angle_degrees` total.
+static func in_cone(
+	origin: Vector3, direction: Vector3, radius: float, angle_degrees: float, point: Vector3
+) -> bool:
+	var offset: Vector2 = Vector2(point.x - origin.x, point.z - origin.z)
+	if offset.length() > radius:
+		return false
+	if offset.length() < 0.5:
+		return true
+	var facing: Vector2 = Vector2(direction.x, direction.z)
+	return absf(rad_to_deg(facing.angle_to(offset))) <= angle_degrees * 0.5
+
+
 ## Damages every player-faction target within radius of center. Returns hits.
 ## Area damage (artillery, ground zones) can't be parried.
 static func damage_in_radius(

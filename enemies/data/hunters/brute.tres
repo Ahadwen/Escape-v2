@@ -1,0 +1,52 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/hunters/hunter_data.gd" id="hunter"]
+[ext_resource type="Script" path="res://enemies/hunters/hunter_ability.gd" id="ability"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/rush_ability.gd" id="rush"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/melee_strike_ability.gd" id="strike"]
+
+[sub_resource type="Resource" id="Ability_0"]
+script = ExtResource("strike")
+display_name = "Slam"
+cooldown = 5.0
+initial_cooldown = 1.0
+max_range = 3.2
+shape = 1
+radius = 3.2
+wind_up = 0.7
+recovery = 0.8
+damage = 40.0
+stun = 0.6
+
+[sub_resource type="Resource" id="Ability_1"]
+script = ExtResource("rush")
+display_name = "Charge"
+cooldown = 7.0
+initial_cooldown = 2.0
+min_range = 5.0
+max_range = 15.0
+needs_line_of_sight = true
+wind_up = 0.9
+distance = 16.0
+speed = 26.0
+width = 2.0
+damage = 45.0
+stun = 0.8
+recovery = 0.9
+
+[resource]
+script = ExtResource("hunter")
+sight_range = 999.0
+lose_interest_range = 0.0
+speed_gain_over_life = 0.0
+despawn_warning = 2.0
+id = &"brute"
+display_name = "Brute"
+color = Color(0.75, 0.3, 0.25, 1)
+body_scale = Vector3(1.5, 1.25, 1.5)
+move_speed = 8.5
+speed_floor_ratio = 1.12
+lifetime_min = 35.0
+lifetime_max = 55.0
+threat_cost = 1.0
+abilities = Array[ExtResource("ability")]([SubResource("Ability_0"), SubResource("Ability_1")])

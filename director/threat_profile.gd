@@ -43,6 +43,14 @@ extends Resource
 @export var speed_per_threat: float = 0.03
 @export var max_speed_multiplier: float = 1.3
 
+@export_group("Field size")
+## Most enemies on the field at the level's starting threat ...
+@export var max_alive_start: int = 0
+## ... plus this many per point of threat above it ...
+@export var max_alive_per_threat: float = 0.0
+## ... up to this. 0 = no count limit (only the threat budget applies).
+@export var max_alive_cap: int = 0
+
 @export_group("Enemies")
 @export var entries: Array[SpawnEntry] = []
 
@@ -76,6 +84,14 @@ func speed_multiplier_for(threat: float) -> float:
 	return minf(1.0 + extra, max_speed_multiplier)
 
 
+## How many enemies may be on the field (0 = unlimited).
+func max_alive_for(threat: float) -> int:
+	if max_alive_cap <= 0:
+		return 0
+	var extra: float = maxf(threat - level_start_threat(), 0.0) * max_alive_per_threat
+	return mini(max_alive_start + floori(extra), max_alive_cap)
+
+
 func spawn_interval_for(threat: float) -> float:
 	if threat <= 0.0:
 		return base_spawn_interval
@@ -93,13 +109,15 @@ func spawn_angle(heading: Vector3, bias_roll: float, spread_roll: float) -> floa
 
 ## Picks an entry allowed at this threat that fits in budget_left, weighted.
 ## roll is in [0, 1). Returns null if nothing fits.
-func pick_entry(threat: float, budget_left: float, roll: float) -> SpawnEntry:
+func pick_entry(
+	threat: float, budget_left: float, roll: float, exclude_ids: Array[StringName] = []
+) -> SpawnEntry:
 	var allowed: Array[SpawnEntry] = []
 	var total: float = 0.0
 	for entry: SpawnEntry in entries:
-		if entry.enemy == null or entry.weight <= 0.0:
+		if entry.enemy == null or entry.weight <= 0.0 or entry.enemy.id in exclude_ids:
 			continue
-		if entry.min_threat <= threat and entry.cost() <= budget_left:
+		if entry.allowed_at(threat) and entry.cost() <= budget_left:
 			allowed.append(entry)
 			total += entry.weight
 	if allowed.is_empty():

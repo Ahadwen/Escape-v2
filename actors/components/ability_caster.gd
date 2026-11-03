@@ -55,14 +55,22 @@ func get_ability(slot: int) -> AbilityData:
 	return slots[slot].data if slot >= 0 and slot < SLOT_COUNT else null
 
 
-func try_cast(slot: int, aim: AimData) -> bool:
+## Whether a slot could be cast right now (ignoring cooldowns).
+func can_cast(slot: int) -> bool:
 	if slot < 0 or slot >= SLOT_COUNT:
 		return false
+	if status != null and status.is_stunned():
+		return false
+	var data: AbilityData = slots[slot].data
+	if data == null:
+		return false
+	return not (data.requires_free_movement and movement != null and movement.has_override())
+
+
+func try_cast(slot: int, aim: AimData) -> bool:
+	if not can_cast(slot):
+		return false
 	var ability_slot: AbilitySlot = slots[slot]
-	if ability_slot.data == null:
-		return false
-	if ability_slot.data.requires_free_movement and movement != null and movement.has_override():
-		return false
 	update_aim(aim)
 	_refresh_haste()
 	if not ability_slot.is_ready():

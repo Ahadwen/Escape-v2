@@ -1,0 +1,41 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/hunters/hunter_data.gd" id="hunter"]
+[ext_resource type="Script" path="res://enemies/hunters/hunter_ability.gd" id="ability"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/zoom_ability.gd" id="zoom"]
+
+[sub_resource type="Resource" id="Ability_0"]
+script = ExtResource("zoom")
+display_name = "Zoom"
+cooldown = 0.0
+initial_cooldown = 0.8
+max_range = 999.0
+aim_time = 0.4
+start_speed = 6.0
+max_speed = 24.0
+acceleration = 30.0
+deceleration = 14.0
+turn_rate_degrees = 55.0
+drive_time = 1.6
+recovery = 0.6
+
+[resource]
+script = ExtResource("hunter")
+sight_range = 999.0
+lose_interest_range = 0.0
+speed_gain_over_life = 0.0
+despawn_warning = 2.0
+id = &"spinner"
+display_name = "Spinner"
+color = Color(0.95, 0.75, 0.2, 1)
+body_scale = Vector3(2.2, 0.7, 2.2)
+move_speed = 7.0
+speed_floor_ratio = 1.0
+spins = true
+contact_damage = 30.0
+contact_cooldown = 0.8
+contact_knockback = 3.0
+lifetime_min = 30.0
+lifetime_max = 50.0
+threat_cost = 1.0
+abilities = Array[ExtResource("ability")]([SubResource("Ability_0")])

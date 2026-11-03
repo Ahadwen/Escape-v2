@@ -9,6 +9,8 @@ var duration: float
 var remaining: float
 ## While active, the actor can't move or act on its own.
 var stuns: bool = false
+## While active, the actor can't move on its own (but can act).
+var roots: bool = false
 ## While active, the actor takes no damage.
 var invulnerable: bool = false
 ## Enemy projectiles and bodies pass through the actor (Q♠ Phase).

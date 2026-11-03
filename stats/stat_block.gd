@@ -29,6 +29,25 @@ func get_value(stat: StringName) -> float:
 	return _cache[stat]
 
 
+## The stat without modifiers whose source starts with `prefix` (e.g. "status:"
+## for temporary boosts and slows). Used for "sustained" speed. Not cached.
+func get_value_excluding(stat: StringName, prefix: String) -> float:
+	var flat: float = 0.0
+	var percent_add: float = 0.0
+	var multiplier: float = 1.0
+	for modifier: StatModifier in _modifiers:
+		if modifier.stat != stat or String(modifier.source).begins_with(prefix):
+			continue
+		match modifier.type:
+			StatModifier.Type.FLAT:
+				flat += modifier.value
+			StatModifier.Type.PERCENT_ADD:
+				percent_add += modifier.value
+			StatModifier.Type.PERCENT_MULT:
+				multiplier *= 1.0 + modifier.value
+	return (get_base(stat) + flat) * maxf(0.0, 1.0 + percent_add) * multiplier
+
+
 func add_modifier(modifier: StatModifier) -> void:
 	_modifiers.append(modifier)
 	_invalidate(modifier.stat)

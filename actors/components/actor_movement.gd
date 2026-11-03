@@ -29,6 +29,11 @@ const WAYPOINT_REACHED_DISTANCE: float = 0.1
 var mode: Mode = Mode.IDLE
 ## Scales this actor's movement in time (1 = normal). Enemies follow EnemyTime.
 var time_scale: float = 1.0
+## While true, normal movement is suppressed (stun, root). Orders are kept and
+## resume afterwards; overrides (knockbacks, pulls) still move the actor.
+var rooted: bool = false
+## Minimum move speed (hunters' pursuit rule). 0 = none.
+var speed_floor: float = 0.0
 
 var _direction: Vector3 = Vector3.ZERO
 var _path: PackedVector3Array = PackedVector3Array()
@@ -108,9 +113,10 @@ func stop() -> void:
 
 
 func current_speed() -> float:
+	var speed: float = move_speed
 	if stats != null and stats.block.has_base(StatIds.MOVE_SPEED):
-		return stats.get_value(StatIds.MOVE_SPEED)
-	return move_speed
+		speed = stats.get_value(StatIds.MOVE_SPEED)
+	return maxf(speed, speed_floor)
 
 
 ## Flat world direction the actor is facing.
@@ -141,6 +147,8 @@ func _physics_process(delta: float) -> void:
 	var desired: Vector3
 	if _override != null:
 		desired = _override.compute_velocity(delta * time_scale) * time_scale
+	elif rooted:
+		desired = Vector3.ZERO
 	else:
 		desired = _desired_velocity() * time_scale
 	body.velocity.x = desired.x

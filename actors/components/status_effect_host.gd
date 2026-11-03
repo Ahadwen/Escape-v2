@@ -45,6 +45,14 @@ func is_stunned() -> bool:
 	return false
 
 
+## Rooted or stunned: can't move on its own.
+func is_rooted() -> bool:
+	for effect: StatusEffect in _effects.values():
+		if effect.roots or effect.stuns:
+			return true
+	return false
+
+
 func is_phased() -> bool:
 	for effect: StatusEffect in _effects.values():
 		if effect.phased:

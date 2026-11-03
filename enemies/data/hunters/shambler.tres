@@ -1,0 +1,34 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/hunters/hunter_data.gd" id="hunter"]
+[ext_resource type="Script" path="res://enemies/hunters/hunter_ability.gd" id="ability"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/melee_strike_ability.gd" id="strike"]
+
+[sub_resource type="Resource" id="Ability_0"]
+script = ExtResource("strike")
+display_name = "Strike"
+cooldown = 1.0
+initial_cooldown = 0.5
+max_range = 2.4
+shape = 0
+radius = 2.0
+angle_degrees = 100.0
+wind_up = 0.55
+recovery = 0.6
+damage = 30.0
+
+[resource]
+script = ExtResource("hunter")
+sight_range = 999.0
+lose_interest_range = 0.0
+speed_gain_over_life = 0.0
+despawn_warning = 2.0
+id = &"shambler"
+display_name = "Shambler"
+color = Color(0.5, 0.55, 0.45, 1)
+move_speed = 6.5
+speed_floor_ratio = 0.85
+lifetime_min = 30.0
+lifetime_max = 45.0
+threat_cost = 1.0
+abilities = Array[ExtResource("ability")]([SubResource("Ability_0")])

@@ -26,6 +26,8 @@ var _spawn_timer: float = 0.0
 
 var _alive: Array[Enemy] = []
 var _debug_index: int = 0
+## Id of the last enemy to leave (not re-picked straight away).
+var _last_departed: StringName = &""
 var _far_check_timer: float = FAR_CHECK_INTERVAL
 
 
@@ -106,8 +108,16 @@ func _physics_process(delta: float) -> void:
 
 
 func _try_spawn() -> bool:
+	var cap: int = profile.max_alive_for(threat)
+	if cap > 0 and _alive_count() >= cap:
+		return true
 	var budget_left: float = profile.budget_for(threat) - alive_cost()
-	var entry: SpawnEntry = profile.pick_entry(threat, budget_left, randf())
+	var exclude: Array[StringName] = _alive_ids()
+	if _last_departed != &"":
+		exclude.append(_last_departed)
+	var entry: SpawnEntry = profile.pick_entry(threat, budget_left, randf(), exclude)
+	if entry == null and not exclude.is_empty():
+		entry = profile.pick_entry(threat, budget_left, randf(), _alive_ids())
 	if entry == null:
 		# Budget full: not a failure, just wait for the next interval.
 		return true
@@ -164,5 +174,23 @@ func _despawn_far_enemies() -> void:
 			enemy.despawn()
 
 
+func _alive_count() -> int:
+	var count: int = 0
+	for enemy: Enemy in _alive:
+		if is_instance_valid(enemy):
+			count += 1
+	return count
+
+
+func _alive_ids() -> Array[StringName]:
+	var ids: Array[StringName] = []
+	for enemy: Enemy in _alive:
+		if is_instance_valid(enemy) and enemy.data != null:
+			ids.append(enemy.data.id)
+	return ids
+
+
 func _on_enemy_despawned(enemy: Enemy) -> void:
 	_alive.erase(enemy)
+	if enemy.data != null:
+		_last_departed = enemy.data.id

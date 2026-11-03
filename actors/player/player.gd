@@ -34,6 +34,10 @@ func _ready() -> void:
 	abilities.set_abilities(character.get_abilities())
 
 
+func _physics_process(_delta: float) -> void:
+	movement.rooted = status.is_rooted()
+
+
 func _on_died() -> void:
 	is_dead = true
 	controller.enabled = false

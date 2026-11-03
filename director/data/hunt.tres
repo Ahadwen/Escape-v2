@@ -1,0 +1,55 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://director/threat_profile.gd" id="profile"]
+[ext_resource type="Script" path="res://director/spawn_entry.gd" id="entry"]
+[ext_resource type="Resource" path="res://enemies/data/hunters/shambler.tres" id="h_shambler"]
+[ext_resource type="Resource" path="res://enemies/data/hunters/brute.tres" id="h_brute"]
+[ext_resource type="Resource" path="res://enemies/data/hunters/spinner.tres" id="h_spinner"]
+[ext_resource type="Resource" path="res://enemies/data/hunters/harpooner.tres" id="h_harpooner"]
+
+[sub_resource type="Resource" id="Entry_shambler"]
+script = ExtResource("entry")
+enemy = ExtResource("h_shambler")
+weight = 3.0
+min_threat = 0.0
+max_threat = 3.5
+
+[sub_resource type="Resource" id="Entry_brute"]
+script = ExtResource("entry")
+enemy = ExtResource("h_brute")
+weight = 2.0
+min_threat = 2.0
+max_threat = 0.0
+
+[sub_resource type="Resource" id="Entry_spinner"]
+script = ExtResource("entry")
+enemy = ExtResource("h_spinner")
+weight = 2.0
+min_threat = 2.5
+max_threat = 0.0
+
+[sub_resource type="Resource" id="Entry_harpooner"]
+script = ExtResource("entry")
+enemy = ExtResource("h_harpooner")
+weight = 2.0
+min_threat = 3.0
+max_threat = 0.0
+
+[resource]
+script = ExtResource("profile")
+start_threat = 2.0
+threat_per_minute = 1.2
+level_start_step = 1.0
+level_rate_step = 0.2
+budget_per_threat = 100.0
+base_spawn_interval = 5.0
+min_spawn_interval = 2.0
+initial_delay = 1.0
+spawn_distance_min = 22.0
+spawn_distance_max = 30.0
+ahead_bias = 0.65
+despawn_distance = 70.0
+max_alive_start = 2
+max_alive_per_threat = 0.5
+max_alive_cap = 5
+entries = Array[ExtResource("entry")]([SubResource("Entry_shambler"), SubResource("Entry_brute"), SubResource("Entry_spinner"), SubResource("Entry_harpooner")])

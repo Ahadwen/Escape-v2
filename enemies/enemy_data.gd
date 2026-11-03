@@ -25,6 +25,8 @@ extends Resource
 @export var contact_damage: float = 0.0
 ## Seconds before the same target can take contact damage again.
 @export var contact_cooldown: float = 0.7
+## Contact also pushes the target away this far (0 = no push).
+@export var contact_knockback: float = 0.0
 
 @export_group("Awareness")
 ## Notices targets within this distance.

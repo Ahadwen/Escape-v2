@@ -192,3 +192,6 @@ func _contact_damage(delta: float) -> void:
 			continue
 		_contact_cooldowns[id] = data.contact_cooldown
 		AttackUtils.damage(target, scaled_damage(data.contact_damage), data.damage_type, self)
+		if data.contact_knockback > 0.0:
+			var away: Vector3 = target.world_position() - global_position
+			AttackUtils.displace(target, away, data.contact_knockback, 18.0)
