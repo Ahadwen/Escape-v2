@@ -1,9 +1,15 @@
 class_name CardView
 extends Button
-## A card as a selectable button: rank+suit, stats and effect text.
+## A card as a button: rank+suit, stats and effect text. Can be dragged onto
+## another CardView to move/swap (mouse and touch).
+
+## Dragged from `from` onto `to` (indices set by the owner).
+signal dropped(from: int, to: int)
 
 const SIZE: Vector2 = Vector2(150, 190)
 
+## Position of this view in its owner's list.
+var index: int = -1
 var stack: CardStack:
 	set(value):
 		stack = value
@@ -23,6 +29,27 @@ func _ready() -> void:
 	alignment = HORIZONTAL_ALIGNMENT_CENTER
 	focus_mode = Control.FOCUS_ALL
 	_refresh()
+
+
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	if stack == null:
+		return null
+	var preview: Label = Label.new()
+	preview.text = stack.card.label()
+	preview.add_theme_font_size_override("font_size", 32)
+	preview.modulate = stack.card.color().lerp(Color.WHITE, 0.4)
+	set_drag_preview(preview)
+	return {"card_view_index": index}
+
+
+func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
+	return data is Dictionary and (data as Dictionary).has("card_view_index")
+
+
+func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	var from: int = (data as Dictionary)["card_view_index"]
+	if from != index:
+		dropped.emit(from, index)
 
 
 func _refresh() -> void:

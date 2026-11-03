@@ -1,9 +1,10 @@
 class_name CardPickupScreen
 extends Control
 ## Shown when you pick up a card (the game pauses). Your 5 slots and the new
-## card: select one card, then another to swap them; discard; Done. Whatever
-## is left in the "new card" spot when you're done is discarded.
-## An A♦ in your slots can upgrade the offered card one rank.
+## card, which waits in its own spot. Mouse/touch: drag a card onto another
+## spot to move or swap. Gamepad (or clicking): A/click a card to pick it up,
+## move to a destination, A/click to drop or swap. Discard; Done. Whatever is
+## left in the "new card" spot is discarded. An A♦ can upgrade the new card.
 
 signal closed
 
@@ -51,8 +52,10 @@ func _ready() -> void:
 			gap.custom_minimum_size = Vector2(28, 0)
 			row.add_child(gap)
 		var view: CardView = CardView.new()
+		view.index = i
 		view.empty_text = "New card" if i == NEW_INDEX else "Slot %d\nempty" % (i + 1)
 		view.pressed.connect(_on_card_pressed.bind(i))
+		view.dropped.connect(_on_card_dropped)
 		row.add_child(view)
 		_views.append(view)
 	_hint = Label.new()
@@ -92,14 +95,7 @@ func open(player: Player, card: CardData, count: int = 1) -> void:
 	else:
 		get_tree().paused = true
 	_refresh()
-	# Default: put it in the first empty slot if there is one.
-	var empty: int = player.cards.first_empty_slot()
-	if empty != -1:
-		_swap(empty, NEW_INDEX)
-		_views[empty].grab_focus()
-	else:
-		_views[NEW_INDEX].grab_focus()
-	_refresh()
+	_views[NEW_INDEX].grab_focus()
 
 
 func _make_button(parent: Node, label: String, handler: Callable) -> Button:
@@ -121,6 +117,13 @@ func _on_card_pressed(index: int) -> void:
 		_swap(_selected, index)
 		_selected = -1
 	_refresh()
+
+
+func _on_card_dropped(from: int, to: int) -> void:
+	_swap(from, to)
+	_selected = -1
+	_refresh()
+	_views[to].grab_focus()
 
 
 func _swap(a: int, b: int) -> void:
@@ -186,11 +189,15 @@ func _refresh() -> void:
 		_views[i].selected = i == _selected
 	var leftover: CardStack = _working[NEW_INDEX]
 	if _selected != -1:
-		_hint.text = "Select another card to swap with, or discard it."
+		var held: String = _working[_selected].card.label()
+		_hint.text = "%s picked up: choose where to drop it (swaps), or discard it." % held
 	elif leftover != null:
-		_hint.text = "%s will be discarded when you're done." % leftover.card.label()
+		_hint.text = (
+			"Drag %s into a slot (or select it, then a slot). Left here, it's discarded."
+			% leftover.card.label()
+		)
 	else:
-		_hint.text = "Select a card to move it."
+		_hint.text = "Drag or select a card to move it."
 	var offered_here: bool = _working.has(_offered)
 	var upgradable: bool = (
 		_upgrade_ace_slot() != -1 and offered_here and _upgraded(_offered) != null

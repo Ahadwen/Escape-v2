@@ -15,6 +15,7 @@ var _window_left: float = 0.0
 var _boost_left: float = 0.0
 var _succeeded: bool = false
 var _modifier: StatModifier
+var _hold: HoldMovement
 
 
 func _init(p_context: CastContext, data: ParryAbilityData) -> void:
@@ -29,6 +30,10 @@ func start() -> void:
 	_window_left = _data.window
 	context.status.apply(InvulnerableEffect.new(_data.window, PARRY_ID))
 	context.health.damage_negated.connect(_on_damage_negated)
+	# Rooted while parrying.
+	if context.movement != null:
+		_hold = HoldMovement.new(_data.window)
+		context.movement.start_override(_hold)
 	FxRing.spawn(
 		context.caster.get_parent(), context.origin(), WINDOW_COLOR, 0.9, 1.3, _data.window
 	)
@@ -55,6 +60,7 @@ func _on_damage_negated(event: DamageEvent) -> void:
 	if _succeeded or not event.parryable or not context.status.has_effect(PARRY_ID):
 		return
 	_succeeded = true
+	_release_hold()
 	context.status.remove(PARRY_ID)
 	context.status.apply(InvulnerableEffect.new(_data.success_grace, GRACE_ID))
 	var center: Vector3 = context.origin()
@@ -81,9 +87,16 @@ func _on_damage_negated(event: DamageEvent) -> void:
 	parried.emit()
 
 
+func _release_hold() -> void:
+	if _hold != null:
+		_hold.cancel()
+		_hold = null
+
+
 func _end() -> void:
 	if finished:
 		return
+	_release_hold()
 	if context.health != null and context.health.damage_negated.is_connected(_on_damage_negated):
 		context.health.damage_negated.disconnect(_on_damage_negated)
 	if context.status != null:

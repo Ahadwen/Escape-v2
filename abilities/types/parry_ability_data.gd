@@ -1,6 +1,7 @@
 class_name ParryAbilityData
 extends AbilityData
-## Brief parry window: no damage taken. If anything hits during it, the parry
+## Brief parry window: rooted in place and no damage taken. If anything hits
+## during it, the parry
 ## succeeds: nearby enemies are knocked back and stunned and the caster gets a
 ## big move-speed boost.
 
@@ -21,6 +22,7 @@ extends AbilityData
 
 func _init() -> void:
 	targeting = Targeting.SELF
+	requires_free_movement = true
 
 
 func create_execution(context: CastContext) -> AbilityExecution:
