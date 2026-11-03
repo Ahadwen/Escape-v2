@@ -10,6 +10,12 @@ const WANDER_RADIUS: float = 5.0
 const WANDER_INTERVAL_MIN: float = 2.0
 const WANDER_INTERVAL_MAX: float = 4.0
 const TELEGRAPH_COLOR: Color = Color(1.0, 0.25, 0.2, 0.55)
+## Never predict further ahead than this when intercepting.
+const MAX_LEAD_TIME: float = 1.2
+## Beyond this distance, approach from the enemy's own flank angle.
+const FLANK_START_DISTANCE: float = 6.0
+const MAX_FLANK_ANGLE_DEGREES: float = 70.0
+const MAX_FLANK_OFFSET: float = 6.0
 
 var enemy: Enemy
 var target: Targetable
@@ -19,6 +25,8 @@ var telegraph: AimIndicator
 var _retarget_timer: float = 0.0
 var _repath_timer: float = 0.0
 var _wander_timer: float = 0.0
+## Each enemy's preferred approach angle, so packs surround rather than queue.
+var _flank_angle: float = 0.0
 
 
 func setup(p_enemy: Enemy) -> void:
@@ -26,6 +34,7 @@ func setup(p_enemy: Enemy) -> void:
 
 
 func _ready() -> void:
+	_flank_angle = deg_to_rad(randf_range(-MAX_FLANK_ANGLE_DEGREES, MAX_FLANK_ANGLE_DEGREES))
 	telegraph = AimIndicator.new()
 	telegraph.color = TELEGRAPH_COLOR
 	telegraph.top_level = true
@@ -71,7 +80,57 @@ func chase(delta: float) -> void:
 	_repath_timer -= delta
 	if _repath_timer <= 0.0:
 		_repath_timer = REPATH_INTERVAL
-		enemy.movement.move_to(target.world_position())
+		enemy.movement.move_to(chase_point())
+
+
+## Where to run to: ahead of the target (interception), offset to this
+## enemy's flank while still far away so packs close in from several sides.
+func chase_point() -> Vector3:
+	var from: Vector3 = enemy.global_position
+	var distance: float = distance_to_target()
+	var speed: float = maxf(enemy.movement.current_speed(), 0.1)
+	var lead: float = clampf(distance / speed, 0.0, MAX_LEAD_TIME)
+	var predicted: Vector3 = target.predicted_position(lead)
+	return flank_point(from, predicted, _flank_angle, distance)
+
+
+## Pure helper: point near `goal`, rotated around it toward the enemy's flank
+## angle. No offset once within FLANK_START_DISTANCE.
+static func flank_point(
+	from: Vector3, goal: Vector3, flank_angle: float, distance: float
+) -> Vector3:
+	if distance <= FLANK_START_DISTANCE:
+		return goal
+	var to_enemy: Vector3 = Vector3(from.x - goal.x, 0.0, from.z - goal.z)
+	if to_enemy.length_squared() < 0.0001:
+		return goal
+	var side: Vector3 = to_enemy.normalized().rotated(Vector3.UP, flank_angle)
+	var offset: float = minf((distance - FLANK_START_DISTANCE) * 0.5, MAX_FLANK_OFFSET)
+	return goal + side * offset
+
+
+## Direction toward where the target will be after `lead` seconds.
+func direction_to_predicted(lead: float) -> Vector3:
+	if target == null:
+		return Vector3.ZERO
+	var offset: Vector3 = target.predicted_position(lead) - enemy.global_position
+	offset.y = 0.0
+	return offset.normalized() if offset.length_squared() > 0.0001 else direction_to_target()
+
+
+## Damages each PLAYER-faction target within radius not already in `already_hit`
+## (which is updated). Used by dash/lunge attacks.
+func hit_targets_in_radius(radius: float, already_hit: Array[Targetable]) -> void:
+	var from: Vector3 = enemy.global_position
+	for node: Node in enemy.get_tree().get_nodes_in_group(Targetable.GROUP):
+		var candidate: Targetable = node as Targetable
+		if candidate == null or candidate.faction != Targetable.Faction.PLAYER:
+			continue
+		if candidate in already_hit or not candidate.is_targetable():
+			continue
+		if candidate.flat_distance_to(from) <= radius:
+			already_hit.append(candidate)
+			deal_damage(candidate)
 
 
 func wander(delta: float) -> void:

@@ -32,7 +32,7 @@ func think(delta: float) -> void:
 			if _timer <= 0.0:
 				_begin_charge()
 		State.CHARGING:
-			_check_hits()
+			hit_targets_in_radius(_data.hit_radius, _hit_targets)
 			if _dash == null or _dash.finished:
 				_end_charge()
 		State.RECOVER:
@@ -50,7 +50,8 @@ func interrupt() -> void:
 
 func _begin_telegraph() -> void:
 	enemy.movement.stop()
-	_charge_direction = direction_to_target()
+	# Lead the target a little; the line then stays locked so it can be dodged.
+	_charge_direction = direction_to_predicted(_data.telegraph_time * 0.5)
 	if _charge_direction == Vector3.ZERO:
 		return
 	enemy.movement.face_towards(_charge_direction)
@@ -65,19 +66,6 @@ func _begin_charge() -> void:
 	_dash = DashMovement.new(_charge_direction, _data.charge_distance, _data.charge_speed)
 	enemy.movement.start_override(_dash)
 	state = State.CHARGING
-
-
-func _check_hits() -> void:
-	var from: Vector3 = enemy.global_position
-	for node: Node in enemy.get_tree().get_nodes_in_group(Targetable.GROUP):
-		var candidate: Targetable = node as Targetable
-		if candidate == null or candidate.faction != Targetable.Faction.PLAYER:
-			continue
-		if candidate in _hit_targets or not candidate.is_targetable():
-			continue
-		if candidate.flat_distance_to(from) <= _data.hit_radius:
-			_hit_targets.append(candidate)
-			deal_damage(candidate)
 
 
 func _end_charge() -> void:

@@ -4,14 +4,17 @@
 
 [resource]
 script = ExtResource("1_chaser")
-attack_range = 1.4
-wind_up = 0.35
+lunge_trigger_range = 4.0
+wind_up = 0.3
+lunge_distance = 4.5
+lunge_speed = 20.0
+hit_radius = 1.0
 id = &"chaser"
 display_name = "Chaser"
 color = Color(0.55, 0.3, 0.75, 1)
 move_speed = 6.5
 damage = 30.0
-attack_cooldown = 1.2
+attack_cooldown = 1.0
 sight_range = 18.0
 lose_interest_range = 0.0
 lifetime_min = 15.0

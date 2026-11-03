@@ -15,6 +15,13 @@ const GROUP: StringName = &"targetables"
 ## Optional. A dead target is no longer targetable.
 @export var health: HealthComponent
 
+## Flat velocity, measured from movement each physics frame (works for
+## anything, not just physics bodies).
+var velocity: Vector3 = Vector3.ZERO
+
+var _last_position: Vector3 = Vector3.ZERO
+var _has_last_position: bool = false
+
 
 ## Picks the highest-priority, then nearest, candidate of a faction within
 ## max_range (flat distance) of from.
@@ -52,6 +59,22 @@ static func find_best(
 
 func _enter_tree() -> void:
 	add_to_group(GROUP)
+
+
+func _physics_process(delta: float) -> void:
+	if body == null or delta <= 0.0:
+		return
+	var position: Vector3 = body.global_position
+	if _has_last_position:
+		var moved: Vector3 = (position - _last_position) / delta
+		velocity = Vector3(moved.x, 0.0, moved.z)
+	_last_position = position
+	_has_last_position = true
+
+
+## Where this target will be after `seconds` if it keeps its current velocity.
+func predicted_position(seconds: float) -> Vector3:
+	return world_position() + velocity * seconds
 
 
 func is_targetable() -> bool:
