@@ -14,7 +14,7 @@ Each level is **infinite, procedurally generated terrain** that streams in aroun
 
 | Topic | Rule |
 |---|---|
-| Combat | The player has no damage output. Abilities may affect enemies (slow, stun, root, knockback, blind, decoy/taunt, etc.) but never kill them. |
+| Combat | The player has no damage output. Abilities may affect enemies (slow, stun, root, knockback, blind, decoy/taunt, etc.) but never kill them. **Nothing the player has (abilities, cards, set bonuses) may harm enemies or shorten their lifetime**: control exists to help you escape, not to fight by other means. |
 | Enemies | Each enemy spawns with its **own lifetime** and despawns when it expires (with a visible tell shortly before). |
 | Threat | Driven by **time** in the level. Resets at the start of each level. |
 | Difficulty curve | Each level starts at a higher baseline and ramps faster than the last, **but** the start of level N+1 is noticeably easier than the end of level N — lingering is always punished, moving on is a relief. |
