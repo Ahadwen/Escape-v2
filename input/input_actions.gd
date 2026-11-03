@@ -52,6 +52,8 @@ const DEBUG_CYCLE_SCHEME: StringName = &"debug_cycle_input_scheme"
 const DEBUG_SPAWN_ENEMY: StringName = &"debug_spawn_enemy"
 # Debug builds only: get a chest's worth of loot.
 const DEBUG_GIVE_LOOT: StringName = &"debug_give_loot"
+# Debug builds only: pick any card to receive.
+const DEBUG_CARD_PICKER: StringName = &"debug_card_picker"
 
 const ABILITY_SLOT_COUNT: int = 4
 
@@ -85,6 +87,7 @@ const ALL: Array[StringName] = [
 	DEBUG_CYCLE_SCHEME,
 	DEBUG_SPAWN_ENEMY,
 	DEBUG_GIVE_LOOT,
+	DEBUG_CARD_PICKER,
 ]
 
 

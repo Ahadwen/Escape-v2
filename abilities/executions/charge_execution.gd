@@ -56,7 +56,8 @@ func physics_tick(_delta: float) -> void:
 			plough_direction(_movement.direction, center, enemy.global_position),
 			_data.plough_knockback
 		)
-		enemy.apply_status(StunEffect.new(_data.plough_stun, &"charge_plough"))
+		var stun: float = _data.plough_stun * AbilityData.duration_scale(context.stats)
+		enemy.apply_status(StunEffect.new(stun, &"charge_plough"))
 
 
 ## Shove direction for an enemy at `point` hit by a charge moving along
@@ -84,7 +85,7 @@ func cancel() -> void:
 
 
 func _on_impacted(position: Vector3) -> void:
-	var stun: float = _data.impact_stun
+	var stun: float = _data.impact_stun * AbilityData.duration_scale(context.stats)
 	AreaEffects.knock_back(
 		context.caster.get_tree(),
 		position,

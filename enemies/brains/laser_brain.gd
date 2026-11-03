@@ -68,7 +68,7 @@ func _begin_prime() -> void:
 	_beam_to = Vector3(raised_end.x, _beam_from.y, raised_end.z)
 	var length: float = Vector2(_beam_to.x - _beam_from.x, _beam_to.z - _beam_from.z).length()
 	_prime_line.show_direction(_beam_from, direction, length)
-	_timer = _data.prime_time
+	_timer = _data.prime_time * DilationField.wind_up_scale_at(enemy.global_position)
 	state = State.PRIME
 
 

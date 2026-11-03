@@ -6,8 +6,20 @@ extends RefCounted
 ## Instant abilities set finished in start(); timed and sustained ones finish
 ## later from physics_tick().
 
+## The ability's "active part" is over (e.g. the parry window closed). Fired
+## at most once; if an execution never fires it, it fires when it finishes.
+signal active_ended
+
 var context: CastContext
 var finished: bool = false
+
+var _active_ended: bool = false
+
+
+func end_active() -> void:
+	if not _active_ended:
+		_active_ended = true
+		active_ended.emit()
 
 
 func _init(p_context: CastContext) -> void:

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://items/card_data.gd" id="1_card"]
+[ext_resource type="Script" path="res://items/card_stat.gd" id="2_stat"]
+
+[sub_resource type="Resource" id="Stat_0"]
+script = ExtResource("2_stat")
+stat = &"recipe_discount"
+value = 10.0
+
+[sub_resource type="Resource" id="Stat_1"]
+script = ExtResource("2_stat")
+stat = &"gold_per_pickup"
+value = 5.0
+
+[sub_resource type="Resource" id="Stat_2"]
+script = ExtResource("2_stat")
+stat = &"extra_recipe_offers"
+value = 1.0
+
+[sub_resource type="Resource" id="Stat_3"]
+script = ExtResource("2_stat")
+stat = &"free_rerolls"
+value = 1.0
+
+[resource]
+script = ExtResource("1_card")
+suit = 1
+rank = 11
+title = "Patron"
+description = "Safehouses offer an extra recipe and a free reroll."
+stats = Array[ExtResource("2_stat")]([SubResource("Stat_0"), SubResource("Stat_1"), SubResource("Stat_2"), SubResource("Stat_3")])

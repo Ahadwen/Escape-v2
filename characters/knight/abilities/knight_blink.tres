@@ -19,3 +19,4 @@ targeting = 2
 cooldown = 6.0
 range_scaling = SubResource("Resource_range")
 requires_free_movement = true
+tags = PackedStringArray("movement")

@@ -45,7 +45,7 @@ func _begin_aim() -> void:
 	_aim_direction = direction_to_predicted(lead + _data.aim_time)
 	enemy.movement.face_towards(_aim_direction)
 	telegraph.show_direction(enemy.global_position, _aim_direction, 2.5)
-	_timer = _data.aim_time
+	_timer = _data.aim_time * DilationField.wind_up_scale_at(enemy.global_position)
 	state = State.AIM
 
 

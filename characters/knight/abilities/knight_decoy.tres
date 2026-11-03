@@ -19,3 +19,4 @@ id = &"knight_decoy"
 display_name = "Decoy"
 targeting = 1
 cooldown = 14.0
+tags = PackedStringArray("summon")

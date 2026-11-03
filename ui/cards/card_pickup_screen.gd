@@ -20,6 +20,7 @@ var _views: Array[CardView] = []
 var _title: Label
 var _hint: Label
 var _upgrade_button: Button
+var _absorb_button: Button
 var _discard_button: Button
 var _done_button: Button
 
@@ -66,6 +67,7 @@ func _ready() -> void:
 	buttons.add_theme_constant_override("separation", 12)
 	column.add_child(buttons)
 	_upgrade_button = _make_button(buttons, "Use A♦: upgrade", _on_upgrade)
+	_absorb_button = _make_button(buttons, "Absorb into K♦", _on_absorb)
 	_discard_button = _make_button(buttons, "Discard selected", _on_discard)
 	_done_button = _make_button(buttons, "Done", _on_done)
 
@@ -83,7 +85,7 @@ func open(player: Player, card: CardData, count: int = 1) -> void:
 	_working.clear()
 	for i: int in CardInventory.SLOT_COUNT:
 		var stack: CardStack = player.cards.stack_at(i)
-		_working.append(CardStack.new(stack.card, stack.count) if stack != null else null)
+		_working.append(stack.copy() if stack != null else null)
 	_offered = CardStack.new(card, count)
 	_working.append(_offered)
 	_selected = -1
@@ -154,6 +156,27 @@ func _on_upgrade() -> void:
 	_refresh()
 
 
+func _on_absorb() -> void:
+	var king: int = _absorb_slot()
+	var at: int = _working.find(_offered)
+	if king == -1 or at == -1 or _offered.card.tier() != 1:
+		return
+	_working[king].bonus_stats.append_array(_offered.card.stats)
+	_title.text = "%s absorbed into K♦" % _offered.card.label()
+	_working[at] = null
+	_offered = null
+	_refresh()
+
+
+## Slot index (working copy) of a K♦ Absorb card, or -1.
+func _absorb_slot() -> int:
+	for i: int in CardInventory.SLOT_COUNT:
+		var stack: CardStack = _working[i]
+		if stack != null and stack.card.effect is AbsorbEffect:
+			return i
+	return -1
+
+
 func _on_done() -> void:
 	_player.cards.replace_all(_working.slice(0, CardInventory.SLOT_COUNT))
 	visible = false
@@ -203,5 +226,9 @@ func _refresh() -> void:
 		_upgrade_ace_slot() != -1 and offered_here and _upgraded(_offered) != null
 	)
 	_upgrade_button.visible = _upgrade_ace_slot() != -1
+	var can_absorb: bool = (
+		_absorb_slot() != -1 and _offered != null and offered_here and _offered.card.tier() == 1
+	)
+	_absorb_button.visible = can_absorb
 	_upgrade_button.disabled = not upgradable
 	_discard_button.disabled = _selected == -1

@@ -14,3 +14,4 @@ display_name = "Unstoppable Charge"
 targeting = 2
 cooldown = 30.0
 requires_free_movement = true
+tags = PackedStringArray("movement", "ultimate")

@@ -11,6 +11,8 @@ var remaining: float
 var stuns: bool = false
 ## While active, the actor takes no damage.
 var invulnerable: bool = false
+## Enemy projectiles and bodies pass through the actor (Q♠ Phase).
+var phased: bool = false
 ## If true, the host calls tick_host every physics frame.
 var ticks_with_host: bool = false
 

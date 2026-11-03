@@ -5,6 +5,7 @@ extends Node
 
 signal threat_changed(threat: float)
 
+const GROUP: StringName = &"threat_director"
 const SPAWN_ATTEMPTS: int = 12
 const RETRY_DELAY: float = 0.5
 const FAR_CHECK_INTERVAL: float = 1.0
@@ -27,11 +28,20 @@ var _far_check_timer: float = FAR_CHECK_INTERVAL
 
 func start() -> void:
 	EnemyTime.reset()
+	DilationField.clear()
 	elapsed = 0.0
 	threat = profile.threat_at(0.0)
 	_spawn_timer = profile.initial_delay
 	running = true
 	threat_changed.emit(threat)
+
+
+static func find(tree: SceneTree) -> ThreatDirector:
+	return tree.get_first_node_in_group(GROUP) as ThreatDirector
+
+
+func _enter_tree() -> void:
+	add_to_group(GROUP)
 
 
 ## Stops spawning and the threat clock. Optionally despawns every enemy,

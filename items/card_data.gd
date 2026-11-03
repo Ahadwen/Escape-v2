@@ -24,6 +24,8 @@ const SUIT_COLORS: Array[Color] = [
 @export var stats: Array[CardStat] = []
 ## Aces only: what using one does.
 @export var ace_effect: AceEffect
+## T2/T3: what the card does beyond its stats.
+@export var effect: CardEffect
 
 
 static func rank_text(value: int) -> String:

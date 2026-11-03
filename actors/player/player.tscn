@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://actors/components/targetable.gd" id="9_targetable"]
 [ext_resource type="Script" path="res://actors/components/card_inventory.gd" id="10_cards"]
 [ext_resource type="Script" path="res://actors/components/wallet.gd" id="11_wallet"]
+[ext_resource type="Script" path="res://actors/components/player_events.gd" id="12_events"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -33,7 +34,7 @@ size = Vector3(0.22, 0.22, 0.4)
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
-collision_mask = 5
+collision_mask = 21
 script = ExtResource("3_player")
 character = ExtResource("6_knight")
 
@@ -83,9 +84,13 @@ stats = NodePath("../StatsComponent")
 health = NodePath("../HealthComponent")
 status = NodePath("../StatusEffectHost")
 
-[node name="CardInventory" type="Node" parent="." node_paths=PackedStringArray("stats")]
+[node name="PlayerEvents" type="Node" parent="."]
+script = ExtResource("12_events")
+
+[node name="CardInventory" type="Node" parent="." node_paths=PackedStringArray("stats", "player")]
 script = ExtResource("10_cards")
 stats = NodePath("../StatsComponent")
+player = NodePath("..")
 
 [node name="Wallet" type="Node" parent="."]
 script = ExtResource("11_wallet")

@@ -19,6 +19,11 @@ const DAMAGE_LOG_SECONDS: float = 5.0
 ## Seconds without taking damage before hp_regen kicks in.
 @export var regen_delay: float = 3.0
 
+## Called in order on every hit after mitigation: func(event, amount) -> float
+## returning the new amount. Returning <= 0 blocks the hit (counts as negated).
+## Used by blocks, front shields and "survive a lethal hit" effects.
+var interceptors: Array[Callable] = []
+
 var pool: ResourcePool = ResourcePool.new()
 var is_dead: bool = false
 ## Seconds since damage was last taken.
@@ -53,6 +58,13 @@ func take_damage(event: DamageEvent) -> float:
 		damage_negated.emit(event)
 		return 0.0
 	var amount: float = DamageResolver.resolve(event, stats.block if stats != null else null)
+	for interceptor: Callable in interceptors.duplicate():
+		if not interceptor.is_valid():
+			continue
+		amount = interceptor.call(event, amount)
+		if amount <= 0.0:
+			damage_negated.emit(event)
+			return 0.0
 	var lost: float = pool.drain(amount)
 	if lost > 0.0:
 		time_since_damage = 0.0

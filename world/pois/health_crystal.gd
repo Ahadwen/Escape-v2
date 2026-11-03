@@ -31,6 +31,7 @@ func _physics_process(_delta: float) -> void:
 			continue
 		if player.health.heal_fraction(heal_fraction) > 0.0:
 			_consume()
+			player.events.crystal_used.emit()
 			return
 
 

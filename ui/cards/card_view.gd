@@ -74,7 +74,8 @@ static func describe(card_stack: CardStack) -> String:
 	lines.append(heading)
 	if not card.title.is_empty():
 		lines.append(card.title)
-	lines.append_array(card.stat_lines())
+	for line: CardStat in card_stack.all_stats():
+		lines.append(line.describe())
 	if not card.description.is_empty():
 		lines.append(card.description)
 	return "\n".join(lines)

@@ -45,6 +45,21 @@ func is_stunned() -> bool:
 	return false
 
 
+func is_phased() -> bool:
+	for effect: StatusEffect in _effects.values():
+		if effect.phased:
+			return true
+	return false
+
+
+## True while any active speed boost (from abilities or Aces) is running.
+func has_active_speed_boost() -> bool:
+	for effect: StatusEffect in _effects.values():
+		if effect is SpeedBoostEffect and (effect as SpeedBoostEffect).active_boost:
+			return true
+	return false
+
+
 func is_invulnerable() -> bool:
 	for effect: StatusEffect in _effects.values():
 		if effect.invulnerable:

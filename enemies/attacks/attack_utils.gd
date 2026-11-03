@@ -43,6 +43,14 @@ static func point_segment_distance_flat(p: Vector3, a: Vector3, b: Vector3) -> f
 	return p2.distance_to(a2 + ab * t)
 
 
+## Phased targets (Q♠ Phase) are passed through by projectiles.
+static func is_phased(target: Targetable) -> bool:
+	var host: StatusEffectHost = (
+		target.body.get_node_or_null("StatusEffectHost") as StatusEffectHost
+	)
+	return host != null and host.is_phased()
+
+
 static func player_targets(tree: SceneTree) -> Array[Targetable]:
 	var targets: Array[Targetable] = []
 	for node: Node in tree.get_nodes_in_group(Targetable.GROUP):

@@ -42,6 +42,7 @@ func _ready() -> void:
 	_player.died.connect(_on_player_died)
 	_message.visible = false
 	_player.wallet.add(roundi(_player.stats.get_value(StatIds.GOLD_PER_LEVEL)))
+	_player.events.level_started.emit()
 	# Let the navigation map sync before the director queries it.
 	await get_tree().physics_frame
 	await get_tree().physics_frame
@@ -68,6 +69,8 @@ func _on_safehouse_entered(_who: Player) -> void:
 	if _finished:
 		return
 	_finished = true
+	_player.events.safehouse_entered.emit()
+	_player.wallet.add(roundi(_player.stats.get_value(StatIds.SAFEHOUSE_INTEREST)))
 	_director.stop(true)
 	_player.controller.enabled = false
 	_player.abilities.cancel_all()

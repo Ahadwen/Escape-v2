@@ -32,7 +32,7 @@ func _fire() -> void:
 	strike.configure(
 		point,
 		_data.strike_radius,
-		_data.strike_wind_up,
+		_data.strike_wind_up * DilationField.wind_up_scale_at(point),
 		enemy.scaled_damage(_data.damage),
 		_data.damage_type,
 		enemy,

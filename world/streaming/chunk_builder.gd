@@ -3,6 +3,9 @@ extends RefCounted
 ## Turns a ChunkLayout into nodes. Meshes, shapes and materials are shared
 ## between chunks.
 
+## Physics layer 5 ("ground"): floors, kept separate from walls (layer 1).
+const GROUND_LAYER_BIT: int = 16
+
 var crystal_scene: PackedScene
 var safehouse_scene: PackedScene
 var chest_scene: PackedScene
@@ -56,6 +59,7 @@ func _build_floor(layout: ChunkLayout, chunk_size: float) -> StaticBody3D:
 	var body: StaticBody3D = StaticBody3D.new()
 	body.name = "Floor"
 	body.position = Vector3(0.0, -0.5, 0.0)
+	body.collision_layer = GROUND_LAYER_BIT
 	var shape: CollisionShape3D = CollisionShape3D.new()
 	shape.shape = _floor_shape
 	body.add_child(shape)

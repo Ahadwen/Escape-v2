@@ -188,5 +188,7 @@ func _contact_damage(delta: float) -> void:
 		var id: int = target.get_instance_id()
 		if _contact_cooldowns.has(id) or target.flat_distance_to(global_position) > reach:
 			continue
+		if AttackUtils.is_phased(target):
+			continue
 		_contact_cooldowns[id] = data.contact_cooldown
 		AttackUtils.damage(target, scaled_damage(data.contact_damage), data.damage_type, self)

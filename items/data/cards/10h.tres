@@ -1,0 +1,27 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://items/card_data.gd" id="1_card"]
+[ext_resource type="Script" path="res://items/card_stat.gd" id="2_stat"]
+[ext_resource type="Script" path="res://items/effects/second_wind_effect.gd" id="3_effect"]
+
+[sub_resource type="Resource" id="Stat_0"]
+script = ExtResource("2_stat")
+stat = &"armour"
+value = 6.0
+
+[sub_resource type="Resource" id="Stat_1"]
+script = ExtResource("2_stat")
+stat = &"elemental_resist"
+value = 6.0
+
+[sub_resource type="Resource" id="Effect"]
+script = ExtResource("3_effect")
+
+[resource]
+script = ExtResource("1_card")
+suit = 0
+rank = 10
+title = "Second Wind"
+description = "Once per level, a lethal hit leaves you at 1 HP with 1.5 s invulnerability."
+stats = Array[ExtResource("2_stat")]([SubResource("Stat_0"), SubResource("Stat_1")])
+effect = SubResource("Effect")

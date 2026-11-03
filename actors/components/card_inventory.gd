@@ -8,11 +8,15 @@ const SLOT_COUNT: int = 5
 const STAT_SOURCE: StringName = &"cards"
 
 @export var stats: StatsComponent
+## The owning player (card effects and aces act on it).
+@export var player: Player
 
 ## One entry per slot; null = empty.
 var slots: Array[CardStack] = []
 ## For gamepad/touch: which slot's ace is selected for use.
 var selected_ace_slot: int = -1
+
+var _equipped: Array[CardEffectInstance] = []
 
 
 func _init() -> void:
@@ -97,7 +101,10 @@ func use_ace(slot: int, player: Player) -> bool:
 		return false
 	if not stack.card.ace_effect.use(player):
 		return false
+	var card: CardData = stack.card
 	consume_one(slot)
+	if player != null:
+		player.events.ace_used.emit(card)
 	return true
 
 
@@ -119,7 +126,32 @@ func _refresh() -> void:
 		if not aces.is_empty():
 			selected_ace_slot = aces[0]
 	_apply_stats()
+	_sync_effects()
 	changed.emit()
+
+
+func _physics_process(delta: float) -> void:
+	for stack: CardStack in slots:
+		if stack != null and stack.effect_instance != null:
+			stack.effect_instance.tick(delta)
+
+
+## Equips effects for newly held cards and unequips ones no longer held.
+func _sync_effects() -> void:
+	if player == null:
+		return
+	var held: Array[CardEffectInstance] = []
+	for stack: CardStack in slots:
+		if stack == null or stack.card.effect == null:
+			continue
+		if stack.effect_instance == null:
+			stack.effect_instance = stack.card.effect.create_instance()
+			stack.effect_instance.equip(player, stack.card.effect)
+		held.append(stack.effect_instance)
+	for instance: CardEffectInstance in _equipped:
+		if not instance in held:
+			instance.unequip()
+	_equipped = held
 
 
 func _apply_stats() -> void:
@@ -129,7 +161,7 @@ func _apply_stats() -> void:
 	for stack: CardStack in slots:
 		if stack == null:
 			continue
-		for line: CardStat in stack.card.stats:
+		for line: CardStat in stack.all_stats():
 			stats.block.add_modifier(
 				StatModifier.new(line.stat, StatModifier.Type.FLAT, line.value, STAT_SOURCE)
 			)

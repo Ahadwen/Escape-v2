@@ -1,5 +1,8 @@
 class_name AbilitySlot
 extends RefCounted
+
+signal active_ended
+signal became_ready
 ## One of the four ability slots: which ability it holds, its cooldown, and the
 ## execution currently running (if any).
 
@@ -11,6 +14,10 @@ var execution: AbilityExecution
 var cooldown_multiplier: float = 1.0
 ## If >= 0, the next cooldown is exactly this long instead (e.g. Flurry). Consumed.
 var next_cooldown_override: float = -1.0
+## Disabled slots can't cast (e.g. J♣ Oathbound disables the ultimate).
+var disabled: bool = false
+## Seconds since the slot last became ready (INF if never on cooldown).
+var time_since_ready: float = INF
 
 
 func _init(p_index: int) -> void:
@@ -24,7 +31,7 @@ func set_ability(ability: AbilityData) -> void:
 
 
 func is_ready() -> bool:
-	return data != null and execution == null and cooldown_remaining <= 0.0
+	return data != null and not disabled and execution == null and cooldown_remaining <= 0.0
 
 
 func is_running() -> bool:
@@ -45,6 +52,7 @@ func try_cast(context: CastContext) -> bool:
 	if new_execution == null:
 		return false
 	execution = new_execution
+	execution.active_ended.connect(func() -> void: active_ended.emit())
 	execution.start()
 	_finish_if_done()
 	return true
@@ -56,6 +64,11 @@ func tick(delta: float) -> void:
 		_finish_if_done()
 	elif cooldown_remaining > 0.0:
 		cooldown_remaining = maxf(cooldown_remaining - delta, 0.0)
+		if cooldown_remaining <= 0.0:
+			time_since_ready = 0.0
+			became_ready.emit()
+	elif time_since_ready < INF:
+		time_since_ready += delta
 
 
 func update_aim(aim: AimData) -> void:
@@ -72,8 +85,11 @@ func cancel() -> void:
 
 func _finish_if_done() -> void:
 	if execution != null and execution.finished:
+		execution.end_active()
 		execution = null
 		cooldown_remaining = _next_cooldown()
+		if cooldown_remaining <= 0.0:
+			time_since_ready = 0.0
 
 
 func _next_cooldown() -> float:

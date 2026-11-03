@@ -21,6 +21,6 @@ func start() -> void:
 	var point: Vector3 = NavigationServer3D.map_get_closest_point(map, wanted)
 	var decoy: Decoy = _data.decoy_scene.instantiate() as Decoy
 	var hp: float = _data.hp_scaling.evaluate(context.stats) if _data.hp_scaling != null else 100.0
-	decoy.configure(hp, _data.lifetime)
+	decoy.configure(hp, _data.lifetime * AbilityData.duration_scale(context.stats))
 	decoy.position = point
 	context.caster.get_parent().add_child(decoy)

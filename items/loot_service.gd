@@ -44,6 +44,9 @@ func open_chest(player: Player) -> void:
 ## Offers a card to the player.
 func offer(player: Player, card: CardData, count: int = 1) -> void:
 	card_offered.emit(card)
+	player.events.card_picked_up.emit(card)
+	if card.is_ace():
+		count += roundi(player.stats.get_value(StatIds.EXTRA_ACE_STACKS))
 	var existing: int = player.cards.stack_slot_for(card)
 	if existing != -1:
 		player.cards.add_to_stack(existing, count)

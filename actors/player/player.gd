@@ -20,6 +20,7 @@ var is_dead: bool = false
 @onready var visual: Node3D = $Visual
 @onready var cards: CardInventory = $CardInventory
 @onready var wallet: Wallet = $Wallet
+@onready var events: PlayerEvents = $PlayerEvents
 
 
 func _ready() -> void:

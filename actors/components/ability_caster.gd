@@ -2,7 +2,13 @@ class_name AbilityCaster
 extends Node
 ## Holds an actor's four ability slots, casts on request and ticks them.
 
+## Just before a cast is attempted; listeners may adjust the slot (e.g. set
+## next_cooldown_override, or temporarily boost Will).
+signal casting(slot: int, ability_slot: AbilitySlot)
 signal ability_cast(slot: int)
+## A cast's active part ended (see AbilityExecution.active_ended).
+signal ability_active_ended(slot: int, ability: AbilityData)
+signal cooldown_ready(slot: int)
 
 const SLOT_COUNT: int = 4
 
@@ -30,7 +36,14 @@ func start_flurry(casts: int, seconds: float, cooldown: float) -> void:
 
 func _init() -> void:
 	for i: int in SLOT_COUNT:
-		slots.append(AbilitySlot.new(i))
+		var ability_slot: AbilitySlot = AbilitySlot.new(i)
+		ability_slot.active_ended.connect(_on_slot_active_ended.bind(i))
+		ability_slot.became_ready.connect(func() -> void: cooldown_ready.emit(i))
+		slots.append(ability_slot)
+
+
+func _on_slot_active_ended(slot: int) -> void:
+	ability_active_ended.emit(slot, slots[slot].data)
 
 
 func set_abilities(abilities: Array[AbilityData]) -> void:
@@ -52,8 +65,11 @@ func try_cast(slot: int, aim: AimData) -> bool:
 		return false
 	update_aim(aim)
 	_refresh_haste()
+	if not ability_slot.is_ready():
+		return false
+	casting.emit(slot, ability_slot)
 	var flurry: bool = _flurry_casts > 0 and _flurry_time > 0.0
-	if flurry:
+	if flurry and ability_slot.next_cooldown_override < 0.0:
 		ability_slot.next_cooldown_override = _flurry_cooldown
 	var context: CastContext = CastContext.new(
 		caster, movement, _stat_block(), _aim, health, status

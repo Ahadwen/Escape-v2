@@ -7,6 +7,7 @@ signal parried
 
 const PARRY_ID: StringName = &"parry"
 const GRACE_ID: StringName = &"parry_grace"
+const BOOST_ID: StringName = &"parry_speed"
 const WINDOW_COLOR: Color = Color(0.6, 0.85, 1.0, 0.7)
 const SUCCESS_COLOR: Color = Color(1.0, 1.0, 1.0, 0.9)
 
@@ -14,7 +15,6 @@ var _data: ParryAbilityData
 var _window_left: float = 0.0
 var _boost_left: float = 0.0
 var _succeeded: bool = false
-var _modifier: StatModifier
 var _hold: HoldMovement
 
 
@@ -47,6 +47,7 @@ func physics_tick(delta: float) -> void:
 		return
 	_window_left -= delta
 	if _window_left <= 0.0:
+		end_active()
 		_end()
 
 
@@ -60,11 +61,12 @@ func _on_damage_negated(event: DamageEvent) -> void:
 	if _succeeded or not event.parryable or not context.status.has_effect(PARRY_ID):
 		return
 	_succeeded = true
+	end_active()
 	_release_hold()
 	context.status.remove(PARRY_ID)
 	context.status.apply(InvulnerableEffect.new(_data.success_grace, GRACE_ID))
 	var center: Vector3 = context.origin()
-	var stun: float = _data.stun_duration
+	var stun: float = _data.stun_duration * AbilityData.duration_scale(context.stats)
 	AreaEffects.knock_back(
 		context.caster.get_tree(),
 		center,
@@ -76,15 +78,11 @@ func _on_damage_negated(event: DamageEvent) -> void:
 	FxRing.spawn(
 		context.caster.get_parent(), center, SUCCESS_COLOR, 0.8, _data.knockback_radius, 0.3
 	)
-	if context.stats != null:
-		var amount: float = (
-			_data.speed_scaling.evaluate(context.stats) if _data.speed_scaling != null else 0.8
-		)
-		_modifier = StatModifier.new(
-			StatIds.MOVE_SPEED, StatModifier.Type.PERCENT_ADD, amount, &"ability:parry"
-		)
-		context.stats.add_modifier(_modifier)
-	_boost_left = _data.speed_duration
+	var amount: float = (
+		_data.speed_scaling.evaluate(context.stats) if _data.speed_scaling != null else 0.8
+	)
+	_boost_left = _data.speed_duration * AbilityData.duration_scale(context.stats)
+	context.status.apply(SpeedBoostEffect.new(amount, _boost_left, BOOST_ID, true, true))
 	parried.emit()
 
 
@@ -102,7 +100,4 @@ func _end() -> void:
 		context.health.damage_negated.disconnect(_on_damage_negated)
 	if context.status != null:
 		context.status.remove(PARRY_ID)
-	if _modifier != null and context.stats != null:
-		context.stats.remove_modifier(_modifier)
-		_modifier = null
 	finished = true

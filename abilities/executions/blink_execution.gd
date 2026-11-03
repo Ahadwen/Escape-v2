@@ -46,8 +46,9 @@ func _shockwave(at: Vector3) -> void:
 	var knockback: float = lerpf(
 		_data.shockwave_knockback_min, _data.shockwave_knockback_max, strength
 	)
-	var slow_duration: float = lerpf(
-		_data.shockwave_slow_duration_min, _data.shockwave_slow_duration_max, strength
+	var slow_duration: float = (
+		lerpf(_data.shockwave_slow_duration_min, _data.shockwave_slow_duration_max, strength)
+		* AbilityData.duration_scale(context.stats)
 	)
 	var slow: float = _data.shockwave_slow
 	AreaEffects.knock_back(

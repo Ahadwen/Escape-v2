@@ -17,6 +17,14 @@ const GOLD_PER_LEVEL: StringName = &"gold_per_level"
 const GOLD_PER_CRYSTAL: StringName = &"gold_per_crystal"
 const RECIPE_DISCOUNT: StringName = &"recipe_discount"
 const SAFEHOUSE_INTEREST: StringName = &"safehouse_interest"
+## Extra stacks when picking up an Ace (8♦ Apothecary).
+const EXTRA_ACE_STACKS: StringName = &"extra_ace_stacks"
+## Fraction added to durations of things abilities create (0.3 = +30%).
+const ABILITY_DURATION: StringName = &"ability_duration"
+## Safehouse shop (M6c).
+const EXTRA_RECIPE_OFFERS: StringName = &"extra_recipe_offers"
+const FREE_REROLLS: StringName = &"free_rerolls"
+const FORGE_WILDCARDS: StringName = &"forge_wildcards"
 
 ## Player-facing names, for card text.
 const DISPLAY_NAMES: Dictionary[StringName, String] = {
@@ -32,6 +40,11 @@ const DISPLAY_NAMES: Dictionary[StringName, String] = {
 	GOLD_PER_CRYSTAL: "gold per health crystal",
 	RECIPE_DISCOUNT: "gold off recipes",
 	SAFEHOUSE_INTEREST: "gold interest at each safehouse",
+	EXTRA_ACE_STACKS: "Ace stacks per pickup",
+	ABILITY_DURATION: "ability effect duration",
+	EXTRA_RECIPE_OFFERS: "recipe offered at safehouses",
+	FREE_REROLLS: "free reroll per safehouse",
+	FORGE_WILDCARDS: "card usable as a wildcard per safehouse",
 }
 
 
