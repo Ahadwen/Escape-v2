@@ -24,6 +24,7 @@ var _finished: bool = false
 @onready var _card_bar: CardBar = $HUD/CardBar
 @onready var _pickup_screen: CardPickupScreen = $PickupLayer/CardPickupScreen
 @onready var _pause: PauseController = $PauseController
+@onready var _interact_prompt: InteractPrompt = $HUD/InteractPrompt
 
 
 func _ready() -> void:
@@ -50,6 +51,7 @@ func _ready() -> void:
 func _on_scheme_changed(kind: InputRouter.SchemeKind) -> void:
 	_ability_bar.set_scheme(kind)
 	_card_bar.set_scheme(kind)
+	_interact_prompt.set_scheme(kind)
 	_pause.set_touch_controls_visible(kind == InputRouter.SchemeKind.TOUCH)
 
 
