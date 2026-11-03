@@ -9,7 +9,7 @@ extends EnemyData
 @export var fire_range: float = 18.0
 ## Brief aim line before each shot.
 @export var aim_time: float = 0.35
-@export var projectile_speed: float = 16.0
+@export var projectile_speed: float = 21.0
 @export var projectile_radius: float = 0.3
 
 

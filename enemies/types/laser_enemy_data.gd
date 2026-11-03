@@ -6,7 +6,7 @@ extends EnemyData
 @export var fire_range: float = 15.0
 @export var prime_time: float = 0.65
 @export var beam_length: float = 24.0
-@export var beam_half_width: float = 0.35
+@export var beam_half_width: float = 0.6
 ## Seconds of target movement to lead by when locking the line.
 @export var lead_time: float = 0.3
 

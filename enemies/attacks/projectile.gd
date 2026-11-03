@@ -11,7 +11,8 @@ var damage_amount: float = 20.0
 var damage_type: DamageEvent.DamageType = DamageEvent.DamageType.PHYSICAL
 var source: Node
 var radius: float = 0.3
-var lifetime: float = 2.5
+## Safety net only: shots normally fly until they hit a wall or a target.
+var lifetime: float = 10.0
 var color: Color = Color(1.0, 0.45, 0.25)
 
 

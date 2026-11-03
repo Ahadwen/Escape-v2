@@ -4,7 +4,7 @@ extends EnemyBrain
 
 enum State { APPROACH, PRIME, COOLDOWN }
 
-const PRIME_LINE_WIDTH: float = 0.12
+const PRIME_LINE_WIDTH: float = 0.2
 
 var state: State = State.APPROACH
 

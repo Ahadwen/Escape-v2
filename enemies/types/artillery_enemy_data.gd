@@ -8,7 +8,7 @@ extends EnemyData
 @export var fire_range: float = 26.0
 ## Seconds of target movement to lead by.
 @export var lead_time: float = 0.8
-@export var strike_radius: float = 2.6
+@export var strike_radius: float = 3.1
 ## Telegraph time before detonation.
 @export var strike_wind_up: float = 1.3
 @export var linger_duration: float = 2.5
