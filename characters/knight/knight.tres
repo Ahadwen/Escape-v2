@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://characters/character_data.gd" id="1_character"]
 [ext_resource type="Resource" path="res://characters/knight/abilities/knight_blink.tres" id="2_blink"]
-[ext_resource type="Resource" path="res://characters/knight/abilities/knight_rally.tres" id="3_rally"]
+[ext_resource type="Resource" path="res://characters/knight/abilities/knight_parry.tres" id="3_parry"]
 [ext_resource type="Resource" path="res://characters/knight/abilities/knight_charge.tres" id="4_charge"]
 [ext_resource type="Resource" path="res://characters/knight/abilities/knight_decoy.tres" id="5_decoy"]
 
@@ -14,6 +14,6 @@ max_hp = 400.0
 move_speed = 8.0
 will = 10.0
 ability_1 = ExtResource("2_blink")
-ability_2 = ExtResource("3_rally")
+ability_2 = ExtResource("3_parry")
 ability_3 = ExtResource("5_decoy")
 ability_4 = ExtResource("4_charge")

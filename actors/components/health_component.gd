@@ -5,6 +5,8 @@ extends Node
 ## ignored while invulnerable.
 
 signal damaged(amount: float, event: DamageEvent)
+## A hit was completely prevented (invulnerable, parried, blocked).
+signal damage_negated(event: DamageEvent)
 signal healed(amount: float)
 signal died
 
@@ -35,7 +37,10 @@ func refresh_max(fill: bool) -> void:
 
 ## Applies damage. Returns HP actually lost.
 func take_damage(event: DamageEvent) -> float:
-	if is_dead or (status != null and status.is_invulnerable()):
+	if is_dead:
+		return 0.0
+	if status != null and status.is_invulnerable():
+		damage_negated.emit(event)
 		return 0.0
 	var amount: float = DamageResolver.resolve(event, stats.block if stats != null else null)
 	var lost: float = pool.drain(amount)

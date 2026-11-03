@@ -41,7 +41,7 @@ A simple, readable introductory kit: one displacement ability, one buff, one agg
 | Slot | Ability | Behaviour | Scaling |
 |---|---|---|---|
 | **Q** | **Blink** | Instant teleport in the aimed direction (`DIRECTION`), passing over walls. If the aimed spot is inside an obstacle, lands on whichever side is closer along the blink line. | Range scales a little with **Will**. The landing scales with **current HP**: above 50% HP, landing produces a shockwave (knockback + slow) whose radius and strength grow with HP. |
-| **W** | **Rally** (move-speed steroid) | Timed self-buff adding a move-speed modifier. Will → speed amount; fixed duration (~3s). |
+| **W** | **Parry** | 0.4 s parry window (no damage taken). If hit during it: knockback + stun around her and a big move-speed boost. | Speed boost scales with **Will** (+80% at 10 Will, 3 s). |
 | **E** | **Decoy** | Places a decoy (`POINT`) with a high-priority `Targetable` that draws enemy aggro and absorbs hits until destroyed. | Decoy HP scales with **Will**. |
 | **R** | **Unstoppable Charge** | Invulnerable while charging forward, gaining speed over time; steerable with a limited turn rate; ends on collision with terrain or an enemy (impact knocks enemies back), or after a max duration (~3s). No early recast. | None for now. |
 
