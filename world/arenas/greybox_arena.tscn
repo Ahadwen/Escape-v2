@@ -19,8 +19,10 @@ tonemap_mode = 2
 ssao_enabled = true
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_arena"]
-agent_radius = 0.6
-agent_max_climb = 0.3
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+agent_radius = 0.5
+agent_max_climb = 0.25
 
 [sub_resource type="StandardMaterial3D" id="Material_Ground"]
 albedo_color = Color(0.36, 0.48, 0.32, 1)
