@@ -163,7 +163,8 @@ Elemental resistance becomes a strategic stat because of this. Once you know the
 
 - **Infinite, streamed terrain.** The world is a grid of chunks generated on demand around the player and freed behind them. Each chunk is generated deterministically from (run seed, level, chunk coordinate), so revisiting an area recreates it identically.
 - **`ChunkGenerator`** takes the `LevelTheme` and a chunk coordinate and outputs a **`ChunkLayout`** data object (ground, obstacles, points of interest); a separate **`ChunkBuilder`** instantiates it. Generation is testable without rendering.
-- **Navigation per chunk:** each chunk bakes its own navmesh from collision shapes (on a thread), and adjacent chunk navmeshes connect at their shared edges. Proven in M5.
+- **Navigation:** one navmesh covers all loaded chunks, baked from collision shapes and rebaked on a thread whenever chunks load or unload (the loaded area extends 64 m ahead, so a rebake finishes long before the player gets there). Simpler and more robust than stitching per-chunk tiles; revisit if bake times grow.
+- **Far enemies** (beyond 60 m) despawn, so nothing runs in unloaded terrain.
 - **Points of interest** are rolled per chunk: health crystals and chests with minimum spacing; safehouses are rare, with their chance rising with distance from the level start (and a guaranteed-eventually rule so a level can't go on forever without one).
 - **Discovery, not markers.** Safehouses (and other POIs) aren't shown until the player has seen them — within a reveal radius or line of sight. Once discovered, an off-screen edge indicator points back to them, so the "leave now or push on" choice stays available.
 - **Safehouse**: an enterable trigger zone. Entering ends the level and opens the shop screen, then advances to the next level.
@@ -208,7 +209,7 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 | **M1** ✅ | Move & input | Greybox arena, ortho camera, player capsule moves via PC and gamepad schemes; touch scheme working via emulated touch; auto device switching |
 | **M2** ✅ | Abilities | 4 slots, targeting types + aim indicators per scheme, cooldowns/costs, `StatScaling`, movement override; the Knight's Q (without shockwave), W and R |
 | **M3** ✅ | Enemies & damage | StatBlock, pools, armour/resist, status effects, `Targetable` aggro, 2 archetypes that chase and attack, per-enemy lifetime + despawn tell, player death; Knight's Q shockwave and E decoy |
-| **M4** | **Core loop prototype** | ThreatDirector + curve, health crystals, a hidden safehouse that's revealed on discovery and ends the level, discovered-POI edge indicators, HUD (HP, cooldowns, threat, time). Tuned against V1's proven feel |
+| **M4** ✅ | **Core loop prototype** | ThreatDirector + curve, health crystals, a hidden safehouse that's revealed on discovery and ends the level, discovered-POI edge indicators, HUD (HP, cooldowns, threat, time). Tuned against V1's proven feel |
 | **M5** | Infinite terrain | Seeded chunk generation, streaming load/unload around the player, per-chunk navmesh baking and stitching, per-chunk POI rolls (crystals, safehouses), all driven by a `LevelTheme` (base zone only) |
 | **M6** | Items & chests | Item data, modifiers, effect hooks, loot tables, gold, 10–15 items |
 | **M7** | Run structure & zones | Safehouse shop, 5 levels with escalating curves, HP restore between levels, win/loss screens. Zone framework (ZoneData, EnemyVariant, ThemeResolver, intensity blending) with one greybox destination zone, using colour, a hazard and one variant to prove the blend |

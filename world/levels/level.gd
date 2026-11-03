@@ -1,23 +1,21 @@
 extends Node3D
-## Hand-built test arena for M1-M4. Bakes the navmesh at runtime, places the
-## safehouse and crystals at random candidate spots, runs the threat
-## director, and restarts after the player escapes or dies. Infinite streamed
-## terrain replaces this in M5.
+## One level: streamed infinite terrain, the threat director, and the player.
+## Ends when the player reaches a safehouse or dies, then restarts.
+## (M7 adds the shop and moving on to the next level.)
 
 const RESTART_DELAY_DEATH: float = 2.5
 const RESTART_DELAY_ESCAPE: float = 4.0
-const CRYSTAL_COUNT: int = 5
 
-@export var crystal_scene: PackedScene = preload("res://world/pois/health_crystal.tscn")
-@export var safehouse_scene: PackedScene = preload("res://world/pois/safehouse.tscn")
+## 0 = random seed each run.
+@export var fixed_seed: int = 0
+@export var level_index: int = 0
 
 var _finished: bool = false
 
-@onready var _nav_region: NavigationRegion3D = $NavigationRegion3D
+@onready var _streamer: WorldStreamer = $WorldStreamer
 @onready var _input_router: InputRouter = $InputRouter
 @onready var _player: Player = $Player
 @onready var _director: ThreatDirector = $ThreatDirector
-@onready var _pois: Node3D = $Pois
 @onready var _move_marker: MoveMarker = $MoveMarker
 @onready var _aim_presenter: AimPreviewPresenter = $AimPreviewPresenter
 @onready var _ability_bar: AbilityBar = $HUD/AbilityBar
@@ -25,7 +23,9 @@ var _finished: bool = false
 
 
 func _ready() -> void:
-	_bake_navigation()
+	var run_seed: int = fixed_seed if fixed_seed != 0 else randi()
+	_streamer.start(run_seed, level_index)
+	_streamer.safehouse_entered.connect(_on_safehouse_entered)
 	_input_router.intent_emitted.connect(_player.controller.handle_intent)
 	_input_router.intent_emitted.connect(_on_intent)
 	_input_router.aim_preview_changed.connect(_aim_presenter.show_preview)
@@ -34,34 +34,10 @@ func _ready() -> void:
 	_ability_bar.set_scheme(_input_router.active_kind)
 	_player.died.connect(_on_player_died)
 	_message.visible = false
-	_place_pois()
 	# Let the navigation map sync before the director queries it.
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	_director.start()
-
-
-## Bakes from collision shapes on the world layer (fast and reliable at runtime,
-## unlike parsing visual meshes back from the GPU).
-func _bake_navigation() -> void:
-	_nav_region.bake_navigation_mesh(false)
-	if _nav_region.navigation_mesh.get_polygon_count() == 0:
-		push_error("Navigation mesh baked with no polygons; click-to-move will not work.")
-
-
-func _place_pois() -> void:
-	var safehouse_spots: Array[Node] = $SafehouseSpots.get_children()
-	var crystal_spots: Array[Node] = $CrystalSpots.get_children()
-	crystal_spots.shuffle()
-	if not safehouse_spots.is_empty():
-		var safehouse: Safehouse = safehouse_scene.instantiate() as Safehouse
-		safehouse.position = (safehouse_spots.pick_random() as Node3D).position
-		safehouse.entered.connect(_on_safehouse_entered)
-		_pois.add_child(safehouse)
-	for i: int in mini(CRYSTAL_COUNT, crystal_spots.size()):
-		var crystal: Node3D = crystal_scene.instantiate() as Node3D
-		crystal.position = (crystal_spots[i] as Node3D).position
-		_pois.add_child(crystal)
 
 
 func _on_intent(intent: PlayerIntent) -> void:

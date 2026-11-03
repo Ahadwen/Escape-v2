@@ -24,6 +24,9 @@ extends Resource
 @export_range(0.0, 1.0) var ahead_bias: float = 0.65
 ## Below this speed the player counts as standing still (no ahead bias).
 @export var ahead_min_speed: float = 2.0
+## Enemies further than this from the player despawn (they'd be in
+## unloaded terrain), freeing their budget.
+@export var despawn_distance: float = 60.0
 
 @export_group("Danger scaling")
 ## Enemies spawned at higher threat hit harder and move faster. Both scale

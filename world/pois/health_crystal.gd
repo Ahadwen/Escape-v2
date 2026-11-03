@@ -3,6 +3,8 @@ extends Area3D
 ## Restores a fraction of max HP when the player touches it. Used up on use;
 ## left alone if the player is already at full HP.
 
+signal consumed
+
 @export_range(0.0, 1.0) var heal_fraction: float = 0.25
 @export var spin_speed: float = 1.5
 
@@ -34,6 +36,7 @@ func _physics_process(_delta: float) -> void:
 
 func _consume() -> void:
 	_used = true
+	consumed.emit()
 	var tween: Tween = create_tween()
 	tween.tween_property(visual, "scale", Vector3.ONE * 0.01, 0.25)
 	tween.tween_callback(queue_free)

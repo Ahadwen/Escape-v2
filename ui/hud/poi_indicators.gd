@@ -1,7 +1,7 @@
 class_name PoiIndicators
 extends Control
 ## Arrows at the screen edge pointing to discovered points of interest that
-## are off-screen.
+## are off-screen (read from the DiscoveryRegistry).
 
 @export var margin: float = 36.0
 @export var arrow_size: float = 16.0
@@ -23,18 +23,18 @@ func _draw() -> void:
 	var screen: Rect2 = get_viewport().get_visible_rect()
 	var inner: Rect2 = screen.grow(-margin)
 	var to_local: Transform2D = get_global_transform_with_canvas().affine_inverse()
-	for node: Node in get_tree().get_nodes_in_group(Discoverable.GROUP):
-		var poi: Discoverable = node as Discoverable
-		if poi == null or not poi.is_discovered or not poi.show_edge_indicator:
+	var registry: DiscoveryRegistry = DiscoveryRegistry.find(get_tree())
+	if registry == null:
+		return
+	for entry: DiscoveryRegistry.Entry in registry.entries():
+		if not entry.show_edge_indicator:
 			continue
-		if poi.target == null or not is_instance_valid(poi.target):
-			continue
-		var point: Vector2 = camera.unproject_position(poi.world_position())
+		var point: Vector2 = camera.unproject_position(entry.position)
 		if inner.has_point(point):
 			continue
 		var edge: Vector2 = clamp_to_rect_edge(inner, point)
 		var direction: Vector2 = (point - inner.get_center()).normalized()
-		_draw_arrow(to_local * edge, direction, poi.indicator_color, poi.label)
+		_draw_arrow(to_local * edge, direction, entry.color, entry.label)
 
 
 ## Where the line from the rect's centre toward point crosses the rect edge.

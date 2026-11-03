@@ -5,6 +5,8 @@ extends Label
 @export var input_router: InputRouter
 @export var movement: ActorMovement
 @export var nav_region: NavigationRegion3D
+## Optional.
+@export var streamer: WorldStreamer
 
 var _last_intent: String = "-"
 
@@ -38,6 +40,7 @@ func _process(_delta: float) -> void:
 				"path points left: %d" % movement.path_points_remaining(),
 				"joypads: %s" % str(Input.get_connected_joypads()),
 				"enemies: %d" % get_tree().get_nodes_in_group(Enemy.GROUP).size(),
+				_streamer_line(),
 			]
 		)
 	)
@@ -48,3 +51,12 @@ func _on_intent(intent: PlayerIntent) -> void:
 		return
 	var script: Script = intent.get_script()
 	_last_intent = String(script.get_global_name()) if script != null else "?"
+
+
+func _streamer_line() -> String:
+	if streamer == null:
+		return ""
+	return (
+		"seed %d  chunk %s  loaded %d"
+		% [streamer.run_seed, streamer.current_chunk(), streamer.loaded_count()]
+	)

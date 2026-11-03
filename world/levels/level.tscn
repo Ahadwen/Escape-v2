@@ -1,0 +1,175 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/levels/level.gd" id="1_level"]
+[ext_resource type="Script" path="res://world/camera/isometric_camera.gd" id="2_camera"]
+[ext_resource type="Script" path="res://ui/feedback/move_marker.gd" id="3_marker"]
+[ext_resource type="PackedScene" path="res://actors/player/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://input/input_router.tscn" id="5_input"]
+[ext_resource type="Script" path="res://ui/feedback/aim_indicator.gd" id="6_aim_indicator"]
+[ext_resource type="Script" path="res://ui/feedback/aim_preview_presenter.gd" id="7_aim_presenter"]
+[ext_resource type="Script" path="res://ui/hud/ability_bar.gd" id="8_ability_bar"]
+[ext_resource type="Script" path="res://ui/debug/debug_overlay.gd" id="9_debug_overlay"]
+[ext_resource type="Script" path="res://ui/hud/health_bar.gd" id="10_health_bar"]
+[ext_resource type="Script" path="res://director/threat_director.gd" id="11_director"]
+[ext_resource type="PackedScene" path="res://enemies/enemy.tscn" id="12_enemy"]
+[ext_resource type="Resource" path="res://director/data/greybox_threat.tres" id="13_threat"]
+[ext_resource type="PackedScene" path="res://world/pois/health_crystal.tscn" id="14_crystal"]
+[ext_resource type="PackedScene" path="res://world/pois/safehouse.tscn" id="15_safehouse"]
+[ext_resource type="Script" path="res://ui/hud/poi_indicators.gd" id="16_poi_indicators"]
+[ext_resource type="Script" path="res://ui/hud/run_info.gd" id="17_run_info"]
+[ext_resource type="Script" path="res://world/streaming/world_streamer.gd" id="18_streamer"]
+[ext_resource type="Resource" path="res://world/streaming/default_terrain.tres" id="19_terrain"]
+[ext_resource type="Script" path="res://world/pois/discovery_registry.gd" id="20_registry"]
+
+[sub_resource type="Environment" id="Environment_level"]
+background_mode = 1
+background_color = Color(0.11, 0.12, 0.15, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.75, 0.8, 0.9, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
+ssao_enabled = true
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+agent_radius = 0.5
+agent_max_climb = 0.25
+
+[node name="Level" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.573576, 0.819152, 0, -0.819152, 0.573576, 0, 10, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="DiscoveryRegistry" type="Node" parent="."]
+script = ExtResource("20_registry")
+
+[node name="WorldStreamer" type="Node" parent="." node_paths=PackedStringArray("player", "nav_region")]
+script = ExtResource("18_streamer")
+profile = ExtResource("19_terrain")
+player = NodePath("../Player")
+nav_region = NodePath("../NavigationRegion3D")
+crystal_scene = ExtResource("14_crystal")
+safehouse_scene = ExtResource("15_safehouse")
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+
+[node name="IsometricCamera" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("2_camera")
+target = NodePath("../Player")
+
+[node name="MoveMarker" type="Node3D" parent="."]
+script = ExtResource("3_marker")
+
+[node name="AimIndicator" type="Node3D" parent="."]
+script = ExtResource("6_aim_indicator")
+
+[node name="AimPreviewPresenter" type="Node" parent="." node_paths=PackedStringArray("abilities", "movement", "indicator")]
+script = ExtResource("7_aim_presenter")
+abilities = NodePath("../Player/AbilityCaster")
+movement = NodePath("../Player/ActorMovement")
+indicator = NodePath("../AimIndicator")
+
+[node name="ThreatDirector" type="Node" parent="." node_paths=PackedStringArray("player", "camera")]
+script = ExtResource("11_director")
+profile = ExtResource("13_threat")
+enemy_scene = ExtResource("12_enemy")
+player = NodePath("../Player")
+camera = NodePath("../IsometricCamera")
+
+[node name="InputRouter" parent="." node_paths=PackedStringArray("camera", "aim_origin") instance=ExtResource("5_input")]
+camera = NodePath("../IsometricCamera")
+aim_origin = NodePath("../Player")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="PoiIndicators" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("16_poi_indicators")
+
+[node name="AbilityBar" type="Control" parent="HUD" node_paths=PackedStringArray("abilities")]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("8_ability_bar")
+abilities = NodePath("../../Player/AbilityCaster")
+
+[node name="HealthBar" type="Control" parent="HUD" node_paths=PackedStringArray("health")]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 16.0
+offset_right = 160.0
+offset_bottom = 44.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("10_health_bar")
+health = NodePath("../../Player/HealthComponent")
+
+[node name="RunInfo" type="Label" parent="HUD" node_paths=PackedStringArray("director")]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 90.0
+grow_horizontal = 0
+script = ExtResource("17_run_info")
+director = NodePath("../../ThreatDirector")
+
+[node name="MessageLabel" type="Label" parent="HUD"]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -60.0
+offset_right = 300.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DebugOverlay" type="Label" parent="HUD" node_paths=PackedStringArray("input_router", "movement", "nav_region", "streamer")]
+offset_top = 60.0
+offset_right = 600.0
+offset_bottom = 260.0
+script = ExtResource("9_debug_overlay")
+input_router = NodePath("../../InputRouter")
+movement = NodePath("../../Player/ActorMovement")
+nav_region = NodePath("../../NavigationRegion3D")
+streamer = NodePath("../../WorldStreamer")
