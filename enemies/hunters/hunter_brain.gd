@@ -63,11 +63,18 @@ static func sustained_speed(player: Node) -> float:
 	return stats.block.get_value_excluding(StatIds.MOVE_SPEED, "status:")
 
 
+## Pursuit rule: never slower than the target's sustained speed x ratio, and
+## sprinting when far away so distance buys time, not safety.
 func _update_speed_floor() -> void:
-	if target == null or hunter.speed_floor_ratio <= 0.0:
+	if target == null:
 		enemy.movement.speed_floor = 0.0
 		return
-	enemy.movement.speed_floor = sustained_speed(target.body) * hunter.speed_floor_ratio
+	var pursuit: float = maxf(
+		enemy.data.move_speed, sustained_speed(target.body) * hunter.speed_floor_ratio
+	)
+	if distance_to_target() > hunter.catch_up_distance:
+		pursuit *= hunter.catch_up_multiplier
+	enemy.movement.speed_floor = pursuit
 
 
 func _process(delta: float) -> void:

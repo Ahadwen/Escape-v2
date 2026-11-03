@@ -34,6 +34,9 @@ extends Resource
 ## Enemies further than this from the player despawn (they'd be in
 ## unloaded terrain), freeing their budget.
 @export var despawn_distance: float = 60.0
+## Hunters further than this and off-screen re-enter ahead of the player
+## (keeping their remaining time). 0 = never.
+@export var reentry_distance: float = 0.0
 
 @export_group("Danger scaling")
 ## Enemies spawned at higher threat hit harder and move faster. Both scale

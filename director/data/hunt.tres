@@ -49,6 +49,7 @@ spawn_distance_min = 22.0
 spawn_distance_max = 30.0
 ahead_bias = 0.65
 despawn_distance = 70.0
+reentry_distance = 32.0
 max_alive_start = 2
 max_alive_per_threat = 0.5
 max_alive_cap = 5

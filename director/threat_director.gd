@@ -167,11 +167,30 @@ func _despawn_far_enemies() -> void:
 	var origin: Vector3 = player.global_position
 	for node: Node in get_tree().get_nodes_in_group(Enemy.GROUP):
 		var enemy: Enemy = node as Enemy
-		if enemy == null:
+		if enemy == null or enemy.is_despawning():
 			continue
 		var offset: Vector3 = enemy.global_position - origin
-		if Vector2(offset.x, offset.z).length() > profile.despawn_distance:
+		var distance: float = Vector2(offset.x, offset.z).length()
+		var can_reenter: bool = profile.reentry_distance > 0.0 and enemy.data is HunterData
+		if can_reenter and distance > profile.reentry_distance and not _on_screen(enemy):
+			_reenter(enemy)
+		elif distance > profile.despawn_distance:
 			enemy.despawn()
+
+
+## Moves a left-behind hunter to an off-screen spot ahead of the player.
+func _reenter(enemy: Enemy) -> void:
+	var point: Variant = _find_spawn_point()
+	if point == null:
+		return
+	if enemy.brain != null:
+		enemy.brain.interrupt()
+	var at: Vector3 = point
+	enemy.movement.teleport(at)
+
+
+func _on_screen(enemy: Enemy) -> bool:
+	return camera != null and camera.is_position_in_frustum(enemy.global_position + Vector3.UP)
 
 
 func _alive_count() -> int:
