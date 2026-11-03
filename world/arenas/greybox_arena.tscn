@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://ui/feedback/aim_indicator.gd" id="6_aim_indicator"]
 [ext_resource type="Script" path="res://ui/feedback/aim_preview_presenter.gd" id="7_aim_presenter"]
 [ext_resource type="Script" path="res://ui/hud/ability_bar.gd" id="8_ability_bar"]
+[ext_resource type="Script" path="res://ui/debug/debug_overlay.gd" id="9_debug_overlay"]
 
 [sub_resource type="Environment" id="Environment_arena"]
 background_mode = 1
@@ -241,3 +242,11 @@ grow_vertical = 0
 mouse_filter = 2
 script = ExtResource("8_ability_bar")
 abilities = NodePath("../../Player/AbilityCaster")
+
+[node name="DebugOverlay" type="Label" parent="HUD" node_paths=PackedStringArray("input_router", "movement", "nav_region")]
+offset_right = 600.0
+offset_bottom = 160.0
+script = ExtResource("9_debug_overlay")
+input_router = NodePath("../../InputRouter")
+movement = NodePath("../../Player/ActorMovement")
+nav_region = NodePath("../../NavigationRegion3D")
