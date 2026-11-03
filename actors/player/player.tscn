@@ -47,7 +47,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -0.42)
 mesh = SubResource("BoxMesh_nose")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-path_desired_distance = 0.5
+path_desired_distance = 0.15
 target_desired_distance = 0.15
 radius = 0.4
 
