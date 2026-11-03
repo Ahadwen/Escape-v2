@@ -64,6 +64,13 @@ func toggle_manual() -> void:
 	_apply()
 
 
+## Enters the normal pause (any input resumes). Used after closing menus,
+## so the game doesn't resume the instant you close one.
+func enter_manual_pause() -> void:
+	manual_paused = true
+	_apply()
+
+
 func push_menu_pause() -> void:
 	_menu_pauses += 1
 	_apply()

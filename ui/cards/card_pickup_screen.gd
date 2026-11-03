@@ -156,6 +156,9 @@ func _on_done() -> void:
 	visible = false
 	var pause: PauseController = PauseController.find(get_tree())
 	if pause != null:
+		# Hand over to the normal pause: the first input resumes the game and
+		# takes effect, so closing the screen never costs you a hit.
+		pause.enter_manual_pause()
 		pause.pop_menu_pause()
 	else:
 		get_tree().paused = false
