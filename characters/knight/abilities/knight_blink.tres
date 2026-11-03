@@ -1,6 +1,6 @@
 [gd_resource type="Resource" format=3]
 
-[ext_resource type="Script" path="res://abilities/types/dash_ability_data.gd" id="1_dash"]
+[ext_resource type="Script" path="res://abilities/types/blink_ability_data.gd" id="1_blink"]
 [ext_resource type="Script" path="res://stats/stat_scaling.gd" id="2_scaling"]
 
 [sub_resource type="Resource" id="Resource_range"]
@@ -10,10 +10,11 @@ base_value = 5.0
 per_point = 0.05
 
 [resource]
-script = ExtResource("1_dash")
-dash_speed = 22.0
-id = &"knight_dash"
-display_name = "Dash"
+script = ExtResource("1_blink")
+max_overshoot = 3.0
+walkable_tolerance = 0.15
+id = &"knight_blink"
+display_name = "Blink"
 targeting = 2
 cooldown = 6.0
 range_scaling = SubResource("Resource_range")

@@ -64,6 +64,20 @@ func move_to(point: Vector3) -> void:
 	mode = Mode.TO_POINT if not _path.is_empty() else Mode.IDLE
 
 
+## Instantly moves the actor (blinks). Cancels any path being followed, since
+## it was planned from the old position. Optionally snaps facing.
+func teleport(point: Vector3, face_direction: Vector3 = Vector3.ZERO) -> void:
+	body.global_position = point
+	body.velocity = Vector3.ZERO
+	body.reset_physics_interpolation()
+	if mode == Mode.TO_POINT:
+		mode = Mode.IDLE
+	var flat: Vector3 = Vector3(face_direction.x, 0.0, face_direction.z)
+	if visual != null and flat.length_squared() > 0.0001:
+		visual.rotation.y = yaw_for_direction(flat)
+		visual.reset_physics_interpolation()
+
+
 ## Remaining waypoints on the current path (for debugging/UI).
 func path_points_remaining() -> int:
 	return maxi(_path.size() - _path_index, 0) if mode == Mode.TO_POINT else 0

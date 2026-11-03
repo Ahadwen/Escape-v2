@@ -7,7 +7,7 @@ extends AbilityData
 @export var max_speed: float = 16.0
 ## Metres per second per second.
 @export var acceleration: float = 8.0
-@export var turn_rate_degrees: float = 90.0
+@export var turn_rate_degrees: float = 35.0
 ## Seconds.
 @export var max_duration: float = 3.0
 
