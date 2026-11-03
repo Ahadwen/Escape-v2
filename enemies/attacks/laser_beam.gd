@@ -51,8 +51,13 @@ func _ready() -> void:
 	if direction.length_squared() > 0.0001:
 		rotation = Vector3(0.0, ActorMovement.yaw_for_direction(direction), 0.0)
 	AttackUtils.damage_on_segment(
-		get_tree(), from_point, to_point, half_width, damage_amount, damage_type, source
+		get_tree(), from_point, to_point, half_width, damage_amount, damage_type, _live_source()
 	)
 	var tween: Tween = create_tween()
 	tween.tween_property(_material, "albedo_color", Color(color.r, color.g, color.b, 0.0), duration)
 	tween.tween_callback(queue_free)
+
+
+## The attacker, or null if it has despawned since (attacks outlive them).
+func _live_source() -> Node:
+	return source if is_instance_valid(source) else null

@@ -63,8 +63,13 @@ func _physics_process(delta: float) -> void:
 			AttackUtils.point_segment_distance_flat(target.world_position(), from, stop)
 			<= radius + TARGET_RADIUS
 		):
-			AttackUtils.damage(target, damage_amount, damage_type, source)
+			AttackUtils.damage(target, damage_amount, damage_type, _live_source())
 			queue_free()
 			return
 	if not stop.is_equal_approx(to):
 		queue_free()
+
+
+## The attacker, or null if it has despawned since (attacks outlive them).
+func _live_source() -> Node:
+	return source if is_instance_valid(source) else null

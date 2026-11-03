@@ -89,7 +89,7 @@ func _physics_process(delta: float) -> void:
 	if _tick_timer <= 0.0:
 		_tick_timer = linger_interval
 		AttackUtils.damage_in_radius(
-			get_tree(), global_position, radius, linger_damage, damage_type, source
+			get_tree(), global_position, radius, linger_damage, damage_type, _live_source()
 		)
 
 
@@ -97,7 +97,7 @@ func _detonate() -> void:
 	_detonated = true
 	_tick_timer = linger_interval
 	AttackUtils.damage_in_radius(
-		get_tree(), global_position, radius, damage_amount, damage_type, source
+		get_tree(), global_position, radius, damage_amount, damage_type, _live_source()
 	)
 	_ring.visible = false
 	_fill.scale = Vector3(radius, 1.0, radius)
@@ -109,3 +109,8 @@ func _detonate() -> void:
 	tween.tween_property(_fill_material, "albedo_color", linger_color, 0.25)
 	if linger_duration <= 0.0:
 		tween.tween_callback(queue_free)
+
+
+## The attacker, or null if it has despawned since (attacks outlive them).
+func _live_source() -> Node:
+	return source if is_instance_valid(source) else null
