@@ -25,6 +25,12 @@ func _card(suit: int, rank: int, stat: StringName = &"", value: float = 0.0) -> 
 	return card
 
 
+func _joker() -> CardData:
+	var card: CardData = CardDataScript.new()
+	card.joker = true
+	return card
+
+
 func before_each() -> void:
 	stats = add_to_tree(StatsComponentScript.new()) as StatsComponent
 	stats.block.set_base(StatIds.ARMOUR, 10.0)
