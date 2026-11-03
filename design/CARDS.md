@@ -78,20 +78,20 @@ Base values for scale: 400 HP, 8 m/s move speed, 10 Will.
 | 9♣ | **Desperation:** the lower your HP, the higher your Will (up to +12 near death). *(yours)* |
 | 10♣ | **Dilation:** enemy projectiles within 5 m of you fly 40% slower, and ranged enemies near you take 30% longer to wind up. Melee is unaffected. *(yours)* |
 | J♣ | **Oathbound:** your R (ultimate) is disabled, but you gain +60% Will. *(yours)* |
-| Q♣ | *TBD* |
-| K♣ | *TBD* |
+| Q♣ | **Lingering:** everything your abilities create lasts 30% longer — buffs, decoys, slows, stuns. |
+| K♣ | **Crown** *(placeholder)*: +15 Will and +40% Will. The big "ability power" item. |
 
-## T2 / T3 — Diamonds ♦ *(all draft — needs your input)*
+## T2 / T3 — Diamonds ♦ *(partly draft)*
 
 | Card | Effect |
 |---|---|
 | 7♦ | **Compound:** +8 gold interest at each safehouse. |
-| 8♦ | **Prospector:** health crystals also drop gold. |
+| 8♦ | **Apothecary:** picking up an Ace grants double the stacks. *(yours)* |
 | 9♦ | **Hoard:** +1 armour per 25 gold held (cap +20). |
 | 10♦ | **Hazard Pay:** every minute survived pays gold, scaling with threat. |
 | J♦ | **Midas:** +1 Will per 20 gold held. |
 | Q♦ | **Patron:** the safehouse offers one extra recipe; your first reroll each visit is free. |
-| K♦ | **Golden Aegis:** while holding 200+ gold, half of incoming damage is paid in gold instead of HP. |
+| K♦ | **Absorb:** when you find a T1 card you may consume it instead of picking it up; its flat stats are permanently added to this card. *(yours)* |
 
 ## Aces — consumables ✅ (effects draft)
 
@@ -107,7 +107,6 @@ Base values for scale: 400 HP, 8 m/s move speed, 10 Will.
 
 ## Open questions
 
-- Diamonds T2/T3 — keep this direction?
 - Recipe rule details: ingredients per T2 / T3, suit requirements, gold prices, joker surcharge.
 - Set bonus thresholds and effects.
 - Do T2s drop from chests, and how rarely?
