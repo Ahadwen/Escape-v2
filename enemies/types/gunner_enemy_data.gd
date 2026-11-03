@@ -11,6 +11,8 @@ extends EnemyData
 @export var aim_time: float = 0.35
 @export var projectile_speed: float = 21.0
 @export var projectile_radius: float = 0.3
+## Inferno: fire an expanding cone of flame instead of a bullet.
+@export var flame_cone: bool = false
 
 
 func _init() -> void:

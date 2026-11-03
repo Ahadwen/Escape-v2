@@ -51,6 +51,19 @@ func _begin_aim() -> void:
 
 func _fire() -> void:
 	telegraph.clear()
+	if _data.flame_cone:
+		var cone: FlameCone = FlameCone.new()
+		cone.configure(
+			enemy.attack_origin(),
+			_aim_direction,
+			enemy.scaled_damage(_data.damage),
+			enemy,
+			_data.fire_range + 2.0
+		)
+		enemy.get_parent().add_child(cone)
+		_cooldown = _data.attack_cooldown
+		state = State.POSITION
+		return
 	var shot: Projectile = Projectile.new()
 	shot.configure(
 		enemy.attack_origin(),

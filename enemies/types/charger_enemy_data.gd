@@ -13,6 +13,13 @@ extends EnemyData
 ## Pause after a charge before chasing again.
 @export var recover_time: float = 1.0
 
+@export_group("Fire trail (Inferno)")
+@export var fire_trail: bool = false
+@export var trail_spacing: float = 1.6
+@export var trail_radius: float = 1.0
+@export var trail_lifetime: float = 3.0
+@export var trail_damage: float = 4.0
+
 
 func _init() -> void:
 	move_speed = 4.2

@@ -12,6 +12,10 @@ var linger_duration: float = 0.0
 var linger_damage: float = 0.0
 var linger_interval: float = 0.5
 var color: Color = Color(1.0, 0.5, 0.2)
+## If set (radius > 0), leaves a FirePatch where it detonates.
+var patch_radius: float = 0.0
+var patch_lifetime: float = 0.0
+var patch_damage: float = 0.0
 
 var _time: float = 0.0
 var _detonated: bool = false
@@ -94,8 +98,20 @@ func _physics_process(raw_delta: float) -> void:
 		)
 
 
+func leave_fire_patch(radius_m: float, lifetime_s: float, damage_per_touch: float) -> void:
+	patch_radius = radius_m
+	patch_lifetime = lifetime_s
+	patch_damage = damage_per_touch
+
+
 func _detonate() -> void:
 	_detonated = true
+	if patch_radius > 0.0:
+		var patch: FirePatch = FirePatch.new()
+		patch.configure(patch_radius, patch_lifetime, patch_damage)
+		patch.grow_time = 0.2
+		patch.position = global_position
+		get_parent().add_child(patch)
 	_tick_timer = linger_interval
 	AttackUtils.damage_in_radius(
 		get_tree(), global_position, radius, damage_amount, damage_type, _live_source()

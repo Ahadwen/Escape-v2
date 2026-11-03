@@ -9,6 +9,7 @@ class ObstacleSpec:
 	var size: Vector3
 	var position: Vector3
 	var yaw: float
+	var color: Color = Color(0.58, 0.58, 0.62)
 
 	func _init(p_kind: StringName, p_size: Vector3, p_position: Vector3, p_yaw: float) -> void:
 		kind = p_kind

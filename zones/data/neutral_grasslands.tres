@@ -1,0 +1,58 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://zones/zone_data.gd" id="zone"]
+[ext_resource type="Script" path="res://zones/obstacle_kind.gd" id="kind"]
+
+[sub_resource type="Resource" id="Kind_0"]
+script = ExtResource("kind")
+kind = &"pillar"
+size = Vector3(2, 2, 2)
+weight = 4.0
+can_rotate = false
+color = Color(0.58, 0.58, 0.62, 1)
+
+[sub_resource type="Resource" id="Kind_1"]
+script = ExtResource("kind")
+kind = &"wall"
+size = Vector3(8, 2, 1)
+weight = 3.0
+can_rotate = true
+color = Color(0.58, 0.58, 0.62, 1)
+
+[sub_resource type="Resource" id="Kind_2"]
+script = ExtResource("kind")
+kind = &"longwall"
+size = Vector3(12, 2, 1)
+weight = 1.0
+can_rotate = true
+color = Color(0.58, 0.58, 0.62, 1)
+
+[sub_resource type="Resource" id="Kind_3"]
+script = ExtResource("kind")
+kind = &"block"
+size = Vector3(4, 2, 4)
+weight = 2.0
+can_rotate = false
+color = Color(0.58, 0.58, 0.62, 1)
+
+[sub_resource type="Resource" id="Kind_4"]
+script = ExtResource("kind")
+kind = &"slab"
+size = Vector3(6, 2, 3)
+weight = 2.0
+can_rotate = true
+color = Color(0.58, 0.58, 0.62, 1)
+
+[resource]
+script = ExtResource("zone")
+id = &"neutral"
+display_name = "Grasslands"
+ground_color_a = Color(0.36, 0.48, 0.32, 1)
+ground_color_b = Color(0.33, 0.45, 0.3, 1)
+background_color = Color(0.11, 0.12, 0.15, 1)
+ambient_color = Color(0.75, 0.8, 0.9, 1)
+ambient_energy = 0.5
+sun_color = Color(1, 1, 1, 1)
+sun_energy = 1.1
+fog_density = 0.0
+obstacle_kit = Array[ExtResource("kind")]([SubResource("Kind_0"), SubResource("Kind_1"), SubResource("Kind_2"), SubResource("Kind_3"), SubResource("Kind_4")])

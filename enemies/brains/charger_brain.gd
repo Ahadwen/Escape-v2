@@ -12,6 +12,7 @@ var _timer: float = 0.0
 var _charge_direction: Vector3 = Vector3.ZERO
 var _dash: DashMovement
 var _hit_targets: Array[Targetable] = []
+var _last_trail: Vector3 = Vector3.INF
 
 
 func _init(p_data: ChargerEnemyData) -> void:
@@ -33,6 +34,7 @@ func think(delta: float) -> void:
 				_begin_charge()
 		State.CHARGING:
 			hit_targets_in_radius(_data.hit_radius, _hit_targets)
+			_drop_trail()
 			if _dash == null or _dash.finished:
 				_end_charge()
 		State.RECOVER:
@@ -60,7 +62,24 @@ func _begin_telegraph() -> void:
 	state = State.TELEGRAPH
 
 
+func _drop_trail() -> void:
+	if not _data.fire_trail:
+		return
+	var here: Vector3 = enemy.global_position
+	if _last_trail != Vector3.INF and here.distance_to(_last_trail) < _data.trail_spacing:
+		return
+	_last_trail = here
+	var patch: FirePatch = FirePatch.new()
+	patch.configure(
+		_data.trail_radius, _data.trail_lifetime, enemy.scaled_damage(_data.trail_damage)
+	)
+	patch.grow_time = 0.15
+	patch.position = here
+	enemy.get_parent().add_child(patch)
+
+
 func _begin_charge() -> void:
+	_last_trail = Vector3.INF
 	telegraph.clear()
 	_hit_targets.clear()
 	_dash = DashMovement.new(_charge_direction, _data.charge_distance, _data.charge_speed)

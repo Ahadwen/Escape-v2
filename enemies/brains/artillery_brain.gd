@@ -40,4 +40,10 @@ func _fire() -> void:
 		enemy.scaled_damage(_data.linger_damage),
 		_data.linger_interval
 	)
+	if _data.leaves_fire_patch:
+		strike.leave_fire_patch(
+			_data.fire_patch_radius,
+			_data.fire_patch_lifetime,
+			enemy.scaled_damage(_data.fire_patch_damage)
+		)
 	enemy.get_parent().add_child(strike)

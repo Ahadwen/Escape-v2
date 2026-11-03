@@ -12,6 +12,8 @@ var source: Node
 ## contact, projectiles) do; beams and ground effects don't (they're still
 ## blocked by invulnerability).
 var parryable: bool = true
+## Damage-over-time ticks (e.g. burning). These don't re-ignite.
+var is_burn: bool = false
 
 
 func _init(

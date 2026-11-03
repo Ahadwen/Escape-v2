@@ -29,10 +29,10 @@ var _baking: bool = false
 
 ## Generates the area around the player and bakes navigation synchronously,
 ## so the level is ready the moment this returns.
-func start(p_seed: int, p_level: int = 0) -> void:
+func start(p_seed: int, p_level: int = 0, theme: LevelTheme = null) -> void:
 	run_seed = p_seed
 	level = p_level
-	_generator = ChunkGenerator.new(profile, run_seed, level)
+	_generator = ChunkGenerator.new(profile, run_seed, level, theme)
 	_builder = ChunkBuilder.new(crystal_scene, safehouse_scene, chest_scene, profile.obstacle_color)
 	nav_region.bake_finished.connect(_on_bake_finished)
 	_update_chunks(true)

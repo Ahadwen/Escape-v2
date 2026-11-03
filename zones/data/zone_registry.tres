@@ -1,0 +1,12 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://zones/zone_registry.gd" id="registry"]
+[ext_resource type="Script" path="res://zones/zone_data.gd" id="zone"]
+[ext_resource type="Resource" path="res://zones/data/neutral_grasslands.tres" id="neutral"]
+[ext_resource type="Resource" path="res://zones/data/inferno.tres" id="inferno"]
+
+[resource]
+script = ExtResource("registry")
+neutral = ExtResource("neutral")
+destinations = Array[ExtResource("zone")]([ExtResource("inferno")])
+level_intensity = PackedFloat32Array(0, 0.25, 0.5, 0.75, 1)

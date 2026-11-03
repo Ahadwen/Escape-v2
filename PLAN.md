@@ -210,9 +210,9 @@ The biggest risk is design, not tech: **is evasion-only fun?** So the core loop 
 | **M2** ✅ | Abilities | 4 slots, targeting types + aim indicators per scheme, cooldowns/costs, `StatScaling`, movement override; the Knight's Q (without shockwave), W and R |
 | **M3** ✅ | Enemies & damage | StatBlock, pools, armour/resist, status effects, `Targetable` aggro, 2 archetypes that chase and attack, per-enemy lifetime + despawn tell, player death; Knight's Q shockwave and E decoy |
 | **M4** ✅ | **Core loop prototype** | ThreatDirector + curve, health crystals, a hidden safehouse that's revealed on discovery and ends the level, discovered-POI edge indicators, HUD (HP, cooldowns, threat, time). Tuned against V1's proven feel |
-| **M5** | Infinite terrain | Seeded chunk generation, streaming load/unload around the player, per-chunk navmesh baking and stitching, per-chunk POI rolls (crystals, safehouses), all driven by a `LevelTheme` (base zone only) |
-| **M6** | Items & chests | Item data, modifiers, effect hooks, loot tables, gold, 10–15 items |
-| **M7** | Run structure & zones | Safehouse shop, 5 levels with escalating curves, HP restore between levels, win/loss screens. Zone framework (ZoneData, EnemyVariant, ThemeResolver, intensity blending) with one greybox destination zone, using colour, a hazard and one variant to prove the blend |
+| **M5** ✅ | Infinite terrain | Seeded chunk generation, streaming load/unload around the player, per-chunk navmesh baking and stitching, per-chunk POI rolls (crystals, safehouses), all driven by a `LevelTheme` (base zone only) |
+| **M6** ✅ | Items & chests | Item data, modifiers, effect hooks, loot tables, gold, 10–15 items |
+| **M7** ✅ (first zone: Inferno) | Run structure & zones | Safehouse shop, 5 levels with escalating curves, HP restore between levels, win/loss screens. Zone framework (ZoneData, EnemyVariant, ThemeResolver, intensity blending) with one greybox destination zone, using colour, a hazard and one variant to prove the blend |
 | **M8** | Nexus & meta | Hub scene, character select, save system, meta-upgrade framework |
 | **M9** | Art pass | Lighting, materials, VFX, readable telegraphs, UI style on one biome |
 | **M10** | Content | 3+ characters, 6+ shared enemy archetypes, 3 destination zones (e.g. Inferno, Swamp, Graveyard), each with exclusives, variants and hazards, 40+ items |

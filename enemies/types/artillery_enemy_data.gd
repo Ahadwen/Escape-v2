@@ -15,6 +15,13 @@ extends EnemyData
 @export var linger_damage: float = 8.0
 @export var linger_interval: float = 0.5
 
+@export_group("Fire patch (Inferno)")
+## Leave burning ground where the shell lands.
+@export var leaves_fire_patch: bool = false
+@export var fire_patch_radius: float = 2.0
+@export var fire_patch_lifetime: float = 8.0
+@export var fire_patch_damage: float = 5.0
+
 
 func _init() -> void:
 	move_speed = 4.5

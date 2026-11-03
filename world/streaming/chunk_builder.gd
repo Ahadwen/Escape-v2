@@ -11,9 +11,9 @@ var safehouse_scene: PackedScene
 var chest_scene: PackedScene
 var obstacle_color: Color
 
-var _meshes: Dictionary[StringName, BoxMesh] = {}
-var _shapes: Dictionary[StringName, BoxShape3D] = {}
-var _obstacle_material: StandardMaterial3D
+var _meshes: Dictionary[String, BoxMesh] = {}
+var _shapes: Dictionary[String, BoxShape3D] = {}
+var _materials: Dictionary[String, StandardMaterial3D] = {}
 var _floor_shape: BoxShape3D
 var _floor_mesh: BoxMesh
 
@@ -25,8 +25,6 @@ func _init(
 	safehouse_scene = p_safehouse
 	chest_scene = p_chest
 	obstacle_color = p_obstacle_color
-	_obstacle_material = StandardMaterial3D.new()
-	_obstacle_material.albedo_color = obstacle_color
 
 
 ## Builds the chunk. skip_poi(id) -> bool lets the caller drop consumed POIs.
@@ -73,22 +71,28 @@ func _build_floor(layout: ChunkLayout, chunk_size: float) -> StaticBody3D:
 
 
 func _build_obstacle(spec: ChunkLayout.ObstacleSpec) -> StaticBody3D:
-	if not _meshes.has(spec.kind):
+	var key: String = "%s|%s|%s" % [spec.kind, spec.size, spec.color.to_html()]
+	if not _meshes.has(key):
+		var color_key: String = spec.color.to_html()
+		if not _materials.has(color_key):
+			var material: StandardMaterial3D = StandardMaterial3D.new()
+			material.albedo_color = spec.color
+			_materials[color_key] = material
 		var box: BoxMesh = BoxMesh.new()
 		box.size = spec.size
-		box.material = _obstacle_material
-		_meshes[spec.kind] = box
+		box.material = _materials[color_key]
+		_meshes[key] = box
 		var shape: BoxShape3D = BoxShape3D.new()
 		shape.size = spec.size
-		_shapes[spec.kind] = shape
+		_shapes[key] = shape
 	var body: StaticBody3D = StaticBody3D.new()
 	body.position = spec.position
 	body.rotation.y = spec.yaw
 	var collision: CollisionShape3D = CollisionShape3D.new()
-	collision.shape = _shapes[spec.kind]
+	collision.shape = _shapes[key]
 	body.add_child(collision)
 	var mesh: MeshInstance3D = MeshInstance3D.new()
-	mesh.mesh = _meshes[spec.kind]
+	mesh.mesh = _meshes[key]
 	body.add_child(mesh)
 	return body
 

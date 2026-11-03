@@ -1,0 +1,88 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://zones/zone_data.gd" id="zone"]
+[ext_resource type="Script" path="res://zones/obstacle_kind.gd" id="kind"]
+[ext_resource type="Script" path="res://zones/hazard_rule.gd" id="hazard"]
+[ext_resource type="Script" path="res://zones/enemy_variant.gd" id="variant"]
+[ext_resource type="PackedScene" path="res://world/hazards/fire_patch.tscn" id="fire_patch"]
+[ext_resource type="Resource" path="res://enemies/data/inferno/artillery_inferno.tres" id="v_artillery"]
+[ext_resource type="Resource" path="res://enemies/data/inferno/gunner_inferno.tres" id="v_gunner"]
+[ext_resource type="Resource" path="res://enemies/data/inferno/charger_inferno.tres" id="v_charger"]
+
+[sub_resource type="Resource" id="Kind_0"]
+script = ExtResource("kind")
+kind = &"spire"
+size = Vector3(1.6, 4.5, 1.6)
+weight = 4.0
+can_rotate = false
+color = Color(0.12, 0.1, 0.1, 1)
+
+[sub_resource type="Resource" id="Kind_1"]
+script = ExtResource("kind")
+kind = &"spire_wide"
+size = Vector3(2.6, 3.2, 2.6)
+weight = 2.0
+can_rotate = false
+color = Color(0.12, 0.1, 0.1, 1)
+
+[sub_resource type="Resource" id="Kind_2"]
+script = ExtResource("kind")
+kind = &"ridge"
+size = Vector3(9, 1.6, 1.4)
+weight = 2.0
+can_rotate = true
+color = Color(0.22, 0.13, 0.11, 1)
+
+[sub_resource type="Resource" id="Kind_3"]
+script = ExtResource("kind")
+kind = &"slab"
+size = Vector3(5, 1.2, 3.5)
+weight = 2.0
+can_rotate = true
+color = Color(0.22, 0.13, 0.11, 1)
+
+[sub_resource type="Resource" id="Variant_artillery"]
+script = ExtResource("variant")
+base_id = &"artillery"
+variant = ExtResource("v_artillery")
+
+[sub_resource type="Resource" id="Variant_gunner"]
+script = ExtResource("variant")
+base_id = &"gunner"
+variant = ExtResource("v_gunner")
+
+[sub_resource type="Resource" id="Variant_charger"]
+script = ExtResource("variant")
+base_id = &"charger"
+variant = ExtResource("v_charger")
+
+[sub_resource type="Resource" id="Hazard_fire"]
+script = ExtResource("hazard")
+hazard_scene = ExtResource("fire_patch")
+base_rate = 0.12
+rate_per_threat = 0.04
+max_alive = 6
+min_distance = 6.0
+max_distance = 18.0
+
+[resource]
+script = ExtResource("zone")
+id = &"inferno"
+display_name = "Inferno"
+ground_color_a = Color(0.3, 0.12, 0.08, 1)
+ground_color_b = Color(0.24, 0.09, 0.07, 1)
+background_color = Color(0.12, 0.04, 0.03, 1)
+ambient_color = Color(1, 0.55, 0.35, 1)
+ambient_energy = 0.55
+sun_color = Color(1, 0.62, 0.38, 1)
+sun_energy = 1.25
+fog_color = Color(0.55, 0.16, 0.06, 1)
+fog_density = 0.012
+particle_color = Color(1, 0.55, 0.2, 0.9)
+obstacle_kit = Array[ExtResource("kind")]([SubResource("Kind_0"), SubResource("Kind_1"), SubResource("Kind_2"), SubResource("Kind_3")])
+hazards = Array[ExtResource("hazard")]([SubResource("Hazard_fire")])
+hits_ignite = true
+burn_duration = 2.0
+burn_tick = 1.0
+burn_damage = 6.0
+enemy_variants = Array[ExtResource("variant")]([SubResource("Variant_artillery"), SubResource("Variant_gunner"), SubResource("Variant_charger")])

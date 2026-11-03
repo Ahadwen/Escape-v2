@@ -54,6 +54,8 @@ const DEBUG_SPAWN_ENEMY: StringName = &"debug_spawn_enemy"
 const DEBUG_GIVE_LOOT: StringName = &"debug_give_loot"
 # Debug builds only: pick any card to receive.
 const DEBUG_CARD_PICKER: StringName = &"debug_card_picker"
+# Debug builds only: skip to the next level (keeps cards and gold).
+const DEBUG_NEXT_LEVEL: StringName = &"debug_next_level"
 
 const ABILITY_SLOT_COUNT: int = 4
 
@@ -88,6 +90,7 @@ const ALL: Array[StringName] = [
 	DEBUG_SPAWN_ENEMY,
 	DEBUG_GIVE_LOOT,
 	DEBUG_CARD_PICKER,
+	DEBUG_NEXT_LEVEL,
 ]
 
 

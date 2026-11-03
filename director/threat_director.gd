@@ -19,8 +19,11 @@ const FAR_CHECK_INTERVAL: float = 1.0
 var elapsed: float = 0.0
 var threat: float = 0.0
 var running: bool = false
+## The level's zone blend (variants replace shared enemies by chance).
+var theme: LevelTheme
 
 var _spawn_timer: float = 0.0
+
 var _alive: Array[Enemy] = []
 var _debug_index: int = 0
 var _far_check_timer: float = FAR_CHECK_INTERVAL
@@ -117,7 +120,7 @@ func _try_spawn() -> bool:
 
 func _spawn(entry: SpawnEntry, point: Vector3) -> void:
 	var enemy: Enemy = enemy_scene.instantiate() as Enemy
-	enemy.data = entry.enemy
+	enemy.data = theme.enemy_for(entry.enemy, randf()) if theme != null else entry.enemy
 	enemy.damage_multiplier = profile.damage_multiplier_for(threat)
 	enemy.speed_multiplier = profile.speed_multiplier_for(threat)
 	enemy.position = point

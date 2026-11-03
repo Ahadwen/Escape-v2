@@ -17,12 +17,17 @@ const PLACEMENT_ATTEMPTS: int = 40
 var profile: TerrainProfile
 var run_seed: int
 var level: int
+## Optional. If set, obstacles and ground colours come from the level theme.
+var theme: LevelTheme
 
 
-func _init(p_profile: TerrainProfile, p_run_seed: int, p_level: int = 0) -> void:
+func _init(
+	p_profile: TerrainProfile, p_run_seed: int, p_level: int = 0, p_theme: LevelTheme = null
+) -> void:
 	profile = p_profile
 	run_seed = p_run_seed
 	level = p_level
+	theme = p_theme
 
 
 ## Which chunk a world position falls in. Chunk (0, 0) is centred on the origin.
@@ -56,7 +61,10 @@ func generate(coord: Vector2i) -> ChunkLayout:
 	var layout: ChunkLayout = ChunkLayout.new()
 	layout.coord = coord
 	var tint: float = rng.randf()
-	layout.ground_color = profile.ground_color_a.lerp(profile.ground_color_b, tint)
+	if theme != null:
+		layout.ground_color = theme.ground_color(tint)
+	else:
+		layout.ground_color = profile.ground_color_a.lerp(profile.ground_color_b, tint)
 
 	var keepouts: Array[Vector3] = []  # (x, z, radius) packed as Vector3
 	var center: Vector3 = chunk_center(coord, profile.chunk_size)
@@ -111,14 +119,8 @@ func _place_obstacles(
 	for kind: StringName in kinds:
 		total_weight += OBSTACLE_KINDS[kind][1]
 	for i: int in count:
-		var kind: StringName = _pick_kind(rng, kinds, total_weight)
-		var info: Array = OBSTACLE_KINDS[kind]
-		var size: Vector3 = info[0]
-		var can_rotate: bool = info[2]
-		var yaw: float = ROTATIONS[rng.randi() % ROTATIONS.size()] if can_rotate else 0.0
-		var spec: ChunkLayout.ObstacleSpec = ChunkLayout.ObstacleSpec.new(
-			kind, size, Vector3.ZERO, yaw
-		)
+		var spec: ChunkLayout.ObstacleSpec = _roll_obstacle(rng, kinds, total_weight)
+		var size: Vector3 = spec.size
 		var radius: float = spec.footprint_radius()
 		# Inset by radius + half the gap, so neighbouring chunks keep the gap too.
 		var half: float = profile.chunk_size * 0.5 - radius - profile.obstacle_gap * 0.5
@@ -133,6 +135,30 @@ func _place_obstacles(
 			layout.obstacles.append(spec)
 			keepouts.append(Vector3(x, z, radius))
 			break
+
+
+func _roll_obstacle(
+	rng: RandomNumberGenerator, kinds: Array, total_weight: float
+) -> ChunkLayout.ObstacleSpec:
+	var themed: ObstacleKind = theme.pick_obstacle(rng) if theme != null else null
+	if themed != null:
+		var themed_yaw: float = (
+			ROTATIONS[rng.randi() % ROTATIONS.size()] if themed.can_rotate else 0.0
+		)
+		var themed_spec: ChunkLayout.ObstacleSpec = ChunkLayout.ObstacleSpec.new(
+			themed.kind, themed.size, Vector3.ZERO, themed_yaw
+		)
+		themed_spec.color = themed.color
+		return themed_spec
+	var kind: StringName = _pick_kind(rng, kinds, total_weight)
+	var info: Array = OBSTACLE_KINDS[kind]
+	var can_rotate: bool = info[2]
+	var yaw: float = ROTATIONS[rng.randi() % ROTATIONS.size()] if can_rotate else 0.0
+	var spec: ChunkLayout.ObstacleSpec = ChunkLayout.ObstacleSpec.new(
+		kind, info[0], Vector3.ZERO, yaw
+	)
+	spec.color = profile.obstacle_color
+	return spec
 
 
 func _pick_kind(rng: RandomNumberGenerator, kinds: Array, total_weight: float) -> StringName:

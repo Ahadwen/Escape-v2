@@ -9,6 +9,10 @@ const SAFEHOUSE_DELAY: float = 1.5
 ## 0 = random seed each run.
 @export var fixed_seed: int = 0
 @export var card_library: CardLibrary = preload("res://items/data/card_library.tres")
+@export var zones: ZoneRegistry = preload("res://zones/data/zone_registry.tres")
+
+## This level's blend between the neutral zone and the run's destination.
+var theme: LevelTheme
 
 var _finished: bool = false
 
@@ -25,6 +29,9 @@ var _finished: bool = false
 @onready var _pause: PauseController = $PauseController
 @onready var _interact_prompt: InteractPrompt = $HUD/InteractPrompt
 @onready var _level_label: Label = $HUD/LevelLabel
+@onready var _hazards: HazardSpawner = $HazardSpawner
+@onready var _environment: WorldEnvironment = $WorldEnvironment
+@onready var _sun: DirectionalLight3D = $Sun
 
 
 func _ready() -> void:
@@ -32,7 +39,13 @@ func _ready() -> void:
 		RunState.start_new_run(fixed_seed if fixed_seed != 0 else randi())
 	var level: int = RunState.level_index
 	_level_label.text = "Level %d of %d" % [level + 1, RunState.LEVEL_COUNT]
-	_streamer.start(RunState.run_seed, level)
+	# The destination isn't announced: you see it in the levels shifting.
+	theme = LevelTheme.new(
+		zones.neutral, zones.destination_for_seed(RunState.run_seed), zones.intensity_for(level)
+	)
+	_apply_atmosphere()
+	_streamer.start(RunState.run_seed, level, theme)
+	_director.theme = theme
 	_streamer.safehouse_entered.connect(_on_safehouse_entered)
 	_streamer.crystal_consumed.connect(_on_crystal_consumed)
 	_pickup_screen.set_library(card_library)
@@ -51,6 +64,85 @@ func _ready() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	_director.start(level)
+	_hazards.start(theme)
+	_setup_burning(level)
+
+
+## Debug builds: F6 skips to the next level, keeping cards and gold.
+func _unhandled_input(event: InputEvent) -> void:
+	if not OS.is_debug_build() or not event.is_action_pressed(InputActions.DEBUG_NEXT_LEVEL):
+		return
+	if _finished or RunState.is_final_level():
+		return
+	_finished = true
+	RunState.save_from(_player)
+	RunState.level_index += 1
+	get_tree().reload_current_scene()
+
+
+func _apply_atmosphere() -> void:
+	var neutral: ZoneData = theme.neutral
+	var zone: ZoneData = theme.zone
+	var env: Environment = _environment.environment.duplicate() as Environment
+	env.background_color = theme.blend_color(neutral.background_color, zone.background_color)
+	env.ambient_light_color = theme.blend_color(neutral.ambient_color, zone.ambient_color)
+	env.ambient_light_energy = theme.blend(neutral.ambient_energy, zone.ambient_energy)
+	var fog: float = theme.blend(neutral.fog_density, zone.fog_density)
+	env.fog_enabled = fog > 0.0001
+	env.fog_light_color = theme.blend_color(neutral.fog_color, zone.fog_color)
+	env.fog_density = fog
+	_environment.environment = env
+	_sun.light_color = theme.blend_color(neutral.sun_color, zone.sun_color)
+	_sun.light_energy = theme.blend(neutral.sun_energy, zone.sun_energy)
+	var particles: Color = zone.particle_color
+	if particles.a > 0.0 and theme.intensity > 0.0:
+		particles.a *= theme.intensity
+		_player.add_child(_make_particles(particles, theme.intensity))
+
+
+## Drifting motes around the player (embers, mist). World-space, so they
+## stay put as you move through them.
+func _make_particles(color: Color, amount_scale: float) -> CPUParticles3D:
+	var particles: CPUParticles3D = CPUParticles3D.new()
+	particles.amount = maxi(roundi(90 * amount_scale), 8)
+	particles.lifetime = 4.0
+	particles.local_coords = false
+	particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	particles.emission_box_extents = Vector3(16.0, 0.5, 12.0)
+	particles.position = Vector3(0.0, 0.4, 0.0)
+	particles.direction = Vector3.UP
+	particles.spread = 25.0
+	particles.gravity = Vector3(0.0, 0.5, 0.0)
+	particles.initial_velocity_min = 0.2
+	particles.initial_velocity_max = 0.8
+	particles.scale_amount_min = 0.5
+	particles.scale_amount_max = 1.2
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	material.albedo_color = color
+	var quad: QuadMesh = QuadMesh.new()
+	quad.size = Vector2(0.12, 0.12)
+	quad.material = material
+	particles.mesh = quad
+	return particles
+
+
+## In zones where hits ignite (Inferno), every hit sets you burning; burn
+## ticks don't re-ignite, and health crystals put it out. Ticks get faster
+## from level 3.
+func _setup_burning(level: int) -> void:
+	if not theme.hits_ignite():
+		return
+	var zone: ZoneData = theme.zone
+	var tick: float = zone.burn_tick * (2.0 / 3.0 if level >= 2 else 1.0)
+	_player.health.damaged.connect(
+		func(_amount: float, event: DamageEvent) -> void:
+			if not event.is_burn:
+				_player.status.apply(BurnEffect.new(zone.burn_duration, tick, zone.burn_damage))
+	)
+	_player.events.crystal_used.connect(func() -> void: _player.status.remove(BurnEffect.ID))
 
 
 func _on_scheme_changed(kind: InputRouter.SchemeKind) -> void:
@@ -73,6 +165,7 @@ func _on_safehouse_entered(_who: Player) -> void:
 	if _finished:
 		return
 	_finished = true
+	_hazards.stop()
 	_player.events.safehouse_entered.emit()
 	_player.wallet.add(roundi(_player.stats.get_value(StatIds.SAFEHOUSE_INTEREST)))
 	_director.stop(true)
@@ -90,6 +183,7 @@ func _on_player_died() -> void:
 	if _finished:
 		return
 	_finished = true
+	_hazards.stop()
 	_director.stop(false)
 	_aim_presenter.clear_preview()
 	_show_message("Caught after %s" % RunInfo.format_time(_director.elapsed))
