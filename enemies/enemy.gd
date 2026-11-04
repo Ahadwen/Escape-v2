@@ -11,6 +11,13 @@ const GROUP: StringName = &"enemies"
 const KNOCKBACK_SPEED: float = 20.0
 ## Contact reach beyond the collision radius.
 const CONTACT_MARGIN: float = 0.55
+## Physics layers (see project settings).
+const WORLD_BIT: int = 1
+const PLAYER_BIT: int = 2
+const ENEMY_BIT: int = 4
+const GROUND_BIT: int = 16
+## Layer 6: crowd bodies (Shamblers) that only enemies collide with.
+const CROWD_BIT: int = 32
 ## How visible a cloaked enemy is.
 const CLOAK_ALPHA: float = 0.1
 ## Longer moves than this in one frame are teleports, not sweeps.
@@ -52,6 +59,7 @@ func _ready() -> void:
 		push_error("Enemy spawned without EnemyData.")
 		queue_free()
 		return
+	_apply_body_blocking()
 	stats.initialize(data.get_base_stats())
 	if not is_equal_approx(speed_multiplier, 1.0):
 		stats.block.add_modifier(
@@ -182,6 +190,19 @@ func set_tell(on: bool) -> void:
 ## Where attacks (projectiles, beams) leave from.
 func attack_origin() -> Vector3:
 	return global_position
+
+
+func _apply_body_blocking() -> void:
+	match data.body_blocking:
+		EnemyData.BodyBlocking.EVERYONE:
+			collision_layer = ENEMY_BIT
+			collision_mask = WORLD_BIT | PLAYER_BIT | ENEMY_BIT | GROUND_BIT | CROWD_BIT
+		EnemyData.BodyBlocking.ENEMIES_ONLY:
+			collision_layer = CROWD_BIT
+			collision_mask = WORLD_BIT | ENEMY_BIT | GROUND_BIT | CROWD_BIT
+		EnemyData.BodyBlocking.NOBODY:
+			collision_layer = 0
+			collision_mask = WORLD_BIT | GROUND_BIT
 
 
 func _apply_size() -> void:

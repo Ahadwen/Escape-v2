@@ -4,11 +4,18 @@ extends Resource
 ## the matching EnemyBrain. Enemies have no HP: they can't be killed, only
 ## outlasted.
 
+## EVERYONE: player and enemies bump into it. ENEMIES_ONLY: a crowd body
+## (Shamblers) that gets in hunters' way but the player walks through.
+## NOBODY: passes through everything but walls (mites).
+enum BodyBlocking { EVERYONE, ENEMIES_ONLY, NOBODY }
+
 @export var id: StringName
 @export var display_name: String
 @export var color: Color = Color(0.85, 0.3, 0.3)
 ## Model and collision size relative to the base enemy (x/z width, y height).
 @export var body_scale: Vector3 = Vector3.ONE
+## What this enemy's body physically blocks.
+@export var body_blocking: BodyBlocking = BodyBlocking.EVERYONE
 
 @export_group("Stats")
 @export var move_speed: float = 4.0

@@ -166,3 +166,21 @@ func test_shamblers_are_an_ambient_supply_not_hunt_entries() -> void:
 
 func _hunt() -> ThreatProfile:
 	return load(HUNT_PATH) as ThreatProfile
+
+
+func test_body_blocking_layers() -> void:
+	var scene: PackedScene = load("res://enemies/enemy.tscn") as PackedScene
+	var cases: Dictionary = {
+		"res://enemies/data/hunters/shambler.tres": [32, false],
+		"res://enemies/data/hunters/brood_mite.tres": [0, false],
+		"res://enemies/data/hunters/brute.tres": [4, true],
+	}
+	for path: String in cases:
+		var enemy: Enemy = scene.instantiate() as Enemy
+		enemy.data = load(path) as EnemyData
+		add_to_tree(enemy)
+		var expected: Array = cases[path]
+		assert_eq(enemy.collision_layer, expected[0], "%s layer" % path)
+		assert_eq(enemy.collision_mask & 2 != 0, expected[1], "%s blocked by player" % path)
+		var player_mask: int = 21
+		assert_eq(player_mask & enemy.collision_layer != 0, expected[1], "%s blocks player" % path)
