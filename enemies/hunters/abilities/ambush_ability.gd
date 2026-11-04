@@ -1,25 +1,23 @@
 class_name AmbushAbility
 extends HunterAbility
-## The Assassin: vanishes (a faint shimmer) and closes in faster, reappears
-## next to you and performs a three-strike sequence (each strike has its own
-## short warning: cone, lunge, cone), then backs off.
+## The Assassin: vanishes (a faint shimmer) and closes in, reappears near you
+## and performs three dash strikes. Each strike shows a brief line warning
+## that locks in place, then it dashes straight along it: step off the line.
+## Then it backs off.
 
-@export var stalk_speed_multiplier: float = 1.25
+@export var stalk_speed_multiplier: float = 1.1
 @export var stalk_timeout: float = 4.0
 ## Reappears once this close.
-@export var reveal_distance: float = 2.5
-## Strikes close in during their wind-up (until they lock), at this multiple
-## of its pursuit speed, so stepping away isn't enough on its own.
-@export var advance_speed_ratio: float = 1.4
-@export var strike_wind_up: float = 0.4
-@export var strike_lock: float = 0.12
-@export var strike_gap: float = 0.12
-@export var cone_radius: float = 2.6
-@export var cone_angle: float = 100.0
-@export var lunge_length: float = 5.0
-@export var lunge_width: float = 1.4
-@export var lunge_speed: float = 22.0
-@export var damage: float = 45.0
+@export var reveal_distance: float = 4.5
+## Warning time per strike; it locks lock_time before the dash.
+@export var strike_wind_up: float = 0.45
+@export var strike_lock: float = 0.25
+## Pause after each dash before the next warning.
+@export var strike_gap: float = 0.3
+@export var dash_length: float = 6.0
+@export var dash_width: float = 1.4
+@export var dash_speed: float = 20.0
+@export var damage: float = 35.0
 @export var retreat_time: float = 1.0
 
 
@@ -30,7 +28,7 @@ func create_action(brain: HunterBrain) -> HunterAction:
 class Action:
 	extends HunterAction
 
-	enum Phase { STALK, STRIKE, GAP, RETREAT }
+	enum Phase { STALK, WARN, DASH, GAP, RETREAT }
 
 	const STRIKES: int = 3
 
@@ -40,6 +38,8 @@ class Action:
 	var _strike: int = 0
 	var _direction: Vector3 = Vector3.FORWARD
 	var _dash: DashMovement
+	var _hit: Array[Targetable] = []
+	var _last_position: Vector3
 
 	func _init(p_brain: HunterBrain, p_ability: AmbushAbility) -> void:
 		super(p_brain)
@@ -47,7 +47,7 @@ class Action:
 
 	func start() -> void:
 		if brain.distance_to_target() <= ability.reveal_distance:
-			_begin_strike()
+			_warn()
 			return
 		enemy().set_cloaked(true)
 		_timer = ability.stalk_timeout
@@ -60,23 +60,25 @@ class Action:
 				_timer -= delta
 				if brain.distance_to_target() <= ability.reveal_distance or _timer <= 0.0:
 					enemy().set_cloaked(false)
-					_begin_strike()
-			Phase.STRIKE:
+					_warn()
+			Phase.WARN:
 				_timer -= delta
 				if _timer > ability.strike_lock:
 					_aim()
-					enemy().movement.speed_floor *= ability.advance_speed_ratio
-					enemy().movement.move_in_direction(_direction)
-				else:
-					enemy().movement.stop()
 				brain.warning.set_progress(1.0 - _timer / ability.strike_wind_up)
 				if _timer <= 0.0:
-					_hit()
+					_begin_dash()
+			Phase.DASH:
+				_check_hits()
+				if _dash.finished:
+					_strike += 1
+					_phase = Phase.GAP
+					_timer = ability.strike_gap
 			Phase.GAP:
 				_timer -= delta
-				if _timer <= 0.0 and (_dash == null or _dash.finished):
+				if _timer <= 0.0:
 					if _strike < STRIKES:
-						_begin_strike()
+						_warn()
 					else:
 						_retreat()
 			Phase.RETREAT:
@@ -90,49 +92,46 @@ class Action:
 		if _dash != null:
 			_dash.cancel()
 
-	func _is_lunge() -> bool:
-		return _strike == 1
-
-	func _begin_strike() -> void:
+	func _warn() -> void:
 		enemy().movement.stop()
-		_phase = Phase.STRIKE
+		_phase = Phase.WARN
 		_timer = ability.strike_wind_up
 		_aim()
 
+	## Aims at where you are now (no lead), so a sidestep dodges it.
 	func _aim() -> void:
-		_direction = brain.direction_to_predicted(0.15)
+		_direction = brain.direction_to_target()
 		if _direction == Vector3.ZERO:
 			_direction = enemy().movement.get_facing()
 		enemy().movement.face_towards(_direction)
-		var from: Vector3 = enemy().global_position
-		if _is_lunge():
-			brain.warning.show_line(from, _direction, ability.lunge_length, ability.lunge_width)
-		else:
-			brain.warning.show_cone(from, _direction, ability.cone_radius, ability.cone_angle)
+		brain.warning.show_line(
+			enemy().global_position, _direction, ability.dash_length, ability.dash_width
+		)
 
-	func _hit() -> void:
+	func _begin_dash() -> void:
 		brain.warning.clear()
-		var from: Vector3 = enemy().global_position
-		var amount: float = enemy().scaled_damage(ability.damage)
+		_hit.clear()
+		_last_position = enemy().global_position
+		_dash = DashMovement.new(_direction, ability.dash_length, ability.dash_speed, 0.1)
+		enemy().movement.start_override(_dash)
+		_phase = Phase.DASH
+
+	## Hits anyone the dash passes through this frame (once per strike).
+	func _check_hits() -> void:
+		var now: Vector3 = enemy().global_position
+		var reach: float = ability.dash_width * 0.5 + 0.4
 		for target: Targetable in AttackUtils.player_targets(enemy().get_tree()):
-			var at: Vector3 = target.world_position()
-			var hit: bool
-			if _is_lunge():
-				var to: Vector3 = from + _direction * ability.lunge_length
-				var near: float = AttackUtils.point_segment_distance_flat(at, from, to)
-				hit = near <= ability.lunge_width * 0.5 + 0.4
-			else:
-				hit = AttackUtils.in_cone(
-					from, _direction, ability.cone_radius + 0.4, ability.cone_angle, at
+			if target in _hit or AttackUtils.is_phased(target):
+				continue
+			var near: float = AttackUtils.point_segment_distance_flat(
+				target.world_position(), _last_position, now
+			)
+			if near <= reach:
+				_hit.append(target)
+				AttackUtils.damage(
+					target, enemy().scaled_damage(ability.damage), enemy().data.damage_type, enemy()
 				)
-			if hit:
-				AttackUtils.damage(target, amount, enemy().data.damage_type, enemy())
-		if _is_lunge():
-			_dash = DashMovement.new(_direction, ability.lunge_length, ability.lunge_speed, 0.1)
-			enemy().movement.start_override(_dash)
-		_strike += 1
-		_phase = Phase.GAP
-		_timer = ability.strike_gap
+		_last_position = now
 
 	func _retreat() -> void:
 		var away: Vector3 = -brain.direction_to_target()

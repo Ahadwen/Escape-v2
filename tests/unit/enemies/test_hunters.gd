@@ -106,17 +106,20 @@ func test_hunter_data_files_load() -> void:
 		assert_false(hunter.abilities.is_empty(), "%s has abilities" % id)
 
 
-func test_barrage_cluster_has_centre_and_ring() -> void:
-	var points: Array[Vector3] = BarrageScript.cluster(Vector3(10, 0, 5), 5, 4.0, 0.0)
-	assert_eq(points.size(), 5)
-	var centres: int = 0
-	for point: Vector3 in points:
-		var d: float = Vector2(point.x - 10.0, point.z - 5.0).length()
-		if d < 0.01:
-			centres += 1
-		else:
-			assert_almost_eq(d, 4.0, 0.01)
-	assert_eq(centres, 1)
+func test_barrage_scatter_centres_on_you_without_overlaps() -> void:
+	var barrage: BarrageAbility = BarrageScript.new()
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 7
+	var circles: Array[Vector3] = barrage.scatter(Vector3(10, 0, 5), rng)
+	assert_true(circles.size() >= barrage.count - 2, "most circles placed: %d" % circles.size())
+	assert_almost_eq(circles[0].x, 10.0)
+	assert_almost_eq(circles[0].z, 5.0)
+	for a: int in circles.size():
+		var from_you: float = Vector2(circles[a].x - 10.0, circles[a].z - 5.0).length()
+		assert_true(from_you <= barrage.spread + 0.01, "within spread")
+		for b: int in range(a + 1, circles.size()):
+			var apart: Vector2 = Vector2(circles[a].x - circles[b].x, circles[a].z - circles[b].z)
+			assert_true(apart.length() >= circles[a].y + circles[b].y, "no overlap")
 
 
 func test_hunt_roster_has_every_hunter() -> void:

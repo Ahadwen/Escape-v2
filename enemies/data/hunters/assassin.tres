@@ -7,10 +7,12 @@
 [sub_resource type="Resource" id="Ability_0"]
 script = ExtResource("ambush")
 display_name = "Ambush"
-cooldown = 5.0
+cooldown = 6.0
 initial_cooldown = 1.5
 max_range = 60.0
 damage = 35.0
+dash_length = 11.0
+dash_speed = 26.0
 
 [resource]
 script = ExtResource("hunter")
@@ -18,8 +20,9 @@ id = &"assassin"
 display_name = "Assassin"
 color = Color(0.25, 0.2, 0.35, 1)
 body_scale = Vector3(0.9, 1.05, 0.9)
-move_speed = 8.0
-speed_floor_ratio = 1.1
+move_speed = 7.0
+speed_floor_ratio = 1.0
+catch_up_multiplier = 1.3
 lifetime_min = 30.0
 lifetime_max = 45.0
 threat_cost = 1.0
