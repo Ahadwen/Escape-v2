@@ -34,7 +34,8 @@ class Action:
 		_aim()
 
 	func _aim() -> void:
-		_direction = brain.direction_to_predicted(maxf(_timer, 0.0) * 0.5)
+		# Leads to where you'll be when it fires; after the lock it's fixed.
+		_direction = brain.direction_to_predicted(maxf(_timer, 0.0))
 		if _direction == Vector3.ZERO:
 			_direction = enemy().movement.get_facing()
 		enemy().movement.face_towards(_direction)

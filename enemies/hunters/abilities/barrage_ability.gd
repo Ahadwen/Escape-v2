@@ -1,8 +1,9 @@
 class_name BarrageAbility
 extends HunterAbility
 ## The Artillerist's barrage: one circle right where you stand, then an
-## irregular scatter of circles of different sizes around you, appearing and
-## detonating at uneven times. Walking on doesn't save you: find the gaps.
+## irregular scatter of circles of different sizes around where your heading
+## takes you by the time they go off, appearing and detonating at uneven
+## times. Walking on doesn't save you: find the gaps.
 
 @export var count: int = 9
 ## Circles land within this distance of you.
@@ -28,8 +29,13 @@ func create_action(brain: HunterBrain) -> HunterAction:
 
 
 ## Circles (x, z = centre, y = radius): the first on `center`, the rest
-## scattered irregularly within `spread`, not overlapping (best effort).
-func scatter(center: Vector3, rng: RandomNumberGenerator) -> Array[Vector3]:
+## scattered irregularly within `spread` of `cloud` (where you're heading),
+## not overlapping (best effort).
+func scatter(
+	center: Vector3, rng: RandomNumberGenerator, cloud: Vector3 = Vector3.INF
+) -> Array[Vector3]:
+	if cloud == Vector3.INF:
+		cloud = center
 	var circles: Array[Vector3] = [Vector3(center.x, radius_min, center.z)]
 	var attempts: int = 0
 	while circles.size() < count and attempts < count * 30:
@@ -38,7 +44,7 @@ func scatter(center: Vector3, rng: RandomNumberGenerator) -> Array[Vector3]:
 		var distance: float = sqrt(rng.randf()) * spread
 		var r: float = rng.randf_range(radius_min, radius_max)
 		var candidate: Vector3 = Vector3(
-			center.x + cos(angle) * distance, r, center.z + sin(angle) * distance
+			cloud.x + cos(angle) * distance, r, cloud.z + sin(angle) * distance
 		)
 		if _fits(candidate, circles):
 			circles.append(candidate)
@@ -72,9 +78,17 @@ class Action:
 		enemy().set_tell(true)
 		_timer = ability.cast_time
 		var center: Vector3 = enemy().global_position
+		var cloud: Vector3 = center
 		if brain.target != null:
 			center = brain.target.world_position()
-		_circles = ability.scatter(center, _rng)
+			# Where your heading takes you by the middle of the barrage.
+			var lead: float = (
+				ability.cast_time
+				+ ability.count * (ability.stagger_min + ability.stagger_max) * 0.25
+				+ (ability.fuse_min + ability.fuse_max) * 0.5
+			)
+			cloud = center + brain.target.average_velocity * lead
+		_circles = ability.scatter(center, _rng, cloud)
 
 	func tick(delta: float) -> bool:
 		_timer -= delta
