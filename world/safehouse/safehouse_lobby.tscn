@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://ui/feedback/aim_indicator.gd" id="6_aim_indicator"]
 [ext_resource type="Script" path="res://ui/feedback/aim_preview_presenter.gd" id="7_aim_presenter"]
 [ext_resource type="Script" path="res://ui/hud/ability_bar.gd" id="8_ability_bar"]
+[ext_resource type="Script" path="res://ui/hud/ace_bar.gd" id="8_ace_bar"]
 [ext_resource type="Script" path="res://ui/hud/health_bar.gd" id="10_health_bar"]
 [ext_resource type="Script" path="res://ui/hud/card_bar.gd" id="11_card_bar"]
 [ext_resource type="Script" path="res://ui/hud/interact_prompt.gd" id="12_prompt"]
@@ -224,6 +225,23 @@ mouse_filter = 2
 script = ExtResource("8_ability_bar")
 abilities = NodePath("../../Player/AbilityCaster")
 
+
+[node name="AceBar" type="Control" parent="HUD" node_paths=PackedStringArray("cards")]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("8_ace_bar")
+cards = NodePath("../../Player/CardInventory")
 [node name="LevelLabel" type="Label" parent="HUD"]
 layout_mode = 3
 anchors_preset = 1

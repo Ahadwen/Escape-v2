@@ -10,6 +10,7 @@ var _wildcard_available: bool = true
 @onready var _move_marker: MoveMarker = $MoveMarker
 @onready var _aim_presenter: AimPreviewPresenter = $AimPreviewPresenter
 @onready var _ability_bar: AbilityBar = $HUD/AbilityBar
+@onready var _ace_bar: AceBar = $HUD/AceBar
 @onready var _card_bar: CardBar = $HUD/CardBar
 @onready var _interact_prompt: InteractPrompt = $HUD/InteractPrompt
 @onready var _pause: PauseController = $PauseController
@@ -45,6 +46,7 @@ func _ready() -> void:
 
 func _on_scheme_changed(kind: InputRouter.SchemeKind) -> void:
 	_ability_bar.set_scheme(kind)
+	_ace_bar.set_scheme(kind)
 	_card_bar.set_scheme(kind)
 	_interact_prompt.set_scheme(kind)
 	_pause.set_touch_controls_visible(kind == InputRouter.SchemeKind.TOUCH)

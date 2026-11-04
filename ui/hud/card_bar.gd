@@ -1,7 +1,7 @@
 class_name CardBar
 extends Control
-## The five card slots and gold, under the HP bar. Shows ace stack counts,
-## the selected ace (gamepad/touch) and PC key hints for aces.
+## The five card slots and gold, under the HP bar. Aces are cast from their
+## icons above the ability bar (AceBar), so here they're just cards.
 
 const SLOT_SIZE: Vector2 = Vector2(64, 46)
 
@@ -11,7 +11,6 @@ const SLOT_SIZE: Vector2 = Vector2(64, 46)
 var _labels: Array[Label] = []
 var _panels: Array[PanelContainer] = []
 var _gold: Label
-var _show_key_hints: bool = true
 
 
 func _ready() -> void:
@@ -48,16 +47,14 @@ func _ready() -> void:
 	_refresh()
 
 
-## Key hints (1-4) only make sense on PC.
-func set_scheme(kind: InputRouter.SchemeKind) -> void:
-	_show_key_hints = kind == InputRouter.SchemeKind.PC
+## Kept for the HUD scheme switch; cards look the same on every scheme.
+func set_scheme(_kind: InputRouter.SchemeKind) -> void:
 	_refresh()
 
 
 func _refresh() -> void:
 	if cards == null:
 		return
-	var ace_number: int = 0
 	for i: int in CardInventory.SLOT_COUNT:
 		var stack: CardStack = cards.stack_at(i)
 		var label: Label = _labels[i]
@@ -65,15 +62,6 @@ func _refresh() -> void:
 			label.text = "·"
 			_panels[i].modulate = Color(1, 1, 1, 0.4)
 			continue
-		var text: String = stack.card.label()
-		if stack.card.is_ace():
-			ace_number += 1
-			text += " ×%d" % stack.count
-			if _show_key_hints and ace_number <= InputActions.ACE_KEY_COUNT:
-				text = "[%d] %s" % [ace_number, text]
-		label.text = text
-		var tint: Color = stack.card.color().lerp(Color.WHITE, 0.4)
-		if not _show_key_hints and i == cards.selected_ace_slot:
-			tint = Color(1.0, 1.0, 0.55)
-		_panels[i].modulate = tint
+		label.text = stack.card.label()
+		_panels[i].modulate = stack.card.color().lerp(Color.WHITE, 0.4)
 	_gold.text = "  %d g" % (wallet.gold if wallet != null else 0)

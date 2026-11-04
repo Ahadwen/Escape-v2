@@ -23,6 +23,7 @@ var _finished: bool = false
 @onready var _move_marker: MoveMarker = $MoveMarker
 @onready var _aim_presenter: AimPreviewPresenter = $AimPreviewPresenter
 @onready var _ability_bar: AbilityBar = $HUD/AbilityBar
+@onready var _ace_bar: AceBar = $HUD/AceBar
 @onready var _message: Label = $HUD/MessageLabel
 @onready var _card_bar: CardBar = $HUD/CardBar
 @onready var _pickup_screen: CardPickupScreen = $PickupLayer/CardPickupScreen
@@ -147,6 +148,7 @@ func _setup_burning(level: int) -> void:
 
 func _on_scheme_changed(kind: InputRouter.SchemeKind) -> void:
 	_ability_bar.set_scheme(kind)
+	_ace_bar.set_scheme(kind)
 	_card_bar.set_scheme(kind)
 	_interact_prompt.set_scheme(kind)
 	_pause.set_touch_controls_visible(kind == InputRouter.SchemeKind.TOUCH)
