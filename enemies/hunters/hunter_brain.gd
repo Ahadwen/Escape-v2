@@ -3,12 +3,19 @@ extends EnemyBrain
 ## Generic hunter: pursue (intercepting, flanking) and use abilities from its
 ## kit when they're ready and usable. Applies the pursuit speed rule.
 
+## Seconds between route recalculations (route_to_predicted).
+const ROUTE_INTERVAL: float = 0.15
+## Path corners closer than this are treated as already passed.
+const ROUTE_CORNER_DISTANCE: float = 1.5
+
 var hunter: HunterData
 var current_action: HunterAction
 ## Ground warnings for this hunter's abilities.
 var warning: Telegraph
 
 var _cooldowns: Array[float] = []
+var _route_timer: float = 0.0
+var _route_direction: Vector3 = Vector3.ZERO
 var _spin: float = 0.0
 var _wobble_time: float = 0.0
 
@@ -52,6 +59,34 @@ func interrupt() -> void:
 	if current_action != null:
 		current_action.cancel()
 		current_action = null
+
+
+## Direction toward where the target will be after `lead` seconds, routed
+## around walls: the way to the next corner of the navigation path, or
+## straight at them when nothing is in the way. Recomputed a few times a
+## second.
+func route_to_predicted(lead: float) -> Vector3:
+	_route_timer -= get_physics_process_delta_time()
+	if _route_timer > 0.0 and _route_direction != Vector3.ZERO:
+		return _route_direction
+	_route_timer = ROUTE_INTERVAL
+	_route_direction = direction_to_predicted(lead)
+	if target == null or has_line_of_sight_to_target():
+		return _route_direction
+	var from: Vector3 = enemy.global_position
+	var path: PackedVector3Array = NavigationServer3D.map_get_path(
+		enemy.get_world_3d().navigation_map,
+		from,
+		target.predicted_position(lead),
+		true,
+		enemy.movement.navigation_layers
+	)
+	var index: int = ActorMovement.next_waypoint_index(path, 0, from, ROUTE_CORNER_DISTANCE)
+	if index < path.size():
+		var offset: Vector3 = Vector3(path[index].x - from.x, 0.0, path[index].z - from.z)
+		if offset.length_squared() > 0.0001:
+			_route_direction = offset.normalized()
+	return _route_direction
 
 
 ## The player's sustained speed: base + permanent bonuses (cards), without

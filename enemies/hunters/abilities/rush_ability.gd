@@ -1,21 +1,31 @@
 class_name RushAbility
 extends HunterAbility
-## A telegraphed straight-line rush (Brute charge): locks direction, shows a
-## line, then dashes along it. Anything it hits is damaged and stunned. Walls
-## stop it.
+## The Brute's charge. No warning: it just goes, steering after you with a
+## poor turning circle and speeding up the whole time. It only stops once it
+## is past you along its own heading (a sidestep makes it overrun you), it
+## hits you, or it runs out of steam. It smashes through terrain, so ducking
+## behind a wall doesn't save you.
 
-@export var wind_up: float = 0.9
-## The aim tracks the target until this long before the rush, then locks.
-@export var lock_time: float = 0.3
-## Longest rush; it rushes a little past where it expects you to be.
-@export var distance: float = 16.0
-@export var overshoot: float = 3.0
-@export var speed: float = 26.0
+## Speed it starts from, as a multiple of its current move speed.
+@export var start_speed_ratio: float = 1.0
+@export var max_speed: float = 30.0
+## Metres per second gained each second while charging.
+@export var acceleration: float = 8.0
+## How fast it comes to a halt once the charge ends.
+@export var deceleration: float = 45.0
+## Turn rate in degrees per second (low = wide turning circle).
+@export var turn_rate_degrees: float = 60.0
+## The charge ends once it is this far past you along its heading.
+@export var pass_distance: float = 2.5
+## Longest a charge can last.
+@export var max_duration: float = 5.0
 @export var width: float = 2.0
-@export var damage: float = 45.0
+@export var damage: float = 100.0
 @export var stun: float = 0.8
-@export var recovery: float = 0.9
-@export var lead: float = 0.3
+@export var knockback: float = 4.0
+@export var recovery: float = 0.6
+## How far ahead of you it steers (seconds of your movement).
+@export var lead: float = 0.2
 
 
 func create_action(brain: HunterBrain) -> HunterAction:
@@ -25,14 +35,12 @@ func create_action(brain: HunterBrain) -> HunterAction:
 class Action:
 	extends HunterAction
 
-	enum Phase { WIND_UP, RUSHING, RECOVER }
+	enum Phase { CHARGING, RECOVER }
 
 	var ability: RushAbility
-	var _phase: Phase = Phase.WIND_UP
+	var _phase: Phase = Phase.CHARGING
 	var _timer: float = 0.0
-	var _direction: Vector3
-	var _length: float = 16.0
-	var _dash: DashMovement
+	var _movement: MomentumMovement
 	var _hit: Array[Targetable] = []
 
 	func _init(p_brain: HunterBrain, p_ability: RushAbility) -> void:
@@ -40,43 +48,31 @@ class Action:
 		ability = p_ability
 
 	func start() -> void:
-		enemy().movement.stop()
-		_aim()
-		brain.warning.show_line(enemy().global_position, _direction, _length, ability.width)
-		_timer = ability.wind_up
-
-	## Aims at where the target will be when the rush arrives.
-	func _aim() -> void:
-		var from: Vector3 = enemy().global_position
-		var arrival: float = maxf(_timer, 0.0) + brain.distance_to_target() / ability.speed
-		var point: Vector3 = brain.target.predicted_position(arrival) if brain.target else from
-		var offset: Vector3 = Vector3(point.x - from.x, 0.0, point.z - from.z)
-		if offset.length_squared() < 0.01:
-			_direction = enemy().movement.get_facing()
-			_length = ability.distance
-		else:
-			_direction = offset.normalized()
-			_length = minf(offset.length() + ability.overshoot, ability.distance)
-		enemy().movement.face_towards(_direction)
+		var direction: Vector3 = brain.direction_to_predicted(ability.lead)
+		if direction == Vector3.ZERO:
+			direction = enemy().movement.get_facing()
+		_movement = MomentumMovement.new(
+			direction,
+			enemy().movement.current_speed() * ability.start_speed_ratio,
+			ability.max_speed,
+			ability.acceleration,
+			ability.deceleration,
+			deg_to_rad(ability.turn_rate_degrees),
+			ability.max_duration
+		)
+		_movement.wall_mode = MomentumMovement.WallMode.SMASH
+		_movement.hit_obstacle.connect(Obstacles.destroy)
+		enemy().movement.start_override(_movement)
 
 	func tick(delta: float) -> bool:
 		match _phase:
-			Phase.WIND_UP:
-				_timer -= delta
-				if _timer > ability.lock_time:
-					_aim()
-					brain.warning.show_line(
-						enemy().global_position, _direction, _length, ability.width
-					)
-				brain.warning.set_progress(1.0 - _timer / ability.wind_up)
-				if _timer <= 0.0:
-					brain.warning.clear()
-					_dash = DashMovement.new(_direction, _length, ability.speed, 0.15)
-					enemy().movement.start_override(_dash)
-					_phase = Phase.RUSHING
-			Phase.RUSHING:
-				_check_hits()
-				if _dash.finished:
+			Phase.CHARGING:
+				if _movement.is_driving():
+					_movement.steer_direction = brain.direction_to_predicted(ability.lead)
+					_check_hits()
+					if not _hit.is_empty() or _is_past_target():
+						_movement.stop_driving()
+				if _movement.finished:
 					_phase = Phase.RECOVER
 					_timer = ability.recovery
 			Phase.RECOVER:
@@ -85,9 +81,16 @@ class Action:
 		return false
 
 	func cancel() -> void:
-		brain.warning.clear()
-		if _dash != null:
-			_dash.cancel()
+		if _movement != null:
+			_movement.cancel()
+
+	## True once the target is behind it by pass_distance along its heading.
+	func _is_past_target() -> bool:
+		if brain.target == null:
+			return true
+		var offset: Vector3 = brain.target.world_position() - enemy().global_position
+		offset.y = 0.0
+		return offset.dot(_movement.direction) < -ability.pass_distance
 
 	func _check_hits() -> void:
 		var from: Vector3 = enemy().global_position
@@ -95,8 +98,11 @@ class Action:
 		for target: Targetable in AttackUtils.player_targets(enemy().get_tree()):
 			if target in _hit or target.flat_distance_to(from) > reach:
 				continue
+			if AttackUtils.is_phased(target):
+				continue
 			_hit.append(target)
 			AttackUtils.damage(
 				target, enemy().scaled_damage(ability.damage), enemy().data.damage_type, enemy()
 			)
 			AttackUtils.apply_status(target, StunEffect.new(ability.stun, &"hunter_stun"))
+			AttackUtils.displace(target, _movement.direction, ability.knockback, 18.0)

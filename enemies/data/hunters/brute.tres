@@ -21,20 +21,21 @@ stun = 0.6
 [sub_resource type="Resource" id="Ability_1"]
 script = ExtResource("rush")
 display_name = "Charge"
-cooldown = 7.0
+cooldown = 6.0
 initial_cooldown = 2.0
-min_range = 5.0
-max_range = 18.0
-needs_line_of_sight = true
-wind_up = 0.9
-distance = 22.0
-overshoot = 3.0
-lock_time = 0.3
-speed = 26.0
+min_range = 4.0
+max_range = 22.0
+max_speed = 30.0
+acceleration = 8.0
+deceleration = 45.0
+turn_rate_degrees = 60.0
+pass_distance = 2.5
+max_duration = 5.0
 width = 2.0
 damage = 100.0
 stun = 0.8
-recovery = 0.5
+knockback = 4.0
+recovery = 0.6
 
 [resource]
 script = ExtResource("hunter")

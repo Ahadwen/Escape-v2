@@ -27,15 +27,27 @@ func _init(
 	obstacle_color = p_obstacle_color
 
 
-## Builds the chunk. skip_poi(id) -> bool lets the caller drop consumed POIs.
+## Stable id of a chunk's i-th obstacle (used to remember destroyed ones).
+static func obstacle_id(coord: Vector2i, index: int) -> String:
+	return "obstacle_%d_%d_%d" % [coord.x, coord.y, index]
+
+
+## Builds the chunk. skip_poi(id) -> bool lets the caller drop consumed POIs
+## and destroyed obstacles.
 ## on_poi(node, spec) is called for each POI node created.
 func build(layout: ChunkLayout, chunk_size: float, skip_poi: Callable, on_poi: Callable) -> Node3D:
 	var chunk: Node3D = Node3D.new()
 	chunk.name = "Chunk_%d_%d" % [layout.coord.x, layout.coord.y]
 	chunk.position = ChunkGenerator.chunk_center(layout.coord, chunk_size)
 	chunk.add_child(_build_floor(layout, chunk_size))
-	for spec: ChunkLayout.ObstacleSpec in layout.obstacles:
-		chunk.add_child(_build_obstacle(spec))
+	for i: int in layout.obstacles.size():
+		var id: String = obstacle_id(layout.coord, i)
+		if skip_poi.is_valid() and skip_poi.call(id):
+			continue
+		var obstacle: StaticBody3D = _build_obstacle(layout.obstacles[i])
+		obstacle.set_meta(Obstacles.ID_META, id)
+		obstacle.add_to_group(Obstacles.GROUP)
+		chunk.add_child(obstacle)
 	for poi: ChunkLayout.PoiSpec in layout.pois:
 		if skip_poi.is_valid() and skip_poi.call(poi.id):
 			continue

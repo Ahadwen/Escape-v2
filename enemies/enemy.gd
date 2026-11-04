@@ -11,6 +11,8 @@ const GROUP: StringName = &"enemies"
 const KNOCKBACK_SPEED: float = 20.0
 ## Contact reach beyond the collision radius.
 const CONTACT_MARGIN: float = 0.55
+## Longer moves than this in one frame are teleports, not sweeps.
+const MAX_CONTACT_SWEEP: float = 3.0
 const AGE_SPEED_SOURCE: StringName = &"age"
 const THREAT_SPEED_SOURCE: StringName = &"threat"
 const AGE_SPEED_REFRESH: float = 0.5
@@ -28,6 +30,7 @@ var body_radius: float = 0.45
 
 var _despawning: bool = false
 var _contact_cooldowns: Dictionary[int, float] = {}
+var _last_contact_position: Vector3 = Vector3.INF
 var _age_modifier: StatModifier
 var _age_refresh: float = 0.0
 
@@ -195,9 +198,15 @@ func _contact_damage(delta: float) -> void:
 	if data.contact_damage <= 0.0:
 		return
 	var reach: float = body_radius + CONTACT_MARGIN
+	# Swept from last frame's position, so a fast enemy can't skip past you.
+	var from: Vector3 = _last_contact_position
+	# (Not across teleports.)
+	if from == Vector3.INF or from.distance_to(global_position) > MAX_CONTACT_SWEEP:
+		from = global_position
+	_last_contact_position = global_position
 	for target: Targetable in AttackUtils.player_targets(get_tree()):
 		var id: int = target.get_instance_id()
-		if _contact_cooldowns.has(id) or target.flat_distance_to(global_position) > reach:
+		if _contact_cooldowns.has(id) or _sweep_distance(from, target) > reach:
 			continue
 		if AttackUtils.is_phased(target):
 			continue
@@ -206,3 +215,16 @@ func _contact_damage(delta: float) -> void:
 		if data.contact_knockback > 0.0:
 			var away: Vector3 = target.world_position() - global_position
 			AttackUtils.displace(target, away, data.contact_knockback, 18.0)
+
+
+## Flat distance from the target to the segment this enemy moved along.
+func _sweep_distance(from: Vector3, target: Targetable) -> float:
+	var p: Vector3 = target.world_position()
+	var a: Vector2 = Vector2(from.x, from.z)
+	var b: Vector2 = Vector2(global_position.x, global_position.z)
+	var point: Vector2 = Vector2(p.x, p.z)
+	var ab: Vector2 = b - a
+	var t: float = 0.0
+	if ab.length_squared() > 0.0001:
+		t = clampf((point - a).dot(ab) / ab.length_squared(), 0.0, 1.0)
+	return point.distance_to(a + ab * t)

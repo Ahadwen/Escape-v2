@@ -34,6 +34,7 @@ func start(p_seed: int, p_level: int = 0, theme: LevelTheme = null) -> void:
 	level = p_level
 	_generator = ChunkGenerator.new(profile, run_seed, level, theme)
 	_builder = ChunkBuilder.new(crystal_scene, safehouse_scene, chest_scene, profile.obstacle_color)
+	add_to_group(Obstacles.OWNER_GROUP)
 	nav_region.bake_finished.connect(_on_bake_finished)
 	_update_chunks(true)
 	nav_region.bake_navigation_mesh(false)
@@ -110,6 +111,16 @@ func _on_safehouse_entered(who: Player) -> void:
 
 func _on_consumed(id: String) -> void:
 	_consumed[id] = true
+
+
+## Destroys a generated obstacle for the rest of the level (it isn't rebuilt
+## when its chunk reloads) and rebuilds navigation around the gap.
+func destroy_obstacle(body: Node3D) -> void:
+	var id: String = str(body.get_meta(Obstacles.ID_META, ""))
+	if not id.is_empty():
+		_consumed[id] = true
+	Obstacles.remove(body)
+	_nav_dirty = true
 
 
 func _on_bake_finished() -> void:
