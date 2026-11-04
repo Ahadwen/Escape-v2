@@ -5,8 +5,8 @@ extends AbilityExecution
 ## enemies back, briefly stunning them.
 
 const INVULNERABLE_ID: StringName = &"charge_invulnerable"
-## Physics layer 3 ("enemies").
-const ENEMY_LAYER_BIT: int = 4
+## Physics layers 3 ("enemies") and 6 ("crowd": Shamblers).
+const ENEMY_LAYER_BIT: int = 4 | 32
 ## How much of a shove goes forward along the charge vs sideways.
 const PLOUGH_FORWARD_SHARE: float = 0.35
 

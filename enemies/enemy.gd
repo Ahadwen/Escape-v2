@@ -16,7 +16,8 @@ const WORLD_BIT: int = 1
 const PLAYER_BIT: int = 2
 const ENEMY_BIT: int = 4
 const GROUND_BIT: int = 16
-## Layer 6: crowd bodies (Shamblers) that only enemies collide with.
+## Layer 6: crowd bodies (Shamblers) that only the player (and each other)
+## collide with.
 const CROWD_BIT: int = 32
 ## How visible a cloaked enemy is.
 const CLOAK_ALPHA: float = 0.1
@@ -196,10 +197,10 @@ func _apply_body_blocking() -> void:
 	match data.body_blocking:
 		EnemyData.BodyBlocking.EVERYONE:
 			collision_layer = ENEMY_BIT
-			collision_mask = WORLD_BIT | PLAYER_BIT | ENEMY_BIT | GROUND_BIT | CROWD_BIT
-		EnemyData.BodyBlocking.ENEMIES_ONLY:
+			collision_mask = WORLD_BIT | PLAYER_BIT | ENEMY_BIT | GROUND_BIT
+		EnemyData.BodyBlocking.PLAYER_ONLY:
 			collision_layer = CROWD_BIT
-			collision_mask = WORLD_BIT | ENEMY_BIT | GROUND_BIT | CROWD_BIT
+			collision_mask = WORLD_BIT | PLAYER_BIT | GROUND_BIT | CROWD_BIT
 		EnemyData.BodyBlocking.NOBODY:
 			collision_layer = 0
 			collision_mask = WORLD_BIT | GROUND_BIT

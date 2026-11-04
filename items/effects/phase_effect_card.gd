@@ -3,8 +3,8 @@ extends CardEffect
 ## Q♠: when an ability's active part ends, pass through enemies and their
 ## projectiles briefly.
 
-## Physics layer 3 ("enemies").
-const ENEMY_LAYER_BIT: int = 4
+## Physics layers 3 ("enemies") and 6 ("crowd": Shamblers).
+const ENEMY_LAYER_BIT: int = 4 | 32
 
 @export var duration: float = 1.0
 

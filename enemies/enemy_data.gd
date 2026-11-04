@@ -4,10 +4,10 @@ extends Resource
 ## the matching EnemyBrain. Enemies have no HP: they can't be killed, only
 ## outlasted.
 
-## EVERYONE: player and enemies bump into it. ENEMIES_ONLY: a crowd body
-## (Shamblers) that gets in hunters' way but the player walks through.
+## EVERYONE: player and enemies bump into it. PLAYER_ONLY: a crowd body
+## (Shamblers) that blocks the player but hunters pass straight through.
 ## NOBODY: passes through everything but walls (mites).
-enum BodyBlocking { EVERYONE, ENEMIES_ONLY, NOBODY }
+enum BodyBlocking { EVERYONE, PLAYER_ONLY, NOBODY }
 
 @export var id: StringName
 @export var display_name: String

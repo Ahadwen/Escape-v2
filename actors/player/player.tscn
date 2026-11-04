@@ -34,7 +34,7 @@ size = Vector3(0.22, 0.22, 0.4)
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
-collision_mask = 21
+collision_mask = 53
 script = ExtResource("3_player")
 character = ExtResource("6_knight")
 
