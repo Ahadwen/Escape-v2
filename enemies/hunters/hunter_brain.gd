@@ -40,8 +40,15 @@ func think(delta: float) -> void:
 	_update_speed_floor()
 	for i: int in _cooldowns.size():
 		_cooldowns[i] -= delta
+	if target != null and not is_instance_valid(target):
+		target = null
+	if current_action != null and target == null:
+		# Target gone (died, or a decoy expired): abilities assume one.
+		warning.clear()
+		current_action.cancel()
+		current_action = null
 	if current_action != null:
-		if target != null and _try_interrupting_ability():
+		if _try_interrupting_ability():
 			return
 		if current_action.tick(delta):
 			current_action = null
