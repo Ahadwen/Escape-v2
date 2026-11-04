@@ -1,0 +1,47 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/hunters/hunter_data.gd" id="hunter"]
+[ext_resource type="Script" path="res://enemies/hunters/hunter_ability.gd" id="ability"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/blink_away_ability.gd" id="blink"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/beam_ability.gd" id="beam"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/barrage_ability.gd" id="barrage"]
+
+[sub_resource type="Resource" id="Ability_0"]
+script = ExtResource("blink")
+display_name = "Displace"
+cooldown = 7.0
+initial_cooldown = 2.0
+max_range = 6.0
+interrupts = true
+distance = 16.0
+
+[sub_resource type="Resource" id="Ability_1"]
+script = ExtResource("beam")
+display_name = "Beam"
+cooldown = 6.0
+initial_cooldown = 2.0
+min_range = 4.0
+max_range = 26.0
+
+[sub_resource type="Resource" id="Ability_2"]
+script = ExtResource("barrage")
+display_name = "Barrage"
+cooldown = 8.0
+initial_cooldown = 4.0
+min_range = 6.0
+max_range = 24.0
+
+[resource]
+script = ExtResource("hunter")
+id = &"artillerist"
+display_name = "Artillerist"
+color = Color(0.7, 0.35, 0.8, 1)
+body_scale = Vector3(1.1, 1.3, 1.1)
+move_speed = 7.0
+speed_floor_ratio = 1.05
+preferred_range_min = 14.0
+preferred_range_max = 22.0
+lifetime_min = 30.0
+lifetime_max = 50.0
+threat_cost = 1.0
+abilities = Array[ExtResource("ability")]([SubResource("Ability_0"), SubResource("Ability_1"), SubResource("Ability_2")])

@@ -1,0 +1,43 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/hunters/hunter_data.gd" id="hunter"]
+[ext_resource type="Script" path="res://enemies/hunters/hunter_ability.gd" id="ability"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/skillshot_ability.gd" id="shot"]
+
+[sub_resource type="Resource" id="Ability_0"]
+script = ExtResource("shot")
+display_name = "Snipe"
+cooldown = 3.0
+initial_cooldown = 1.0
+min_range = 5.0
+max_range = 24.0
+needs_line_of_sight = true
+wind_up = 0.7
+lock_time = 0.2
+reach = 30.0
+warning_width = 0.4
+speed = 70.0
+radius = 0.25
+damage = 35.0
+color = Color(1, 0.6, 0.2, 1)
+trap_count = 3
+trap_spread = 2.2
+trap_root_time = 1.0
+trap_lifetime = 8.0
+trap_damage = 10.0
+recovery = 0.2
+
+[resource]
+script = ExtResource("hunter")
+id = &"trapper"
+display_name = "Trapper"
+color = Color(0.55, 0.45, 0.25, 1)
+body_scale = Vector3(0.9, 1.0, 0.9)
+move_speed = 9.0
+speed_floor_ratio = 1.2
+preferred_range_min = 12.0
+preferred_range_max = 20.0
+lifetime_min = 30.0
+lifetime_max = 50.0
+threat_cost = 1.0
+abilities = Array[ExtResource("ability")]([SubResource("Ability_0")])

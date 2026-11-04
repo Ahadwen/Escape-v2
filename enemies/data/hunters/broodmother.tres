@@ -1,0 +1,52 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://enemies/hunters/hunter_data.gd" id="hunter"]
+[ext_resource type="Script" path="res://enemies/hunters/hunter_ability.gd" id="ability"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/swarm_ability.gd" id="swarm"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/skillshot_ability.gd" id="shot"]
+[ext_resource type="Resource" path="res://enemies/data/hunters/brood_mite.tres" id="mite"]
+
+[sub_resource type="Resource" id="Ability_0"]
+script = ExtResource("swarm")
+display_name = "Swarm"
+cooldown = 11.0
+initial_cooldown = 2.5
+max_range = 22.0
+minion = ExtResource("mite")
+count = 8
+
+[sub_resource type="Resource" id="Ability_1"]
+script = ExtResource("shot")
+display_name = "Web"
+cooldown = 4.0
+initial_cooldown = 1.5
+min_range = 3.0
+max_range = 13.0
+needs_line_of_sight = true
+wind_up = 0.4
+lock_time = 0.15
+reach = 16.0
+warning_width = 1.0
+speed = 22.0
+radius = 0.5
+damage = 10.0
+color = Color(0.85, 0.85, 0.9, 1)
+on_hit = 1
+slow_amount = 0.45
+status_duration = 2.0
+recovery = 0.3
+
+[resource]
+script = ExtResource("hunter")
+id = &"broodmother"
+display_name = "Broodmother"
+color = Color(0.4, 0.6, 0.3, 1)
+body_scale = Vector3(1.6, 0.9, 1.6)
+move_speed = 6.5
+speed_floor_ratio = 1.0
+preferred_range_min = 9.0
+preferred_range_max = 14.0
+lifetime_min = 35.0
+lifetime_max = 50.0
+threat_cost = 1.0
+abilities = Array[ExtResource("ability")]([SubResource("Ability_0"), SubResource("Ability_1")])

@@ -18,6 +18,9 @@ extends EnemyData
 ## hunter that always closes in.
 @export var preferred_range_min: float = 0.0
 @export var preferred_range_max: float = 0.0
+## Ranged hunters: run alongside you inside the band (keeping pace) instead
+## of standing still in it.
+@export var strafes: bool = false
 ## Spinning visual (Spinner).
 @export var spins: bool = false
 

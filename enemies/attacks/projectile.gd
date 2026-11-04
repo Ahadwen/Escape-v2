@@ -1,7 +1,9 @@
 class_name Projectile
 extends Node3D
 ## A straight-line shot. Stops at walls; hits the first player-faction target
-## it touches.
+## it touches. Emits `impacted` wherever it ends (target, wall or range).
+
+signal impacted(point: Vector3, target: Targetable)
 
 const GROUP: StringName = &"enemy_projectiles"
 ## Extra reach so the shot connects with a body, not just its centre point.
@@ -15,6 +17,10 @@ var radius: float = 0.3
 ## Safety net only: shots normally fly until they hit a wall or a target.
 var lifetime: float = 10.0
 var color: Color = Color(1.0, 0.45, 0.25)
+## Flies at most this far, then ends (impacted at that point).
+var max_distance: float = INF
+
+var _travelled: float = 0.0
 
 
 func configure(
@@ -63,7 +69,11 @@ func _physics_process(delta: float) -> void:
 	var from: Vector3 = global_position
 	var time_scale: float = EnemyTime.scale() * DilationField.projectile_scale_at(from)
 	var to: Vector3 = from + velocity * delta * time_scale
+	var remaining: float = max_distance - _travelled
+	if from.distance_to(to) > remaining:
+		to = from + (to - from).normalized() * remaining
 	var stop: Vector3 = AttackUtils.ray_to_wall(get_world_3d(), from, to)
+	_travelled += from.distance_to(stop)
 	global_position = stop
 	for target: Targetable in AttackUtils.player_targets(get_tree()):
 		if AttackUtils.is_phased(target):
@@ -73,10 +83,15 @@ func _physics_process(delta: float) -> void:
 			<= radius + TARGET_RADIUS
 		):
 			AttackUtils.damage(target, damage_amount, damage_type, _live_source())
-			queue_free()
+			_end(target.world_position(), target)
 			return
-	if not stop.is_equal_approx(to):
-		queue_free()
+	if not stop.is_equal_approx(to) or _travelled >= max_distance - 0.001:
+		_end(stop, null)
+
+
+func _end(point: Vector3, target: Targetable) -> void:
+	impacted.emit(Vector3(point.x, point.y - AttackUtils.EYE_HEIGHT, point.z), target)
+	queue_free()
 
 
 ## The attacker, or null if it has despawned since (attacks outlive them).

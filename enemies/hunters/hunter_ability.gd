@@ -14,6 +14,8 @@ extends Resource
 ## Show a ground warning during the wind-up. Light attacks don't need one:
 ## the hunter's body flashing is their tell.
 @export var show_warning: bool = true
+## May cut off whatever the hunter is doing (e.g. the Artillerist's escape).
+@export var interrupts: bool = false
 
 
 func can_use(brain: HunterBrain) -> bool:

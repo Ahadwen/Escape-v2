@@ -1,6 +1,6 @@
 # Hunters — working draft
 
-Status: **in discussion.** Your ideas, organised; numbers are placeholders.
+Status: **all nine hunters implemented** (first pass); numbers live in `enemies/data/hunters/*.tres` and the roster in `director/data/hunt.tres`.
 
 ## Principles
 

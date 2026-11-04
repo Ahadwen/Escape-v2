@@ -89,7 +89,39 @@ func test_sustained_speed_ignores_status_boosts() -> void:
 
 
 func test_hunter_data_files_load() -> void:
-	for id: String in ["shambler", "brute", "spinner", "harpooner"]:
+	for id: String in [
+		"shambler",
+		"brute",
+		"spinner",
+		"harpooner",
+		"gunslinger",
+		"trapper",
+		"assassin",
+		"artillerist",
+		"broodmother",
+	]:
 		var hunter: HunterData = load("res://enemies/data/hunters/%s.tres" % id) as HunterData
 		assert_not_null(hunter, id)
 		assert_false(hunter.abilities.is_empty(), "%s has abilities" % id)
+
+
+func test_barrage_cluster_has_centre_and_ring() -> void:
+	var points: Array[Vector3] = BarrageAbility.cluster(Vector3(10, 0, 5), 5, 4.0, 0.0)
+	assert_eq(points.size(), 5)
+	var centres: int = 0
+	for point: Vector3 in points:
+		var d: float = Vector2(point.x - 10.0, point.z - 5.0).length()
+		if d < 0.01:
+			centres += 1
+		else:
+			assert_almost_eq(d, 4.0, 0.01)
+	assert_eq(centres, 1)
+
+
+func test_hunt_roster_has_every_hunter() -> void:
+	var hunt: ThreatProfile = load("res://director/data/hunt.tres") as ThreatProfile
+	var ids: Array[StringName] = []
+	for entry: SpawnEntry in hunt.entries:
+		ids.append(entry.enemy.id)
+	for id: StringName in [&"gunslinger", &"trapper", &"assassin", &"artillerist", &"broodmother"]:
+		assert_true(id in ids, "%s in the hunt" % id)

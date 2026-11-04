@@ -11,6 +11,8 @@ const GROUP: StringName = &"enemies"
 const KNOCKBACK_SPEED: float = 20.0
 ## Contact reach beyond the collision radius.
 const CONTACT_MARGIN: float = 0.55
+## How visible a cloaked enemy is.
+const CLOAK_ALPHA: float = 0.1
 ## Longer moves than this in one frame are teleports, not sweeps.
 const MAX_CONTACT_SWEEP: float = 3.0
 const AGE_SPEED_SOURCE: StringName = &"age"
@@ -145,6 +147,25 @@ func spawn_minion(minion_data: EnemyData, at: Vector3, scene: PackedScene) -> En
 	minion.position = at
 	get_parent().add_child(minion)
 	return minion
+
+
+## Near-invisible (Assassin's vanish): only a faint shimmer of the body.
+func set_cloaked(on: bool) -> void:
+	var material: StandardMaterial3D = body_mesh.material_override as StandardMaterial3D
+	if material == null:
+		return
+	material.transparency = (
+		BaseMaterial3D.TRANSPARENCY_ALPHA if on else BaseMaterial3D.TRANSPARENCY_DISABLED
+	)
+	material.albedo_color.a = CLOAK_ALPHA if on else 1.0
+	body_mesh.cast_shadow = (
+		GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if on
+		else GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	)
+	for part: Node in model.get_children():
+		if part != body_mesh and part is Node3D:
+			(part as Node3D).visible = not on
 
 
 ## Wind-up tell on the body (a bright flash), for attacks without a ground

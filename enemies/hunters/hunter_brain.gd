@@ -7,6 +7,8 @@ extends EnemyBrain
 const ROUTE_INTERVAL: float = 0.15
 ## Path corners closer than this are treated as already passed.
 const ROUTE_CORNER_DISTANCE: float = 1.5
+## Strafing hunters aim to be beside where you'll be this far ahead.
+const STRAFE_LEAD: float = 0.6
 
 var hunter: HunterData
 var current_action: HunterAction
@@ -37,6 +39,8 @@ func think(delta: float) -> void:
 	for i: int in _cooldowns.size():
 		_cooldowns[i] -= delta
 	if current_action != null:
+		if target != null and _try_interrupting_ability():
+			return
 		if current_action.tick(delta):
 			current_action = null
 		return
@@ -44,22 +48,57 @@ func think(delta: float) -> void:
 		wander(delta)
 		return
 	for i: int in hunter.abilities.size():
-		var ability: HunterAbility = hunter.abilities[i]
-		if _cooldowns[i] <= 0.0 and ability.can_use(self):
-			_cooldowns[i] = ability.cooldown
-			current_action = ability.create_action(self)
-			current_action.start()
+		if _try_ability(i):
 			return
-	_pursue(delta)
+	pursue(delta)
 
 
 ## Melee hunters close in; ranged ones hold their band while they have a
-## clear shot and chase (around walls) to get one when they don't.
-func _pursue(delta: float) -> void:
-	if hunter.preferred_range_max > 0.0 and has_line_of_sight_to_target():
-		keep_distance(delta, hunter.preferred_range_min, hunter.preferred_range_max)
-	else:
+## clear shot (running alongside if they strafe) and chase around walls to
+## get one when they don't.
+func pursue(delta: float) -> void:
+	if hunter.preferred_range_max <= 0.0 or not has_line_of_sight_to_target():
 		chase(delta)
+	elif hunter.strafes:
+		_strafe(delta)
+	else:
+		keep_distance(delta, hunter.preferred_range_min, hunter.preferred_range_max)
+
+
+func _try_ability(index: int) -> bool:
+	var ability: HunterAbility = hunter.abilities[index]
+	if _cooldowns[index] > 0.0 or not ability.can_use(self):
+		return false
+	_cooldowns[index] = ability.cooldown
+	if current_action != null:
+		warning.clear()
+		current_action.cancel()
+	current_action = ability.create_action(self)
+	current_action.start()
+	return true
+
+
+func _try_interrupting_ability() -> bool:
+	for i: int in hunter.abilities.size():
+		if hunter.abilities[i].interrupts and _try_ability(i):
+			return true
+	return false
+
+
+## Keeps pace beside the target: heads for a point at the middle of the band,
+## on this hunter's side of where the target is going.
+func _strafe(delta: float) -> void:
+	_repath_timer -= delta
+	if _repath_timer > 0.0:
+		return
+	_repath_timer = REPATH_INTERVAL
+	var goal: Vector3 = target.predicted_position(STRAFE_LEAD)
+	var side: Vector3 = enemy.global_position - goal
+	side.y = 0.0
+	if side.length_squared() < 0.01:
+		side = Vector3.RIGHT
+	var band: float = (hunter.preferred_range_min + hunter.preferred_range_max) * 0.5
+	enemy.movement.move_to(goal + side.normalized() * band)
 
 
 func interrupt() -> void:
