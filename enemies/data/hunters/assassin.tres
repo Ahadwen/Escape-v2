@@ -7,12 +7,9 @@
 [sub_resource type="Resource" id="Ability_0"]
 script = ExtResource("ambush")
 display_name = "Ambush"
-cooldown = 6.0
+cooldown = 5.0
 initial_cooldown = 1.5
 max_range = 60.0
-damage = 35.0
-dash_length = 11.0
-dash_speed = 26.0
 
 [resource]
 script = ExtResource("hunter")

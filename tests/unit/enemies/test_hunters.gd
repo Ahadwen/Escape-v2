@@ -8,6 +8,7 @@ const AttackUtilsScript := preload("res://enemies/attacks/attack_utils.gd")
 const StatBlockScript := preload("res://stats/stat_block.gd")
 const BarrageScript := preload("res://enemies/hunters/abilities/barrage_ability.gd")
 const HeadOffScript := preload("res://enemies/hunters/abilities/head_off_ability.gd")
+const AmbushScript := preload("res://enemies/hunters/abilities/ambush_ability.gd")
 
 const DT: float = 1.0 / 60.0
 
@@ -142,3 +143,10 @@ func test_head_off_destination_is_ahead_of_heading() -> void:
 	var side: Vector3 = ability.destination(Vector3.ZERO, Vector3(8, 0, 0), 5.0)
 	assert_almost_eq(side.x, 15.0, 0.01)
 	assert_almost_eq(absf(side.z), 5.0, 0.01)
+
+
+func test_assassin_flanks_ahead_of_heading() -> void:
+	var ambush: AmbushAbility = AmbushScript.new()
+	var point: Vector3 = ambush.flank_point(Vector3.ZERO, Vector3(8, 0, 0), 1.0)
+	assert_almost_eq(point.x, ambush.flank_ahead, 0.01)
+	assert_almost_eq(absf(point.z), ambush.flank_side, 0.01)
