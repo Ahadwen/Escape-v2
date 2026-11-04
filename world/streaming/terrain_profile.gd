@@ -31,9 +31,20 @@ extends Resource
 ## Safehouse chance per chunk grows by this much per chunk of distance beyond
 ## the minimum, up to safehouse_max_chance.
 @export var safehouse_chance_per_distance: float = 0.04
-@export_range(0.0, 1.0) var safehouse_max_chance: float = 0.35
+@export_range(0.0, 1.0) var safehouse_max_chance: float = 0.0
 ## Clear space kept around points of interest.
 @export var poi_clearance: float = 3.5
+
+@export_group("Timed safehouses")
+## Safehouses open on a timer rather than being scattered through chunks:
+## one opens every interval_min..max seconds (the previous one closes), a
+## distance ahead of where you've been heading. 0 = off.
+@export var safehouse_interval_min: float = 75.0
+@export var safehouse_interval_max: float = 110.0
+@export var safehouse_distance_min: float = 45.0
+@export var safehouse_distance_max: float = 65.0
+## Opens within this angle either side of your heading.
+@export var safehouse_spread_degrees: float = 70.0
 
 @export_group("Look")
 @export var ground_color_a: Color = Color(0.36, 0.48, 0.32)

@@ -77,6 +77,8 @@ func test_no_safehouses_near_start() -> void:
 
 
 func test_safehouses_appear_far_away() -> void:
+	# The scattered mode (off by default now that safehouses are timed).
+	profile.safehouse_max_chance = 0.35
 	var gen: ChunkGenerator = ChunkGeneratorScript.new(profile, 42, 0)
 	var found: int = 0
 	for x: int in range(8, 18):
@@ -141,3 +143,10 @@ func test_compound_corner_is_two_meeting_walls() -> void:
 	var pieces: Array[ChunkLayout.ObstacleSpec] = ChunkGenerator.compound_corner(rng)
 	assert_eq(pieces.size(), 2)
 	assert_almost_eq(pieces[0].yaw, pieces[1].yaw)
+
+
+func test_chunks_no_longer_scatter_safehouses_by_default() -> void:
+	var profile: TerrainProfile = TerrainProfile.new()
+	assert_almost_eq(profile.safehouse_max_chance, 0.0)
+	assert_true(profile.safehouse_interval_min > 0.0, "timed safehouses on")
+	assert_true(profile.safehouse_interval_max >= profile.safehouse_interval_min)

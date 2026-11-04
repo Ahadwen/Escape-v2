@@ -20,6 +20,10 @@ var _trace_timer: float = 0.0
 var _hunt: ThreatProfile
 
 var _run: int = 0
+## --start-run=N replays from run N (same seeds as a full batch).
+var _first_run: int = 0
+## Most enemies alive at once this run (0 = the hunt never started).
+var _max_enemies: int = 0
 var _level: Node
 var _player: Player
 var _time: float = 0.0
@@ -43,6 +47,9 @@ func _initialize() -> void:
 	for arg: String in args:
 		if arg == "--blink-on-cooldown":
 			_blink_on_cooldown = true
+		elif arg.begins_with("--start-run="):
+			_first_run = int(arg.trim_prefix("--start-run="))
+			_run = _first_run
 		elif arg.begins_with("--only="):
 			_only = StringName(arg.trim_prefix("--only="))
 		else:
@@ -55,6 +62,7 @@ func _initialize() -> void:
 	# level would load unmodified copies.
 	_terrain = load("res://world/streaming/default_terrain.tres")
 	_terrain.safehouse_max_chance = 0.0
+	_terrain.safehouse_interval_min = 0.0
 	if _only != &"":
 		_hunt = load("res://director/data/hunt.tres")
 		var hunt: ThreatProfile = _hunt
@@ -89,6 +97,7 @@ func _start_run() -> void:
 	_stuck_timer = 0.0
 	_last_position = _player.global_position
 	_hits.clear()
+	_max_enemies = 0
 	_damage = 0.0
 	_first_hit = -1.0
 	_died_at = -1.0
@@ -100,6 +109,7 @@ func _physics_process(delta: float) -> bool:
 	if _player == null or not is_instance_valid(_player):
 		return false
 	_time += delta
+	_max_enemies = maxi(_max_enemies, get_nodes_in_group(Enemy.GROUP).size())
 	if _died_at < 0.0 and _player.health.is_dead:
 		_died_at = _time
 	if _died_at < 0.0 and _time < _seconds:
@@ -178,7 +188,7 @@ func _finish_run() -> void:
 		counts[who] = counts.get(who, 0) + 1
 	var director: ThreatDirector = _level.get_node("ThreatDirector") as ThreatDirector
 	var line: String = (
-		"run %d: %s  first hit %s  hits %d  damage %d  threat %.1f  by %s"
+		"run %d: %s  first hit %s  hits %d  damage %d  threat %.1f  max enemies %d  by %s"
 		% [
 			_run + 1,
 			("DIED at %.1fs" % _died_at) if _died_at >= 0.0 else ("survived %.0fs" % _seconds),
@@ -186,6 +196,7 @@ func _finish_run() -> void:
 			_hits.size(),
 			roundi(_damage),
 			director.threat,
+			_max_enemies,
 			str(counts)
 		]
 	)
@@ -198,7 +209,7 @@ func _finish_run() -> void:
 	_level.queue_free()
 	_player = null
 	_run += 1
-	if _run < _runs:
+	if _run < _first_run + _runs:
 		_start_run.call_deferred()
 	else:
 		_survival.sort()

@@ -6,6 +6,9 @@ extends Node
 
 signal safehouse_entered(player: Player)
 signal crystal_consumed
+## A timed safehouse opened (the previous one, if any, closed).
+signal safehouse_opened(safehouse: Safehouse)
+signal safehouse_closed
 
 @export var profile: TerrainProfile
 @export var player: Node3D
@@ -25,6 +28,7 @@ var _consumed: Dictionary[String, bool] = {}
 var _current: Vector2i = Vector2i(2147483647, 0)
 var _nav_dirty: bool = false
 var _baking: bool = false
+var _safehouses: SafehouseScheduler
 
 
 ## Generates the area around the player and bakes navigation synchronously,
@@ -35,6 +39,13 @@ func start(p_seed: int, p_level: int = 0, theme: LevelTheme = null) -> void:
 	_generator = ChunkGenerator.new(profile, run_seed, level, theme)
 	_builder = ChunkBuilder.new(crystal_scene, safehouse_scene, chest_scene, profile.obstacle_color)
 	add_to_group(Obstacles.OWNER_GROUP)
+	_safehouses = SafehouseScheduler.new()
+	_safehouses.name = "Safehouses"
+	_safehouses.setup(profile, player, safehouse_scene, hash([run_seed, level, "safehouses"]))
+	_safehouses.entered.connect(_on_safehouse_entered)
+	_safehouses.opened.connect(func(house: Safehouse) -> void: safehouse_opened.emit(house))
+	_safehouses.closed.connect(func() -> void: safehouse_closed.emit())
+	add_child(_safehouses)
 	nav_region.bake_finished.connect(_on_bake_finished)
 	_update_chunks(true)
 	nav_region.bake_navigation_mesh(false)

@@ -5,6 +5,8 @@ extends Node3D
 
 const RESTART_DELAY_DEATH: float = 2.5
 const SAFEHOUSE_DELAY: float = 1.5
+## How long short notices (a safehouse opening) stay up.
+const FLASH_MESSAGE_TIME: float = 3.0
 
 ## 0 = random seed each run.
 @export var fixed_seed: int = 0
@@ -49,6 +51,7 @@ func _ready() -> void:
 	_director.theme = theme
 	_streamer.safehouse_entered.connect(_on_safehouse_entered)
 	_streamer.crystal_consumed.connect(_on_crystal_consumed)
+	_streamer.safehouse_opened.connect(_on_safehouse_opened)
 	_pickup_screen.set_library(card_library)
 	_input_router.intent_emitted.connect(_player.controller.handle_intent)
 	_input_router.intent_emitted.connect(_on_intent)
@@ -192,6 +195,22 @@ func _on_player_died() -> void:
 	RunState.end_run()
 	await get_tree().create_timer(RESTART_DELAY_DEATH).timeout
 	get_tree().reload_current_scene()
+
+
+func _on_safehouse_opened(house: Safehouse) -> void:
+	var offset: Vector3 = house.global_position - _player.global_position
+	var distance: float = Vector2(offset.x, offset.z).length()
+	_flash_message("A safehouse has opened, %d m away" % roundi(distance))
+
+
+## A short notice that clears itself (unless the level has ended meanwhile).
+func _flash_message(text: String) -> void:
+	if _finished:
+		return
+	_show_message(text)
+	await get_tree().create_timer(FLASH_MESSAGE_TIME).timeout
+	if not _finished and _message.text == text:
+		_message.visible = false
 
 
 func _show_message(text: String) -> void:
