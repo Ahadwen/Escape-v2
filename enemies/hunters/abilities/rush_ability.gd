@@ -4,7 +4,9 @@ extends HunterAbility
 ## poor turning circle and speeding up the whole time. It only stops once it
 ## is past you along its own heading (a sidestep makes it overrun you), it
 ## hits you, or it runs out of steam. It smashes through terrain, so ducking
-## behind a wall doesn't save you.
+## behind a wall doesn't save you. While charging it glows and a lane on the
+## ground shows where it's heading (no wind-up: it shows the charge, it
+## doesn't warn of it).
 
 ## Speed it starts from, as a multiple of its current move speed.
 @export var start_speed_ratio: float = 1.0
@@ -26,6 +28,8 @@ extends HunterAbility
 @export var recovery: float = 0.6
 ## How far ahead of you it steers (seconds of your movement).
 @export var lead: float = 0.2
+## The heading lane shows this many seconds of travel at the current speed.
+@export var lane_seconds: float = 0.5
 
 
 func create_action(brain: HunterBrain) -> HunterAction:
@@ -63,6 +67,7 @@ class Action:
 		_movement.wall_mode = MomentumMovement.WallMode.SMASH
 		_movement.hit_obstacle.connect(Obstacles.destroy)
 		enemy().movement.start_override(_movement)
+		enemy().set_tell(true)
 
 	func tick(delta: float) -> bool:
 		match _phase:
@@ -72,7 +77,9 @@ class Action:
 					_check_hits()
 					if not _hit.is_empty() or _is_past_target():
 						_movement.stop_driving()
+				_show_lane()
 				if _movement.finished:
+					_end_indication()
 					_phase = Phase.RECOVER
 					_timer = ability.recovery
 			Phase.RECOVER:
@@ -81,8 +88,22 @@ class Action:
 		return false
 
 	func cancel() -> void:
+		_end_indication()
 		if _movement != null:
 			_movement.cancel()
+
+	## A lane ahead of it, longer the faster it goes; gone once it brakes.
+	func _show_lane() -> void:
+		if not _movement.is_driving():
+			brain.warning.clear()
+			return
+		var length: float = maxf(_movement.speed * ability.lane_seconds, 3.0)
+		brain.warning.show_line(enemy().global_position, _movement.direction, length, ability.width)
+		brain.warning.set_progress(1.0)
+
+	func _end_indication() -> void:
+		brain.warning.clear()
+		enemy().set_tell(false)
 
 	## True once the target is behind it by pass_distance along its heading.
 	func _is_past_target() -> bool:
