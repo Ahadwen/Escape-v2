@@ -9,6 +9,8 @@ const ROUTE_INTERVAL: float = 0.15
 const ROUTE_CORNER_DISTANCE: float = 1.5
 ## Strafing hunters aim to be beside where you'll be this far ahead.
 const STRAFE_LEAD: float = 0.6
+## holds_ahead only kicks in once you've been heading somewhere this fast.
+const HOLD_AHEAD_MIN_SPEED: float = 3.0
 
 var hunter: HunterData
 var current_action: HunterAction
@@ -59,7 +61,7 @@ func think(delta: float) -> void:
 func pursue(delta: float) -> void:
 	if hunter.preferred_range_max <= 0.0 or not has_line_of_sight_to_target():
 		chase(delta)
-	elif hunter.strafes:
+	elif hunter.strafes or hunter.holds_ahead:
 		_strafe(delta)
 	else:
 		keep_distance(delta, hunter.preferred_range_min, hunter.preferred_range_max)
@@ -97,6 +99,10 @@ func _strafe(delta: float) -> void:
 	side.y = 0.0
 	if side.length_squared() < 0.01:
 		side = Vector3.RIGHT
+	var heading: Vector3 = target.average_velocity
+	if hunter.holds_ahead and heading.length() > HOLD_AHEAD_MIN_SPEED:
+		# Between its side and straight ahead of where you're going.
+		side = side.normalized() + heading.normalized() * 1.5
 	var band: float = (hunter.preferred_range_min + hunter.preferred_range_max) * 0.5
 	enemy.movement.move_to(goal + side.normalized() * band)
 

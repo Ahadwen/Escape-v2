@@ -21,6 +21,9 @@ extends EnemyData
 ## Ranged hunters: run alongside you inside the band (keeping pace) instead
 ## of standing still in it.
 @export var strafes: bool = false
+## Ranged hunters: hold their band ahead of where you've been heading (your
+## average movement), so running one way runs you toward them.
+@export var holds_ahead: bool = false
 ## Spinning visual (Spinner).
 @export var spins: bool = false
 

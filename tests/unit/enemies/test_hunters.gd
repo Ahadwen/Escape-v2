@@ -7,6 +7,7 @@ const MomentumScript := preload("res://actors/movement/momentum_movement.gd")
 const AttackUtilsScript := preload("res://enemies/attacks/attack_utils.gd")
 const StatBlockScript := preload("res://stats/stat_block.gd")
 const BarrageScript := preload("res://enemies/hunters/abilities/barrage_ability.gd")
+const HeadOffScript := preload("res://enemies/hunters/abilities/head_off_ability.gd")
 
 const DT: float = 1.0 / 60.0
 
@@ -129,3 +130,15 @@ func test_hunt_roster_has_every_hunter() -> void:
 		ids.append(entry.enemy.id)
 	for id: StringName in [&"gunslinger", &"trapper", &"assassin", &"artillerist", &"broodmother"]:
 		assert_true(id in ids, "%s in the hunt" % id)
+
+
+func test_head_off_destination_is_ahead_of_heading() -> void:
+	var ability: HeadOffAbility = HeadOffScript.new()
+	ability.ahead_distance = 15.0
+	ability.min_distance = 9.0
+	var point: Vector3 = ability.destination(Vector3.ZERO, Vector3(8, 0, 0), 0.0)
+	assert_almost_eq(point.x, 15.0, 0.01)
+	assert_almost_eq(point.z, 0.0, 0.01)
+	var side: Vector3 = ability.destination(Vector3.ZERO, Vector3(8, 0, 0), 5.0)
+	assert_almost_eq(side.x, 15.0, 0.01)
+	assert_almost_eq(absf(side.z), 5.0, 0.01)

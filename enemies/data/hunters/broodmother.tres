@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://enemies/hunters/hunter_data.gd" id="hunter"]
 [ext_resource type="Script" path="res://enemies/hunters/hunter_ability.gd" id="ability"]
+[ext_resource type="Script" path="res://enemies/hunters/abilities/head_off_ability.gd" id="ahead"]
 [ext_resource type="Script" path="res://enemies/hunters/abilities/swarm_ability.gd" id="swarm"]
 [ext_resource type="Script" path="res://enemies/hunters/abilities/skillshot_ability.gd" id="shot"]
 [ext_resource type="Resource" path="res://enemies/data/hunters/brood_mite.tres" id="mite"]
@@ -36,6 +37,13 @@ slow_amount = 0.45
 status_duration = 2.0
 recovery = 0.3
 
+[sub_resource type="Resource" id="Ability_ahead"]
+script = ExtResource("ahead")
+display_name = "Burrow"
+cooldown = 7.0
+initial_cooldown = 3.0
+max_range = 60.0
+
 [resource]
 script = ExtResource("hunter")
 id = &"broodmother"
@@ -45,8 +53,9 @@ body_scale = Vector3(1.6, 0.9, 1.6)
 move_speed = 6.5
 speed_floor_ratio = 1.0
 preferred_range_min = 9.0
+holds_ahead = true
 preferred_range_max = 14.0
 lifetime_min = 35.0
 lifetime_max = 50.0
 threat_cost = 1.0
-abilities = Array[ExtResource("ability")]([SubResource("Ability_0"), SubResource("Ability_1")])
+abilities = Array[ExtResource("ability")]([SubResource("Ability_ahead"), SubResource("Ability_0"), SubResource("Ability_1")])

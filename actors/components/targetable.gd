@@ -7,6 +7,10 @@ extends Node
 enum Faction { PLAYER, ENEMY }
 
 const GROUP: StringName = &"targetables"
+## Time constant of average_velocity (seconds).
+const AVERAGE_WINDOW: float = 2.5
+## Faster single-frame moves (blinks, teleports) count as this speed.
+const AVERAGE_MAX_SPEED: float = 25.0
 
 @export var body: Node3D
 @export var faction: Faction = Faction.PLAYER
@@ -18,6 +22,9 @@ const GROUP: StringName = &"targetables"
 ## Flat velocity, measured from movement each physics frame (works for
 ## anything, not just physics bodies).
 var velocity: Vector3 = Vector3.ZERO
+## Velocity averaged over the last few seconds: which way you're really
+## heading, not which way you're facing or jinking right now.
+var average_velocity: Vector3 = Vector3.ZERO
 
 var _last_position: Vector3 = Vector3.ZERO
 var _has_last_position: bool = false
@@ -68,6 +75,8 @@ func _physics_process(delta: float) -> void:
 	if _has_last_position:
 		var moved: Vector3 = (position - _last_position) / delta
 		velocity = Vector3(moved.x, 0.0, moved.z)
+		var weight: float = 1.0 - exp(-delta / AVERAGE_WINDOW)
+		average_velocity = average_velocity.lerp(velocity.limit_length(AVERAGE_MAX_SPEED), weight)
 	_last_position = position
 	_has_last_position = true
 
