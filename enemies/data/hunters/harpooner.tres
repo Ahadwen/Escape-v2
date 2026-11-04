@@ -3,40 +3,24 @@
 [ext_resource type="Script" path="res://enemies/hunters/hunter_data.gd" id="hunter"]
 [ext_resource type="Script" path="res://enemies/hunters/hunter_ability.gd" id="ability"]
 [ext_resource type="Script" path="res://enemies/hunters/abilities/hook_ability.gd" id="hook"]
-[ext_resource type="Script" path="res://enemies/hunters/abilities/melee_strike_ability.gd" id="strike"]
 
 [sub_resource type="Resource" id="Ability_0"]
-script = ExtResource("strike")
-display_name = "Punch"
-show_warning = false
-cooldown = 4.0
-initial_cooldown = 1.0
-max_range = 2.5
-shape = 0
-radius = 2.2
-angle_degrees = 90.0
-wind_up = 0.4
-recovery = 0.6
-damage = 70.0
-stun = 0.5
-
-[sub_resource type="Resource" id="Ability_1"]
 script = ExtResource("hook")
 display_name = "Hook"
-cooldown = 6.0
-initial_cooldown = 2.0
+cooldown = 4.0
+initial_cooldown = 1.0
 min_range = 4.0
-max_range = 15.0
+max_range = 13.0
 needs_line_of_sight = true
-wind_up = 0.7
-range_m = 15.0
-width = 0.7
-projectile_speed = 30.0
-damage = 30.0
+wind_up = 0.5
+range_m = 20.0
+width = 1.3
+projectile_speed = 45.0
+damage = 50.0
 pull_speed = 26.0
 pull_stop = 1.8
 stun_after_pull = 0.5
-recovery = 0.7
+recovery = 0.3
 
 [resource]
 script = ExtResource("hunter")
@@ -50,7 +34,9 @@ color = Color(0.35, 0.5, 0.7, 1)
 body_scale = Vector3(1.3, 1.1, 1.3)
 move_speed = 7.4
 speed_floor_ratio = 1.25
+preferred_range_min = 7.0
+preferred_range_max = 11.0
 lifetime_min = 35.0
 lifetime_max = 55.0
 threat_cost = 1.0
-abilities = Array[ExtResource("ability")]([SubResource("Ability_0"), SubResource("Ability_1")])
+abilities = Array[ExtResource("ability")]([SubResource("Ability_0")])

@@ -13,6 +13,11 @@ extends EnemyData
 @export var catch_up_distance: float = 7.0
 ## ... at this multiple of its pursuit speed.
 @export var catch_up_multiplier: float = 1.5
+## Ranged hunters: hold this band of distance (backing off when closer)
+## while they can see you; chase to get sight of you otherwise. 0 = melee
+## hunter that always closes in.
+@export var preferred_range_min: float = 0.0
+@export var preferred_range_max: float = 0.0
 ## Spinning visual (Spinner).
 @export var spins: bool = false
 

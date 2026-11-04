@@ -50,7 +50,16 @@ func think(delta: float) -> void:
 			current_action = ability.create_action(self)
 			current_action.start()
 			return
-	chase(delta)
+	_pursue(delta)
+
+
+## Melee hunters close in; ranged ones hold their band while they have a
+## clear shot and chase (around walls) to get one when they don't.
+func _pursue(delta: float) -> void:
+	if hunter.preferred_range_max > 0.0 and has_line_of_sight_to_target():
+		keep_distance(delta, hunter.preferred_range_min, hunter.preferred_range_max)
+	else:
+		chase(delta)
 
 
 func interrupt() -> void:

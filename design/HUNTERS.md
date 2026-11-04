@@ -50,9 +50,8 @@ Larger and much faster than now, with real momentum.
 
 ### Harpooner — Blitzcrank
 Nobody's favourite, but it raises the stakes.
-- Slow walker.
-- **Hook:** long, thin skillshot with a clear wind-up. If it hits, you're **pulled** to it. Long cooldown — a miss is your window.
-- *(Optional)* **Punch:** a short knock-up if you're next to it after a pull.
+- Ranged only, no melee. Doesn't tailgate you: holds 7–12 m while it can see you, backs off if you get close, and chases around walls to get a clear shot.
+- **Hook:** wide, fast skillshot with a short wind-up and a line warning. If it hits, you're damaged, **pulled** to it (and toward whoever else is hunting you) and briefly stunned. Breaking line of sight is the counter.
 
 ### Assassin — Kha'Zix / Rengar / Evelynn
 - **Vanish:** fades out (a faint shimmer) and closes in unseen.
