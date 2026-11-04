@@ -1,9 +1,9 @@
 class_name SalvoAbility
 extends HunterAbility
-## The Gunslinger's salvo: quick shots in rhythm while still running
-## alongside you (no warning, they're light), then a heavy final shot with
-## its own tell (body flash + aim line, he plants his feet), then a reload:
-## a visible pause that's your window.
+## The Gunslinger's salvo: quick shots in rhythm while running alongside you
+## (no warning, they're light), then a heavy final shot with its own tell
+## (body flash + aim line), then a reload: a visible gap in the shooting
+## that's your window. He keeps moving throughout.
 
 @export var shots: int = 5
 @export var interval: float = 0.32
@@ -53,13 +53,23 @@ class Action:
 				if _timer <= 0.0:
 					_light_shot()
 			Phase.FINAL_TELL:
+				brain.pursue(delta)
 				_timer -= delta
 				if _timer > ability.final_lock:
 					_aim_final()
+				else:
+					# Direction is locked; the line follows him as he moves.
+					brain.warning.show_line(
+						enemy().global_position,
+						_direction,
+						ability.reach,
+						ability.final_radius * 2.0
+					)
 				brain.warning.set_progress(1.0 - _timer / ability.final_tell)
 				if _timer <= 0.0:
 					_final_shot()
 			Phase.RELOAD:
+				brain.pursue(delta)
 				_timer -= delta
 				return _timer <= 0.0
 		return false
@@ -84,7 +94,6 @@ class Action:
 		_fired += 1
 		_timer = ability.interval
 		if _fired >= ability.shots - 1:
-			enemy().movement.stop()
 			enemy().set_tell(true)
 			_phase = Phase.FINAL_TELL
 			_timer = ability.final_tell
