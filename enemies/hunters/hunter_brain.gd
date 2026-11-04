@@ -107,7 +107,11 @@ func _strafe(delta: float) -> void:
 	if side.length_squared() < 0.01:
 		side = Vector3.RIGHT
 	var heading: Vector3 = target.average_velocity
-	if hunter.holds_ahead and heading.length() > HOLD_AHEAD_MIN_SPEED:
+	if hunter.runs_parallel and heading.length() > HOLD_AHEAD_MIN_SPEED:
+		# Level with you, on whichever side of your heading it already is.
+		var lateral: Vector3 = heading.normalized().cross(Vector3.UP)
+		side = lateral if lateral.dot(side) >= 0.0 else -lateral
+	elif hunter.holds_ahead and heading.length() > HOLD_AHEAD_MIN_SPEED:
 		# Between its side and straight ahead of where you're going.
 		side = side.normalized() + heading.normalized() * 1.5
 	var band: float = (hunter.preferred_range_min + hunter.preferred_range_max) * 0.5

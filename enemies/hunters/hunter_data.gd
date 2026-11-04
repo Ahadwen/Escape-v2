@@ -24,6 +24,9 @@ extends EnemyData
 ## Ranged hunters: hold their band ahead of where you've been heading (your
 ## average movement), so running one way runs you toward them.
 @export var holds_ahead: bool = false
+## Strafing hunters: run level with you, off to your side of your heading, so
+## they shoot across your path rather than from behind (Gunslinger).
+@export var runs_parallel: bool = false
 ## Spinning visual (Spinner).
 @export var spins: bool = false
 

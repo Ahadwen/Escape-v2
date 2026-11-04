@@ -115,3 +115,29 @@ func test_coord_for_centres_chunk_zero_on_origin() -> void:
 
 func test_chunk_distance_is_chebyshev() -> void:
 	assert_eq(ChunkGeneratorScript.chunk_distance(Vector2i(0, 0), Vector2i(3, -1)), 3)
+
+
+func test_compound_cluster_leaves_walkable_gaps() -> void:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	for s: int in 20:
+		rng.seed = s
+		var pieces: Array[ChunkLayout.ObstacleSpec] = ChunkGenerator.compound_cluster(rng)
+		for a: int in pieces.size():
+			for b: int in range(a + 1, pieces.size()):
+				var apart: float = (
+					Vector2(
+						pieces[a].position.x - pieces[b].position.x,
+						pieces[a].position.z - pieces[b].position.z
+					)
+					. length()
+				)
+				var edges: float = (pieces[a].size.x + pieces[b].size.x) * 0.5
+				assert_true(apart - edges >= 1.0, "gap %.2f" % (apart - edges))
+
+
+func test_compound_corner_is_two_meeting_walls() -> void:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 3
+	var pieces: Array[ChunkLayout.ObstacleSpec] = ChunkGenerator.compound_corner(rng)
+	assert_eq(pieces.size(), 2)
+	assert_almost_eq(pieces[0].yaw, pieces[1].yaw)

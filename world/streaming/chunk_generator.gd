@@ -119,6 +119,9 @@ func _place_obstacles(
 	for kind: StringName in kinds:
 		total_weight += OBSTACLE_KINDS[kind][1]
 	for i: int in count:
+		if rng.randf() < profile.compound_chance:
+			_place_compound(rng, layout, keepouts)
+			continue
 		var spec: ChunkLayout.ObstacleSpec = _roll_obstacle(rng, kinds, total_weight)
 		var size: Vector3 = spec.size
 		var radius: float = spec.footprint_radius()
@@ -135,6 +138,80 @@ func _place_obstacles(
 			layout.obstacles.append(spec)
 			keepouts.append(Vector3(x, z, radius))
 			break
+
+
+## Places an L-shaped corner or a cluster of pillars as one unit (one
+## keepout, so the usual gap stays around it).
+func _place_compound(
+	rng: RandomNumberGenerator, layout: ChunkLayout, keepouts: Array[Vector3]
+) -> void:
+	var color: Color = profile.obstacle_color
+	if theme != null:
+		var themed: ObstacleKind = theme.pick_obstacle(rng)
+		if themed != null:
+			color = themed.color
+	var pieces: Array[ChunkLayout.ObstacleSpec] = (
+		compound_corner(rng) if rng.randf() < 0.6 else compound_cluster(rng)
+	)
+	var radius: float = 0.0
+	for piece: ChunkLayout.ObstacleSpec in pieces:
+		var reach: float = Vector2(piece.position.x, piece.position.z).length()
+		radius = maxf(radius, reach + piece.footprint_radius())
+	var half: float = profile.chunk_size * 0.5 - radius - profile.obstacle_gap * 0.5
+	if half <= 0.0:
+		return
+	for attempt: int in PLACEMENT_ATTEMPTS:
+		var x: float = rng.randf_range(-half, half)
+		var z: float = rng.randf_range(-half, half)
+		if _blocked(x, z, radius + profile.obstacle_gap, keepouts):
+			continue
+		for piece: ChunkLayout.ObstacleSpec in pieces:
+			piece.position += Vector3(x, 0.0, z)
+			piece.color = color
+			layout.obstacles.append(piece)
+		keepouts.append(Vector3(x, z, radius))
+		return
+
+
+## Two walls meeting at a corner, turned to one of four directions. Pieces
+## are positioned relative to the corner's centre.
+static func compound_corner(rng: RandomNumberGenerator) -> Array[ChunkLayout.ObstacleSpec]:
+	var yaw: float = PI * 0.5 * rng.randi_range(0, 3)
+	var long: float = rng.randf_range(7.0, 10.0)
+	var short: float = rng.randf_range(4.0, 7.0)
+	var a: ChunkLayout.ObstacleSpec = ChunkLayout.ObstacleSpec.new(
+		&"corner", Vector3(long, 2.0, 1.0), Vector3(long * 0.5, 1.0, 0.0), yaw
+	)
+	var b: ChunkLayout.ObstacleSpec = ChunkLayout.ObstacleSpec.new(
+		&"corner", Vector3(1.0, 2.0, short), Vector3(0.0, 1.0, short * 0.5 - 0.5), yaw
+	)
+	var pieces: Array[ChunkLayout.ObstacleSpec] = [a, b]
+	# Centre the shape on the middle of its footprint, then turn it.
+	var middle: Vector3 = Vector3(long * 0.25, 0.0, short * 0.25)
+	for piece: ChunkLayout.ObstacleSpec in pieces:
+		var local: Vector3 = piece.position - middle
+		piece.position = (
+			Vector3(0.0, piece.position.y, 0.0)
+			+ Vector3(local.x, 0.0, local.z).rotated(Vector3.UP, yaw)
+		)
+	return pieces
+
+
+## Three or four pillars packed close, with narrow gaps between them.
+static func compound_cluster(rng: RandomNumberGenerator) -> Array[ChunkLayout.ObstacleSpec]:
+	var pieces: Array[ChunkLayout.ObstacleSpec] = []
+	var count: int = rng.randi_range(3, 4)
+	var turn: float = rng.randf() * TAU
+	for i: int in count:
+		var angle: float = turn + TAU * i / count
+		var size: float = rng.randf_range(1.5, 2.5)
+		var offset: Vector3 = Vector3(cos(angle), 0.0, sin(angle)) * 2.6
+		pieces.append(
+			ChunkLayout.ObstacleSpec.new(
+				&"cluster", Vector3(size, 2.0, size), offset + Vector3.UP, 0.0
+			)
+		)
+	return pieces
 
 
 func _roll_obstacle(

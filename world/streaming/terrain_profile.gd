@@ -12,8 +12,12 @@ extends Resource
 @export var unload_radius: int = 3
 
 @export_group("Obstacles")
-@export var obstacles_min: int = 6
-@export var obstacles_max: int = 11
+@export var obstacles_min: int = 7
+@export var obstacles_max: int = 12
+## Chance that an obstacle is a compound shape instead (an L-shaped corner or
+## a tight cluster of pillars): corners to duck round and pockets to get
+## caught in.
+@export_range(0.0, 1.0) var compound_chance: float = 0.3
 ## Minimum clear gap between obstacles (also across chunk borders).
 @export var obstacle_gap: float = 2.0
 ## No obstacles within this radius of the level start.
