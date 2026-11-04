@@ -6,6 +6,7 @@ const EnemyDataScript := preload("res://enemies/enemy_data.gd")
 const MomentumScript := preload("res://actors/movement/momentum_movement.gd")
 const AttackUtilsScript := preload("res://enemies/attacks/attack_utils.gd")
 const StatBlockScript := preload("res://stats/stat_block.gd")
+const BarrageScript := preload("res://enemies/hunters/abilities/barrage_ability.gd")
 
 const DT: float = 1.0 / 60.0
 
@@ -106,7 +107,7 @@ func test_hunter_data_files_load() -> void:
 
 
 func test_barrage_cluster_has_centre_and_ring() -> void:
-	var points: Array[Vector3] = BarrageAbility.cluster(Vector3(10, 0, 5), 5, 4.0, 0.0)
+	var points: Array[Vector3] = BarrageScript.cluster(Vector3(10, 0, 5), 5, 4.0, 0.0)
 	assert_eq(points.size(), 5)
 	var centres: int = 0
 	for point: Vector3 in points:
