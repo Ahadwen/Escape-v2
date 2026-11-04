@@ -14,8 +14,8 @@ max_range = 2.4
 shape = 0
 radius = 2.0
 angle_degrees = 100.0
-wind_up = 0.55
-recovery = 0.6
+wind_up = 0.35
+recovery = 0.4
 damage = 60.0
 
 [resource]
@@ -27,8 +27,8 @@ despawn_warning = 2.0
 id = &"shambler"
 display_name = "Shambler"
 color = Color(0.5, 0.55, 0.45, 1)
-move_speed = 6.5
-speed_floor_ratio = 1.15
+move_speed = 6.0
+speed_floor_ratio = 1.05
 lifetime_min = 30.0
 lifetime_max = 45.0
 threat_cost = 1.0
