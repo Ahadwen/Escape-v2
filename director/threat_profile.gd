@@ -57,6 +57,20 @@ extends Resource
 @export_group("Enemies")
 @export var entries: Array[SpawnEntry] = []
 
+@export_group("Ambient")
+## A steady background supply (Shamblers) kept topped up alongside the hunt.
+## They don't count toward the field size, threat budget or the one-of-each
+## rule, and they physically get in the hunters' way. Null = none.
+@export var ambient_enemy: EnemyData
+## How many to keep around at the level's starting threat ...
+@export var ambient_count: int = 0
+## ... plus this many per point of threat above it ...
+@export var ambient_per_threat: float = 0.0
+## ... up to this.
+@export var ambient_cap: int = 0
+## Seconds between topping-up spawns.
+@export var ambient_interval: float = 2.5
+
 ## Which level (0-based) the curve is for. Set by the director.
 var level: int = 0
 
@@ -93,6 +107,14 @@ func max_alive_for(threat: float) -> int:
 		return 0
 	var extra: float = maxf(threat - level_start_threat(), 0.0) * max_alive_per_threat
 	return mini(max_alive_start + floori(extra), max_alive_cap)
+
+
+## How many ambient enemies to keep around at this threat.
+func ambient_target_for(threat: float) -> int:
+	if ambient_enemy == null:
+		return 0
+	var extra: float = maxf(threat - level_start_threat(), 0.0) * ambient_per_threat
+	return mini(ambient_count + floori(extra), maxi(ambient_cap, ambient_count))
 
 
 func spawn_interval_for(threat: float) -> float:

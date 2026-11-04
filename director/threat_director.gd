@@ -29,6 +29,9 @@ var _debug_index: int = 0
 ## Id of the last enemy to leave (not re-picked straight away).
 var _last_departed: StringName = &""
 var _far_check_timer: float = FAR_CHECK_INTERVAL
+## The ambient supply (Shamblers): tracked apart from the hunt.
+var _ambient: Array[Enemy] = []
+var _ambient_timer: float = 0.0
 
 
 func start(level: int = 0) -> void:
@@ -39,6 +42,7 @@ func start(level: int = 0) -> void:
 	elapsed = 0.0
 	threat = profile.threat_at(0.0)
 	_spawn_timer = profile.initial_delay
+	_ambient_timer = profile.initial_delay
 	running = true
 	threat_changed.emit(threat)
 
@@ -61,6 +65,7 @@ func stop(despawn_all: bool = false) -> void:
 			if enemy != null:
 				enemy.despawn()
 		_alive.clear()
+		_ambient.clear()
 
 
 ## Debug builds: F2 spawns the next enemy type from the profile near the
@@ -100,6 +105,10 @@ func _physics_process(delta: float) -> void:
 	if _far_check_timer <= 0.0:
 		_far_check_timer = FAR_CHECK_INTERVAL
 		_despawn_far_enemies()
+	_ambient_timer -= delta
+	if _ambient_timer <= 0.0:
+		_ambient_timer = profile.ambient_interval
+		_top_up_ambient()
 	_spawn_timer -= delta
 	if _spawn_timer <= 0.0:
 		_spawn_timer = profile.spawn_interval_for(threat)
@@ -129,14 +138,34 @@ func _try_spawn() -> bool:
 
 
 func _spawn(entry: SpawnEntry, point: Vector3) -> void:
-	var enemy: Enemy = enemy_scene.instantiate() as Enemy
-	enemy.data = theme.enemy_for(entry.enemy, randf()) if theme != null else entry.enemy
-	enemy.damage_multiplier = profile.damage_multiplier_for(threat)
-	enemy.speed_multiplier = profile.speed_multiplier_for(threat)
-	enemy.position = point
+	var enemy: Enemy = _create(entry.enemy, point)
 	enemy.despawned.connect(_on_enemy_despawned)
 	add_child(enemy)
 	_alive.append(enemy)
+
+
+## Spawns one ambient enemy if there are fewer than the target.
+func _top_up_ambient() -> void:
+	for i: int in range(_ambient.size() - 1, -1, -1):
+		if not is_instance_valid(_ambient[i]) or _ambient[i].is_despawning():
+			_ambient.remove_at(i)
+	if _ambient.size() >= profile.ambient_target_for(threat):
+		return
+	var point: Variant = _find_spawn_point()
+	if point == null:
+		return
+	var enemy: Enemy = _create(profile.ambient_enemy, point)
+	add_child(enemy)
+	_ambient.append(enemy)
+
+
+func _create(data: EnemyData, point: Vector3) -> Enemy:
+	var enemy: Enemy = enemy_scene.instantiate() as Enemy
+	enemy.data = theme.enemy_for(data, randf()) if theme != null else data
+	enemy.damage_multiplier = profile.damage_multiplier_for(threat)
+	enemy.speed_multiplier = profile.speed_multiplier_for(threat)
+	enemy.position = point
+	return enemy
 
 
 func _find_spawn_point() -> Variant:

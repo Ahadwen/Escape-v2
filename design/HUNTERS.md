@@ -35,7 +35,7 @@ Running in a straight line must never be a strategy, but speed should still help
 ## Roster
 
 ### Shambler — the fundamentals
-Like Hades II's basic shambler. Walks at you and strikes. Teaches telegraphs and spacing, then **drops out of the spawn pool quickly** as threat rises.
+Like Hades II's basic shambler. Walks at you and strikes. Not part of the hunt: a **steady background supply** (2, rising to 4 with threat) that doesn't count toward the hunter field size, and whose bodies get in the hunters' way.
 - **Strike:** short wind-up, short-range cone in front of it.
 
 ### Brute — Sion / Sejuani

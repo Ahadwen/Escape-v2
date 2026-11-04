@@ -65,6 +65,12 @@ func _initialize() -> void:
 				entry.max_threat = 0.0
 				kept.append(entry)
 		hunt.entries = kept
+		# The ambient Shamblers only when asked for by name.
+		if hunt.ambient_enemy == null or hunt.ambient_enemy.id != _only:
+			hunt.ambient_enemy = null
+		else:
+			hunt.ambient_count = 1
+			hunt.ambient_cap = 1
 		hunt.max_alive_start = 1
 		hunt.max_alive_cap = 1
 	_start_run.call_deferred()

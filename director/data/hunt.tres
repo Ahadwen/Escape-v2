@@ -12,13 +12,6 @@
 [ext_resource type="Resource" path="res://enemies/data/hunters/broodmother.tres" id="h_broodmother"]
 [ext_resource type="Resource" path="res://enemies/data/hunters/artillerist.tres" id="h_artillerist"]
 
-[sub_resource type="Resource" id="Entry_shambler"]
-script = ExtResource("entry")
-enemy = ExtResource("h_shambler")
-weight = 2.0
-min_threat = 0.0
-max_threat = 3.5
-
 [sub_resource type="Resource" id="Entry_brute"]
 script = ExtResource("entry")
 enemy = ExtResource("h_brute")
@@ -93,4 +86,9 @@ reentry_distance = 32.0
 max_alive_start = 2
 max_alive_per_threat = 0.5
 max_alive_cap = 5
-entries = Array[ExtResource("entry")]([SubResource("Entry_shambler"), SubResource("Entry_brute"), SubResource("Entry_spinner"), SubResource("Entry_harpooner"), SubResource("Entry_gunslinger"), SubResource("Entry_trapper"), SubResource("Entry_assassin"), SubResource("Entry_broodmother"), SubResource("Entry_artillerist")])
+ambient_enemy = ExtResource("h_shambler")
+ambient_count = 2
+ambient_per_threat = 0.5
+ambient_cap = 4
+ambient_interval = 2.5
+entries = Array[ExtResource("entry")]([SubResource("Entry_brute"), SubResource("Entry_spinner"), SubResource("Entry_harpooner"), SubResource("Entry_gunslinger"), SubResource("Entry_trapper"), SubResource("Entry_assassin"), SubResource("Entry_broodmother"), SubResource("Entry_artillerist")])

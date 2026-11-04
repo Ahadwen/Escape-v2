@@ -11,6 +11,7 @@ const HeadOffScript := preload("res://enemies/hunters/abilities/head_off_ability
 const AmbushScript := preload("res://enemies/hunters/abilities/ambush_ability.gd")
 
 const DT: float = 1.0 / 60.0
+const HUNT_PATH: String = "res://director/data/hunt.tres"
 
 
 func _entry(id: StringName, min_threat: float, max_threat: float) -> SpawnEntry:
@@ -125,7 +126,7 @@ func test_barrage_scatter_centres_on_you_without_overlaps() -> void:
 
 
 func test_hunt_roster_has_every_hunter() -> void:
-	var hunt: ThreatProfile = load("res://director/data/hunt.tres") as ThreatProfile
+	var hunt: ThreatProfile = _hunt()
 	var ids: Array[StringName] = []
 	for entry: SpawnEntry in hunt.entries:
 		ids.append(entry.enemy.id)
@@ -150,3 +151,18 @@ func test_assassin_flanks_ahead_of_heading() -> void:
 	var point: Vector3 = ambush.flank_point(Vector3.ZERO, Vector3(8, 0, 0), 1.0)
 	assert_almost_eq(point.x, ambush.flank_ahead, 0.01)
 	assert_almost_eq(absf(point.z), ambush.flank_side, 0.01)
+
+
+func test_shamblers_are_an_ambient_supply_not_hunt_entries() -> void:
+	var hunt: ThreatProfile = _hunt()
+	assert_not_null(hunt.ambient_enemy)
+	assert_eq(hunt.ambient_enemy.id, &"shambler")
+	for entry: SpawnEntry in hunt.entries:
+		assert_ne(entry.enemy.id, &"shambler", "shambler isn't in the hunter roster")
+	var start: float = hunt.level_start_threat()
+	assert_eq(hunt.ambient_target_for(start), hunt.ambient_count)
+	assert_eq(hunt.ambient_target_for(start + 100.0), hunt.ambient_cap)
+
+
+func _hunt() -> ThreatProfile:
+	return load(HUNT_PATH) as ThreatProfile
