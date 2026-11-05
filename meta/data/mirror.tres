@@ -1,62 +1,156 @@
 [gd_resource type="Resource" format=3]
 
-[ext_resource type="Script" path="res://meta/upgrade_board.gd" id="board"]
-[ext_resource type="Script" path="res://meta/upgrade_data.gd" id="upgrade"]
+[ext_resource type="Script" path="res://meta/mirror_board.gd" id="board"]
+[ext_resource type="Script" path="res://meta/mirror_row.gd" id="row"]
+[ext_resource type="Script" path="res://meta/mirror_option.gd" id="option"]
 
-[sub_resource type="Resource" id="Up_hp"]
-script = ExtResource("upgrade")
+[sub_resource type="Resource" id="Opt_death_defiance"]
+script = ExtResource("option")
+id = &"death_defiance"
+display_name = "Death Defiance"
+description = "Once per run, a lethal hit leaves you at 50% HP, briefly invulnerable."
+kind = 1
+revive_fraction = 0.5
+per_level = false
+
+[sub_resource type="Resource" id="Opt_stubborn_defiance"]
+script = ExtResource("option")
+id = &"stubborn_defiance"
+display_name = "Stubborn Defiance"
+description = "Once per level, a lethal hit leaves you at 25% HP, briefly invulnerable."
+kind = 1
+revive_fraction = 0.25
+per_level = true
+
+[sub_resource type="Resource" id="Opt_armed"]
+script = ExtResource("option")
+id = &"armed"
+display_name = "Armed"
+description = "Start each run with a random T2 card."
+kind = 2
+start_t2 = 1
+
+[sub_resource type="Resource" id="Opt_stocked"]
+script = ExtResource("option")
+id = &"stocked"
+display_name = "Stocked"
+description = "Start each run with two random T1 cards and a random Ace."
+kind = 2
+start_t1 = 2
+start_aces = 1
+
+[sub_resource type="Resource" id="Opt_slow_burn"]
+script = ExtResource("option")
+id = &"slow_burn"
+display_name = "Slow Burn"
+description = "Threat rises 20% slower."
+kind = 3
+threat_multiplier = 0.8
+
+[sub_resource type="Resource" id="Opt_thrill_seeker"]
+script = ExtResource("option")
+id = &"thrill_seeker"
+display_name = "Thrill Seeker"
+description = "Threat rises 20% faster, but chests are 50% more common."
+kind = 3
+threat_multiplier = 1.2
+chest_multiplier = 1.5
+
+[sub_resource type="Resource" id="Opt_thick_skin"]
+script = ExtResource("option")
 id = &"thick_skin"
 display_name = "Thick Skin"
-description = "%s max HP"
+description = "+75 max HP."
+kind = 0
 stat = &"max_hp"
-value_per_rank = 25.0
-costs = PackedInt32Array(10, 20, 35)
+value = 75.0
 
-[sub_resource type="Resource" id="Up_speed"]
-script = ExtResource("upgrade")
+[sub_resource type="Resource" id="Opt_fleet_foot"]
+script = ExtResource("option")
 id = &"fleet_foot"
 display_name = "Fleet Foot"
-description = "%s m/s move speed"
+description = "+0.4 m/s move speed."
+kind = 0
 stat = &"move_speed"
-value_per_rank = 0.2
-costs = PackedInt32Array(15, 30, 50)
+value = 0.4
 
-[sub_resource type="Resource" id="Up_haste"]
-script = ExtResource("upgrade")
+[sub_resource type="Resource" id="Opt_quick_hands"]
+script = ExtResource("option")
 id = &"quick_hands"
 display_name = "Quick Hands"
-description = "%s ability haste"
+description = "+15 ability haste."
+kind = 0
 stat = &"ability_haste"
-value_per_rank = 5.0
-costs = PackedInt32Array(10, 20, 35)
+value = 15.0
 
-[sub_resource type="Resource" id="Up_will"]
-script = ExtResource("upgrade")
+[sub_resource type="Resource" id="Opt_steady_will"]
+script = ExtResource("option")
 id = &"steady_will"
 display_name = "Steady Will"
-description = "%s Will"
+description = "+9 Will."
+kind = 0
 stat = &"will"
-value_per_rank = 3.0
-costs = PackedInt32Array(10, 20, 35)
+value = 9.0
 
-[sub_resource type="Resource" id="Up_armour"]
-script = ExtResource("upgrade")
-id = &"hardened"
-display_name = "Hardened"
-description = "%s armour"
-stat = &"armour"
-value_per_rank = 4.0
-costs = PackedInt32Array(10, 20, 35)
-
-[sub_resource type="Resource" id="Up_gold"]
-script = ExtResource("upgrade")
+[sub_resource type="Resource" id="Opt_allowance"]
+script = ExtResource("option")
 id = &"allowance"
 display_name = "Allowance"
-description = "%s gold at the start of each level"
+description = "+25 gold at the start of each level."
+kind = 0
 stat = &"gold_per_level"
-value_per_rank = 10.0
-costs = PackedInt32Array(10, 20, 35)
+value = 25.0
+
+[sub_resource type="Resource" id="Opt_lucky_finds"]
+script = ExtResource("option")
+id = &"lucky_finds"
+display_name = "Lucky Finds"
+description = "Chests are 30% more common."
+kind = 3
+chest_multiplier = 1.3
+
+[sub_resource type="Resource" id="Row_defiance"]
+script = ExtResource("row")
+id = &"defiance"
+display_name = "Defiance"
+option_a = SubResource("Opt_death_defiance")
+option_b = SubResource("Opt_stubborn_defiance")
+
+[sub_resource type="Resource" id="Row_head_start"]
+script = ExtResource("row")
+id = &"head_start"
+display_name = "Head Start"
+option_a = SubResource("Opt_armed")
+option_b = SubResource("Opt_stocked")
+
+[sub_resource type="Resource" id="Row_pace"]
+script = ExtResource("row")
+id = &"pace"
+display_name = "Pace"
+option_a = SubResource("Opt_slow_burn")
+option_b = SubResource("Opt_thrill_seeker")
+
+[sub_resource type="Resource" id="Row_body"]
+script = ExtResource("row")
+id = &"body"
+display_name = "Body"
+option_a = SubResource("Opt_thick_skin")
+option_b = SubResource("Opt_fleet_foot")
+
+[sub_resource type="Resource" id="Row_kit"]
+script = ExtResource("row")
+id = &"kit"
+display_name = "Kit"
+option_a = SubResource("Opt_quick_hands")
+option_b = SubResource("Opt_steady_will")
+
+[sub_resource type="Resource" id="Row_fortune"]
+script = ExtResource("row")
+id = &"fortune"
+display_name = "Fortune"
+option_a = SubResource("Opt_allowance")
+option_b = SubResource("Opt_lucky_finds")
 
 [resource]
 script = ExtResource("board")
-upgrades = Array[ExtResource("upgrade")]([SubResource("Up_hp"), SubResource("Up_speed"), SubResource("Up_haste"), SubResource("Up_will"), SubResource("Up_armour"), SubResource("Up_gold")])
+rows = Array[ExtResource("row")]([SubResource("Row_defiance"), SubResource("Row_head_start"), SubResource("Row_pace"), SubResource("Row_body"), SubResource("Row_kit"), SubResource("Row_fortune")])

@@ -45,6 +45,9 @@ func _ready() -> void:
 		zones.neutral, zones.destination_for_seed(RunState.run_seed), zones.intensity_for(level)
 	)
 	_apply_atmosphere()
+	# Mirror choices that change the run itself (chests, threat pace).
+	_streamer.profile = _streamer.profile.duplicate()
+	_streamer.profile.chest_chance *= MetaProgress.chest_multiplier()
 	_streamer.start(RunState.run_seed, level, theme)
 	_director.theme = theme
 	_streamer.safehouse_entered.connect(_on_safehouse_entered)
@@ -59,12 +62,14 @@ func _ready() -> void:
 	_player.died.connect(_on_player_died)
 	_message.visible = false
 	RunState.apply_to(_player)
+	_deal_starting_cards()
 	_player.wallet.add(roundi(_player.stats.get_value(StatIds.GOLD_PER_LEVEL)))
 	_player.events.level_started.emit()
 	# Let the navigation map sync before the director queries it.
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	_director.start(level)
+	_director.profile.threat_per_minute *= MetaProgress.threat_multiplier()
 	_hazards.start(theme)
 	_setup_burning(level)
 
@@ -200,3 +205,24 @@ func _on_player_died() -> void:
 func _show_message(text: String) -> void:
 	_message.text = text
 	_message.visible = true
+
+
+## Mirror Head Start: cards dealt once, at the start of a run.
+func _deal_starting_cards() -> void:
+	if RunState.starting_cards_given:
+		return
+	RunState.starting_cards_given = true
+	var kit: MirrorOption = MetaProgress.chosen_of(MirrorOption.Kind.START_CARDS)
+	if kit == null:
+		return
+	var picks: Array[CardData] = []
+	for i: int in kit.start_t2:
+		picks.append(card_library.cards_of_tier(2).pick_random())
+	for i: int in kit.start_t1:
+		picks.append(card_library.cards_of_tier(1).pick_random())
+	for i: int in kit.start_aces:
+		picks.append(card_library.cards_of_tier(0).pick_random())
+	for card: CardData in picks:
+		var slot: int = _player.cards.first_empty_slot()
+		if card != null and slot != -1:
+			_player.cards.set_stack(slot, CardStack.new(card))

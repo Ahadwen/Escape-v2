@@ -1,74 +1,68 @@
 class_name MirrorScreen
 extends NexusMenu
-## The Mirror: permanent upgrades bought in ranks with Reagents. They apply
-## at the start of every run.
+## The Mirror: choose what to bring on your runs. Each row has two
+## alternatives; bring one, or neither. (Everything is unlocked for now.)
 
-const PIP_OWNED: String = "◆"
-const PIP_EMPTY: String = "◇"
-## Debug builds only, until Reagents can be found in runs.
-const DEBUG_GRANT: int = 50
+const OPTION_SIZE: Vector2 = Vector2(330, 74)
+const SELECTED: Color = Color(1.0, 0.82, 0.3)
 
 
 func rebuild() -> void:
 	_title.text = "The Mirror"
-	_subtitle.text = "%d Reagents" % MetaProgress.reagents
+	_subtitle.text = "Choose what you bring. Click a choice again to leave it behind."
 	clear_body()
 	var grid: GridContainer = GridContainer.new()
-	grid.columns = 4
-	grid.add_theme_constant_override("h_separation", 18)
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 12)
 	grid.add_theme_constant_override("v_separation", 10)
 	_body.add_child(grid)
 	var first: Button = null
-	var board: UpgradeBoard = MetaProgress.board()
-	for upgrade: UpgradeData in board.upgrades:
-		var button: Button = _add_row(grid, upgrade)
-		if first == null and not button.disabled:
-			first = button
-	if OS.is_debug_build():
-		var grant: Button = Button.new()
-		grant.text = "Debug: +%d Reagents" % DEBUG_GRANT
-		grant.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		grant.pressed.connect(_on_debug_grant)
-		_body.add_child(grant)
+	for row: MirrorRow in MetaProgress.board().rows:
+		var label: Label = make_label(row.display_name, 18)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		label.custom_minimum_size = Vector2(120, 0)
+		grid.add_child(label)
+		for option: MirrorOption in [row.option_a, row.option_b]:
+			var button: Button = _option_button(row, option)
+			grid.add_child(button)
+			if first == null:
+				first = button
 	if first != null:
 		first.grab_focus.call_deferred()
-	else:
-		focus_close()
 
 
-func _add_row(grid: GridContainer, upgrade: UpgradeData) -> Button:
-	var rank: int = MetaProgress.rank_of(upgrade.id)
-	var name_label: Label = make_label(upgrade.display_name, 18)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	grid.add_child(name_label)
-	var pips: String = PIP_OWNED.repeat(rank) + PIP_EMPTY.repeat(upgrade.max_rank() - rank)
-	grid.add_child(make_label(pips, 18))
-	var effect: String = upgrade.describe(rank) if rank > 0 else "—"
-	if rank < upgrade.max_rank():
-		effect += "   →   " + upgrade.describe(rank + 1)
-	var effect_label: Label = make_label(effect, 15)
-	effect_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	effect_label.custom_minimum_size = Vector2(380, 0)
-	grid.add_child(effect_label)
-	var buy: Button = Button.new()
-	buy.custom_minimum_size = Vector2(150, 36)
-	var cost: int = upgrade.cost_after(rank)
-	if cost < 0:
-		buy.text = "Maxed"
-		buy.disabled = true
-	else:
-		buy.text = "%d Reagents" % cost
-		buy.disabled = MetaProgress.reagents < cost
-	buy.pressed.connect(_on_buy.bind(upgrade))
-	grid.add_child(buy)
-	return buy
+func _option_button(row: MirrorRow, option: MirrorOption) -> Button:
+	var chosen: bool = MetaProgress.choice(row.id) == option.id
+	var button: Button = Button.new()
+	button.custom_minimum_size = OPTION_SIZE
+	button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	button.text = "%s%s\n%s" % ["✓ " if chosen else "", option.display_name, option.description]
+	button.add_theme_font_size_override("font_size", 14)
+	var fill: Color = Color(0.16, 0.13, 0.24) if chosen else Color(0.1, 0.09, 0.14)
+	button.add_theme_stylebox_override(
+		"normal", _style(fill, SELECTED if chosen else Color(0, 0, 0, 0))
+	)
+	button.add_theme_stylebox_override(
+		"hover", _style(fill.lightened(0.1), SELECTED if chosen else Color(1, 1, 1, 0.2))
+	)
+	button.add_theme_stylebox_override("pressed", _style(fill.lightened(0.2), SELECTED))
+	button.add_theme_stylebox_override("focus", _style(Color(0, 0, 0, 0), Color.WHITE))
+	if not chosen:
+		button.modulate = Color(1, 1, 1, 0.75)
+	button.pressed.connect(_on_choose.bind(row, option))
+	return button
 
 
-func _on_buy(upgrade: UpgradeData) -> void:
-	if MetaProgress.buy_rank(upgrade):
-		rebuild()
+func _style(fill: Color, border: Color) -> StyleBoxFlat:
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = fill
+	style.border_color = border
+	style.set_border_width_all(2 if border.a > 0.0 else 0)
+	style.set_corner_radius_all(6)
+	style.set_content_margin_all(8)
+	return style
 
 
-func _on_debug_grant() -> void:
-	MetaProgress.add_reagents(DEBUG_GRANT)
+func _on_choose(row: MirrorRow, option: MirrorOption) -> void:
+	MetaProgress.choose(row.id, option.id)
 	rebuild()

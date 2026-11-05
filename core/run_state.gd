@@ -16,6 +16,10 @@ static var level_index: int = 0
 static var gold: int = 0
 ## Saved card stacks (copies), one per slot (null = empty).
 static var cards: Array[CardStack] = []
+## Mirror Death Defiance spent this run.
+static var defiance_used: bool = false
+## Mirror starting cards already dealt this run.
+static var starting_cards_given: bool = false
 ## How the last run ended (shown in the Nexus). Empty before the first run.
 static var last_result: String = ""
 
@@ -26,6 +30,8 @@ static func start_new_run(p_seed: int) -> void:
 	level_index = 0
 	gold = 0
 	cards.clear()
+	defiance_used = false
+	starting_cards_given = false
 
 
 ## Ends the run; `result` describes how (shown back in the Nexus).

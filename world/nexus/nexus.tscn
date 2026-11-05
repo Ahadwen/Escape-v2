@@ -142,7 +142,7 @@ size = Vector3(2.6, 1.4, 1.2)
 [node name="Mirror" parent="NavigationRegion3D" instance=ExtResource("19_station")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 1)
 title = "Mirror"
-prompt = "Upgrades"
+prompt = "Choose what to bring"
 color = Color(0.85, 0.3, 0.45, 1)
 size = Vector3(1.6, 2.6, 0.5)
 

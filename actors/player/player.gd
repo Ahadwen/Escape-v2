@@ -36,6 +36,12 @@ func _ready() -> void:
 	stats.initialize(character.get_base_stats())
 	MetaProgress.apply_to(stats.block)
 	health.refresh_max(true)
+	var defiance: MirrorOption = MetaProgress.chosen_of(MirrorOption.Kind.DEFIANCE)
+	if defiance != null:
+		var guard: DefianceGuard = DefianceGuard.new()
+		guard.name = "DefianceGuard"
+		add_child(guard)
+		guard.setup(defiance, self)
 	abilities.set_abilities(character.get_abilities())
 
 

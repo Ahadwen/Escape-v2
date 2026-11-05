@@ -1,7 +1,7 @@
 extends Node3D
 ## The Nexus: the hub between runs. Every run starts and ends here. Walk
 ## into the portal to start a run, choose who to play at the Armory, and buy
-## permanent upgrades with Reagents at the Mirror.
+## at the Mirror what to bring (one choice per row).
 
 @onready var _nav_region: NavigationRegion3D = $NavigationRegion3D
 @onready var _input_router: InputRouter = $InputRouter

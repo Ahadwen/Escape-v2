@@ -1,6 +1,5 @@
 extends "res://tests/framework/test_case.gd"
 
-const UpgradeScript := preload("res://meta/upgrade_data.gd")
 const StatBlockScript := preload("res://stats/stat_block.gd")
 
 
@@ -10,51 +9,47 @@ func before_each() -> void:
 	MetaProgress.reset()
 
 
-func _upgrade() -> UpgradeData:
-	var upgrade: UpgradeData = UpgradeScript.new()
-	upgrade.id = &"test_hp"
-	upgrade.stat = StatIds.MAX_HP
-	upgrade.value_per_rank = 25.0
-	upgrade.costs = PackedInt32Array([10, 20])
-	upgrade.description = "%s max HP"
-	return upgrade
+func test_mirror_rows_each_offer_two_options() -> void:
+	var board: MirrorBoard = MetaProgress.board()
+	assert_eq(board.rows.size(), 6)
+	for row: MirrorRow in board.rows:
+		assert_not_null(row.option_a, String(row.id))
+		assert_not_null(row.option_b, String(row.id))
+		assert_ne(row.option_a.id, row.option_b.id)
 
 
-func test_upgrade_costs_and_text() -> void:
-	var upgrade: UpgradeData = _upgrade()
-	assert_eq(upgrade.max_rank(), 2)
-	assert_eq(upgrade.cost_after(0), 10)
-	assert_eq(upgrade.cost_after(2), -1)
-	assert_eq(upgrade.describe(2), "+50 max HP")
+func test_one_choice_per_row_and_toggle_off() -> void:
+	MetaProgress.choose(&"body", &"thick_skin")
+	MetaProgress.choose(&"body", &"fleet_foot")
+	assert_eq(MetaProgress.choice(&"body"), &"fleet_foot", "the row holds one choice")
+	MetaProgress.choose(&"body", &"fleet_foot")
+	assert_eq(MetaProgress.choice(&"body"), &"", "choosing it again clears it")
 
 
-func test_buying_ranks_spends_reagents() -> void:
-	var upgrade: UpgradeData = _upgrade()
-	assert_false(MetaProgress.buy_rank(upgrade), "can't afford")
-	MetaProgress.add_reagents(25)
-	assert_true(MetaProgress.buy_rank(upgrade))
-	assert_eq(MetaProgress.rank_of(upgrade.id), 1)
-	assert_eq(MetaProgress.reagents, 15)
-	assert_false(MetaProgress.buy_rank(upgrade), "rank 2 costs 20")
-
-
-func test_mirror_upgrades_apply_once_to_stats() -> void:
-	var board: UpgradeBoard = MetaProgress.board()
-	assert_false(board.upgrades.is_empty())
-	var hp: UpgradeData = board.find(&"thick_skin")
-	assert_not_null(hp)
-	MetaProgress.ranks[String(hp.id)] = 2
+func test_stat_choices_apply_and_swap_cleanly() -> void:
 	var block: StatBlock = StatBlockScript.new()
 	block.set_base(StatIds.MAX_HP, 400.0)
+	block.set_base(StatIds.MOVE_SPEED, 8.0)
+	MetaProgress.choose(&"body", &"thick_skin")
 	MetaProgress.apply_to(block)
 	MetaProgress.apply_to(block)
-	assert_almost_eq(block.get_value(StatIds.MAX_HP), 450.0)
+	assert_almost_eq(block.get_value(StatIds.MAX_HP), 475.0)
+	MetaProgress.choose(&"body", &"fleet_foot")
+	MetaProgress.apply_to(block)
+	assert_almost_eq(block.get_value(StatIds.MAX_HP), 400.0, 0.001, "thick skin removed")
+	assert_almost_eq(block.get_value(StatIds.MOVE_SPEED), 8.4)
+
+
+func test_run_multipliers_combine() -> void:
+	assert_almost_eq(MetaProgress.threat_multiplier(), 1.0)
+	MetaProgress.choose(&"pace", &"thrill_seeker")
+	MetaProgress.choose(&"fortune", &"lucky_finds")
+	assert_almost_eq(MetaProgress.threat_multiplier(), 1.2)
+	assert_almost_eq(MetaProgress.chest_multiplier(), 1.5 * 1.3)
 
 
 func test_roster_starts_with_the_knight_selected() -> void:
 	assert_true(MetaProgress.is_unlocked(&"knight"))
-	var chosen: CharacterData = MetaProgress.selected_character()
-	assert_not_null(chosen)
-	assert_eq(chosen.id, &"knight")
+	assert_eq(MetaProgress.selected_character().id, &"knight")
 	MetaProgress.select_character(&"nobody")
 	assert_eq(MetaProgress.selected_character().id, &"knight", "locked ids are ignored")
