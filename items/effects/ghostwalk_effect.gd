@@ -43,7 +43,7 @@ class Instance:
 		var effect: GhostwalkEffect = data as GhostwalkEffect
 		var map: RID = player.get_world_3d().navigation_map
 		var here: Vector3 = player.global_position
-		var safe: Vector3 = NavigationServer3D.map_get_closest_point(map, here)
+		var safe: Vector3 = GroundNav.closest_point(map, here)
 		var offset: Vector3 = Vector3(safe.x - here.x, 0.0, safe.z - here.z)
 		if offset.length() <= effect.stuck_distance:
 			_set_ghost(false)

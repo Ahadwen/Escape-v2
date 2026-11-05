@@ -80,7 +80,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	var map: RID = player.get_world_3d().navigation_map
 	var angle: float = randf() * TAU
 	var guess: Vector3 = player.global_position + Vector3(cos(angle), 0.0, sin(angle)) * 12.0
-	_spawn(entry, NavigationServer3D.map_get_closest_point(map, guess))
+	_spawn(entry, GroundNav.closest_point(map, guess))
 	print("Debug spawn: %s" % entry.enemy.display_name)
 
 
@@ -180,7 +180,7 @@ func _find_spawn_point() -> Variant:
 		var angle: float = profile.spawn_angle(heading, randf(), randf())
 		var distance: float = randf_range(profile.spawn_distance_min, profile.spawn_distance_max)
 		var guess: Vector3 = origin + Vector3(cos(angle), 0.0, sin(angle)) * distance
-		var point: Vector3 = NavigationServer3D.map_get_closest_point(map, guess)
+		var point: Vector3 = GroundNav.closest_point(map, guess)
 		var flat: float = Vector2(point.x - origin.x, point.z - origin.z).length()
 		if flat < profile.spawn_distance_min * 0.75:
 			continue

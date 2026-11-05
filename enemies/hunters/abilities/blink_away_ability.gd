@@ -49,7 +49,7 @@ class Action:
 			away = heading.normalized().rotated(Vector3.UP, turn)
 		var goal: Vector3 = brain.target.world_position() + away * ability.distance
 		var map: RID = enemy().get_world_3d().navigation_map
-		enemy().movement.teleport(NavigationServer3D.map_get_closest_point(map, goal), -away)
+		enemy().movement.teleport(GroundNav.closest_point(map, goal), -away)
 		return true
 
 	func cancel() -> void:

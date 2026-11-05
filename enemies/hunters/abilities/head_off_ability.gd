@@ -66,9 +66,7 @@ class Action:
 		var heading: Vector3 = brain.target.average_velocity
 		var arrival: Vector3 = brain.target.world_position() + heading * ability.tell_time
 		var map: RID = enemy().get_world_3d().navigation_map
-		_destination = NavigationServer3D.map_get_closest_point(
-			map, ability.destination(arrival, heading, side)
-		)
+		_destination = GroundNav.closest_point(map, ability.destination(arrival, heading, side))
 		brain.warning.show_circle(_destination, enemy().body_radius + 0.8)
 
 	func tick(delta: float) -> bool:

@@ -58,7 +58,5 @@ class Action:
 		for i: int in ability.count:
 			var angle: float = TAU * i / ability.count
 			var offset: Vector3 = Vector3(cos(angle), 0.0, sin(angle)) * ability.spawn_radius
-			var point: Vector3 = NavigationServer3D.map_get_closest_point(
-				map, enemy().global_position + offset
-			)
+			var point: Vector3 = GroundNav.closest_point(map, enemy().global_position + offset)
 			enemy().spawn_minion(ability.minion, point, scene)

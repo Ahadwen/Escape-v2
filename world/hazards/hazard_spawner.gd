@@ -43,7 +43,7 @@ func _spawn(rule: HazardRule) -> void:
 	var angle: float = randf() * TAU
 	var distance: float = randf_range(rule.min_distance, rule.max_distance)
 	var guess: Vector3 = player.global_position + Vector3(cos(angle), 0.0, sin(angle)) * distance
-	var point: Vector3 = NavigationServer3D.map_get_closest_point(map, guess)
+	var point: Vector3 = GroundNav.closest_point(map, guess)
 	var offset: Vector3 = point - player.global_position
 	if Vector2(offset.x, offset.z).length() < rule.min_distance * 0.8:
 		return

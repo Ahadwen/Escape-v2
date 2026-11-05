@@ -119,5 +119,5 @@ static func on_impact(
 		trap.lifetime = ability.trap_lifetime
 		trap.damage_amount = ability.trap_damage
 		trap.source = source.get_ref() as Node
-		trap.position = NavigationServer3D.map_get_closest_point(map, point + offset)
+		trap.position = GroundNav.closest_point(map, point + offset)
 		world.add_child(trap)
