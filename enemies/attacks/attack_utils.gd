@@ -113,7 +113,7 @@ static func in_cone(
 
 
 ## Damages every player-faction target within radius of center. Returns hits.
-## Area damage (artillery, ground zones) can't be parried.
+## Area damage (barrages, ground zones) can't be parried.
 static func damage_in_radius(
 	tree: SceneTree,
 	center: Vector3,

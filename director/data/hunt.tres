@@ -71,7 +71,7 @@ max_threat = 0.0
 [resource]
 script = ExtResource("profile")
 start_threat = 2.0
-threat_per_minute = 0.5
+threat_per_minute = 0.42
 level_start_step = 1.0
 level_rate_step = 0.2
 budget_per_threat = 100.0

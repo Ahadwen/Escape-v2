@@ -25,7 +25,7 @@ extends Resource
 
 @export_group("Points of interest")
 @export_range(0.0, 1.0) var crystal_chance: float = 0.3
-@export_range(0.0, 1.0) var chest_chance: float = 0.07
+@export_range(0.0, 1.0) var chest_chance: float = 0.055
 ## Safehouses are rare and spread out: the world is split into cells of
 ## safehouse_cell_size x safehouse_cell_size chunks, and each cell holds at
 ## most one (in a random chunk of it, with safehouse_cell_chance). Roughly one

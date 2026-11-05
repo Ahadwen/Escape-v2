@@ -88,4 +88,4 @@ Several hunters can stun, root, pull or slow you. Durations stay short (0.5–1.
 - Field size and time-on-hunt numbers.
 - CC durations — and whether the parry should be able to break or block CC.
 - Zone variants for each hunter (Inferno versions).
-- Fate of the current roster: Chaser → Shambler? Charger → Brute? Gunner / Laser / Artillery / Brood → folded into the new kits?
+- ~~Fate of the old roster~~: retired; the hunters above replace it.

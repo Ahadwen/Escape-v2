@@ -1,7 +1,7 @@
 class_name LaserBeam
 extends Node3D
 ## The firing half of a laser: damages everything along the segment once,
-## then fades. (The warning line is drawn by the laser enemy beforehand.)
+## then fades. (The warning line is drawn beforehand by whoever fires it.)
 
 var from_point: Vector3
 var to_point: Vector3

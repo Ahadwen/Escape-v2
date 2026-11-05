@@ -1,6 +1,6 @@
 class_name MiteEnemyData
 extends EnemyData
-## Tiny, fast, short-lived swarm enemy spawned by broods. Contact damage only.
+## Tiny, fast, short-lived swarm enemy spawned by the Broodmother's swarm. Contact damage only.
 
 
 func _init() -> void:

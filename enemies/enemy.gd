@@ -146,7 +146,7 @@ func scaled_damage(base: float) -> float:
 	return base * damage_multiplier
 
 
-## Spawns a child enemy (e.g. a brood's mite) that inherits this enemy's
+## Spawns a child enemy (e.g. a Broodmother's mite) that inherits this enemy's
 ## threat scaling. Returns it.
 func spawn_minion(minion_data: EnemyData, at: Vector3, scene: PackedScene) -> Enemy:
 	var minion: Enemy = scene.instantiate() as Enemy

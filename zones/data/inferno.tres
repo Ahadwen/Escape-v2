@@ -3,11 +3,7 @@
 [ext_resource type="Script" path="res://zones/zone_data.gd" id="zone"]
 [ext_resource type="Script" path="res://zones/obstacle_kind.gd" id="kind"]
 [ext_resource type="Script" path="res://zones/hazard_rule.gd" id="hazard"]
-[ext_resource type="Script" path="res://zones/enemy_variant.gd" id="variant"]
 [ext_resource type="PackedScene" path="res://world/hazards/fire_patch.tscn" id="fire_patch"]
-[ext_resource type="Resource" path="res://enemies/data/inferno/artillery_inferno.tres" id="v_artillery"]
-[ext_resource type="Resource" path="res://enemies/data/inferno/gunner_inferno.tres" id="v_gunner"]
-[ext_resource type="Resource" path="res://enemies/data/inferno/charger_inferno.tres" id="v_charger"]
 
 [sub_resource type="Resource" id="Kind_0"]
 script = ExtResource("kind")
@@ -41,21 +37,6 @@ weight = 2.0
 can_rotate = true
 color = Color(0.22, 0.13, 0.11, 1)
 
-[sub_resource type="Resource" id="Variant_artillery"]
-script = ExtResource("variant")
-base_id = &"artillery"
-variant = ExtResource("v_artillery")
-
-[sub_resource type="Resource" id="Variant_gunner"]
-script = ExtResource("variant")
-base_id = &"gunner"
-variant = ExtResource("v_gunner")
-
-[sub_resource type="Resource" id="Variant_charger"]
-script = ExtResource("variant")
-base_id = &"charger"
-variant = ExtResource("v_charger")
-
 [sub_resource type="Resource" id="Hazard_fire"]
 script = ExtResource("hazard")
 hazard_scene = ExtResource("fire_patch")
@@ -85,4 +66,3 @@ hits_ignite = true
 burn_duration = 2.0
 burn_tick = 1.0
 burn_damage = 6.0
-enemy_variants = Array[ExtResource("variant")]([SubResource("Variant_artillery"), SubResource("Variant_gunner"), SubResource("Variant_charger")])

@@ -5,7 +5,6 @@ const ObstacleKindScript := preload("res://zones/obstacle_kind.gd")
 const LevelThemeScript := preload("res://zones/level_theme.gd")
 const EnemyVariantScript := preload("res://zones/enemy_variant.gd")
 const EnemyDataScript := preload("res://enemies/enemy_data.gd")
-const FlameConeScript := preload("res://enemies/attacks/flame_cone.gd")
 const StatusEffectHostScript := preload("res://actors/components/status_effect_host.gd")
 const HealthComponentScript := preload("res://actors/components/health_component.gd")
 const BurnEffectScript := preload("res://status/burn_effect.gd")
@@ -86,17 +85,7 @@ func test_registry_files_load() -> void:
 	assert_almost_eq(registry.intensity_for(99), 1.0)
 	var inferno: ZoneData = registry.destination_for_seed(12345)
 	assert_eq(inferno.id, &"inferno")
-	assert_not_null(inferno.variant_for(&"artillery"))
 	assert_eq(inferno.obstacle_kit.size(), 4)
-
-
-func test_flame_cone_band() -> void:
-	var at: Vector3 = Vector3.ZERO
-	var dir: Vector3 = Vector3.FORWARD
-	var angle: float = deg_to_rad(7.5)
-	assert_true(FlameConeScript.in_band(at, dir, angle, 5.0, 1.2, Vector3(0, 0, -5)))
-	assert_false(FlameConeScript.in_band(at, dir, angle, 5.0, 1.2, Vector3(0, 0, -8)))
-	assert_false(FlameConeScript.in_band(at, dir, angle, 5.0, 1.2, Vector3(4, 0, -3)))
 
 
 func test_burn_ticks_damage_and_is_flagged() -> void:
