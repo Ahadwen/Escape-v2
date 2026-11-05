@@ -8,6 +8,7 @@ extends SceneTree
 ##
 ## Safehouses are disabled so the bot keeps running.
 
+const MetaProgressScript := preload("res://meta/meta_progress.gd")
 const LEVEL_SCENE: String = "res://world/levels/level.tscn"
 
 var _seconds: float = 120.0
@@ -43,7 +44,7 @@ var _hit_rates: Array[float] = []
 
 func _initialize() -> void:
 	# A clean profile, and never touch the real save.
-	MetaProgress.saving_enabled = false
+	MetaProgressScript.saving_enabled = false
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	var numbers: Array[String] = []
 	for arg: String in args:

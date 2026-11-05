@@ -8,6 +8,7 @@ extends SceneTree
 ## The optional argument after `--` restricts the run to files whose path
 ## contains that text. Exits with code 0 if every test passes, 1 otherwise.
 
+const MetaProgressScript := preload("res://meta/meta_progress.gd")
 const TestCase := preload("res://tests/framework/test_case.gd")
 const TEST_ROOT := "res://tests"
 const SKIP_DIRS: Array[String] = ["framework"]
@@ -23,8 +24,15 @@ func _initialize() -> void:
 
 
 func _run_all() -> void:
+	var missing: PackedStringArray = _unregistered_classes()
+	if not missing.is_empty():
+		print("Godot hasn't registered these script classes yet: %s" % ", ".join(missing))
+		print("Run this once, then run the tests again:")
+		print("  godot --headless --path . --import")
+		quit(1)
+		return
 	# Tests never read or write the real meta save.
-	MetaProgress.saving_enabled = false
+	MetaProgressScript.saving_enabled = false
 	var filter: String = ""
 	var user_args: PackedStringArray = OS.get_cmdline_user_args()
 	if not user_args.is_empty():
@@ -111,3 +119,33 @@ func _collect_test_files(dir_path: String, out: Array[String]) -> void:
 		if sub_dir in SKIP_DIRS:
 			continue
 		_collect_test_files(dir_path.path_join(sub_dir), out)
+
+
+## Script classes declared in the project that Godot's class cache doesn't
+## know about (new files since the last import).
+func _unregistered_classes() -> PackedStringArray:
+	var known: Dictionary = {}
+	for entry: Dictionary in ProjectSettings.get_global_class_list():
+		known[String(entry["class"])] = true
+	var missing: PackedStringArray = PackedStringArray()
+	var scripts: Array[String] = []
+	_collect_scripts("res://", scripts)
+	for path: String in scripts:
+		var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+		if file == null:
+			continue
+		var first: String = file.get_line().strip_edges()
+		if first.begins_with("class_name "):
+			var name: String = first.trim_prefix("class_name ").split(" ")[0]
+			if not known.has(name):
+				missing.append(name)
+	return missing
+
+
+func _collect_scripts(dir_path: String, out: Array[String]) -> void:
+	for file_name: String in DirAccess.get_files_at(dir_path):
+		if file_name.ends_with(".gd"):
+			out.append(dir_path.path_join(file_name))
+	for sub_dir: String in DirAccess.get_directories_at(dir_path):
+		if not sub_dir.begins_with("."):
+			_collect_scripts(dir_path.path_join(sub_dir), out)
