@@ -188,10 +188,13 @@ func _on_player_died() -> void:
 	_hazards.stop()
 	_director.stop(false)
 	_aim_presenter.clear_preview()
-	_show_message("Caught after %s" % RunInfo.format_time(_director.elapsed))
-	RunState.end_run()
+	var time: String = RunInfo.format_time(_director.elapsed)
+	_show_message("Caught after %s" % time)
+	RunState.end_run(
+		"Caught on level %d of %d after %s" % [RunState.level_index + 1, RunState.LEVEL_COUNT, time]
+	)
 	await get_tree().create_timer(RESTART_DELAY_DEATH).timeout
-	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file(RunState.NEXUS_SCENE)
 
 
 func _show_message(text: String) -> void:

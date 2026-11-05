@@ -7,6 +7,7 @@ extends RefCounted
 const LEVEL_COUNT: int = 5
 const LEVEL_SCENE: String = "res://world/levels/level.tscn"
 const SAFEHOUSE_SCENE: String = "res://world/safehouse/safehouse_lobby.tscn"
+const NEXUS_SCENE: String = "res://world/nexus/nexus.tscn"
 
 static var active: bool = false
 static var run_seed: int = 0
@@ -15,6 +16,8 @@ static var level_index: int = 0
 static var gold: int = 0
 ## Saved card stacks (copies), one per slot (null = empty).
 static var cards: Array[CardStack] = []
+## How the last run ended (shown in the Nexus). Empty before the first run.
+static var last_result: String = ""
 
 
 static func start_new_run(p_seed: int) -> void:
@@ -25,8 +28,11 @@ static func start_new_run(p_seed: int) -> void:
 	cards.clear()
 
 
-static func end_run() -> void:
+## Ends the run; `result` describes how (shown back in the Nexus).
+static func end_run(result: String = "") -> void:
 	active = false
+	if not result.is_empty():
+		last_result = result
 
 
 static func is_final_level() -> bool:

@@ -64,9 +64,10 @@ func _on_shop(player: Player) -> void:
 func _on_exit(_player_used: Player) -> void:
 	RunState.save_from(_player)
 	if RunState.is_final_level():
-		_level_label.text = "You escaped! Starting a new run..."
-		RunState.end_run()
+		_level_label.text = "You escaped!"
+		RunState.end_run("Escaped! All %d levels survived." % RunState.LEVEL_COUNT)
 		await get_tree().create_timer(3.0).timeout
-	else:
-		RunState.level_index += 1
+		get_tree().change_scene_to_file(RunState.NEXUS_SCENE)
+		return
+	RunState.level_index += 1
 	get_tree().change_scene_to_file(RunState.LEVEL_SCENE)
