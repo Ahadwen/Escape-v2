@@ -2,6 +2,7 @@ extends "res://tests/framework/test_case.gd"
 
 const CardDataScript := preload("res://items/card_data.gd")
 const CardStackScript := preload("res://items/card_stack.gd")
+const BOOK_PATH: String = "res://items/data/recipe_book.tres"
 
 
 func _card(suit: int, rank: int) -> CardData:
@@ -138,3 +139,52 @@ func test_joker_can_cover_the_suit_requirement() -> void:
 	var plan: RecipePlan = RecipePlan.build(recipe, _stacks(held), false)
 	assert_true(plan.is_complete())
 	assert_eq(plan.jokers_used, 1)
+
+
+func _tier(tier: int, suit: int) -> RecipeIngredient:
+	var ingredient: RecipeIngredient = RecipeIngredient.new()
+	ingredient.tier = tier
+	ingredient.suit = suit
+	return ingredient
+
+
+func test_tier_ingredient_matches_tier_and_suit_only() -> void:
+	var t1_heart: RecipeIngredient = _tier(1, 0)
+	assert_true(t1_heart.matches(_card(0, 2)))
+	assert_true(t1_heart.matches(_card(0, 6)))
+	assert_false(t1_heart.matches(_card(0, 7)), "a 7 is T2")
+	assert_false(t1_heart.matches(_card(1, 3)), "wrong suit")
+	assert_true(_tier(2, 3).matches(_card(3, 10)))
+
+
+func test_book_recipes_are_tier_and_suit_and_all_distinct() -> void:
+	var book: RecipeBook = load(BOOK_PATH) as RecipeBook
+	var seen: Dictionary = {}
+	for recipe: RecipeData in book.recipes:
+		assert_eq(recipe.ingredients.size(), 3, recipe.result.label())
+		var key: PackedStringArray = PackedStringArray()
+		for ingredient: RecipeIngredient in recipe.ingredients:
+			assert_true(ingredient.tier > 0, "%s uses tiers" % recipe.result.label())
+			key.append("%d%d" % [ingredient.tier, ingredient.suit])
+		key.sort()
+		var signature: String = ",".join(key)
+		assert_false(seen.has(signature), "%s duplicates a recipe" % recipe.result.label())
+		seen[signature] = true
+
+
+func test_two_t1_hearts_and_a_t1_diamond_make_seven_of_hearts() -> void:
+	var book: RecipeBook = load(BOOK_PATH) as RecipeBook
+	var seven: RecipeData = null
+	for recipe: RecipeData in book.recipes:
+		if recipe.result.label() == "7♥":
+			seven = recipe
+	var stacks: Array[CardStack] = [
+		CardStackScript.new(_card(0, 2)),
+		CardStackScript.new(_card(0, 5)),
+		CardStackScript.new(_card(1, 4)),
+		null,
+		null,
+	]
+	assert_true(RecipePlan.build(seven, stacks, false).is_complete())
+	stacks[2] = CardStackScript.new(_card(2, 4))
+	assert_false(RecipePlan.build(seven, stacks, false).is_complete(), "needs the diamond")

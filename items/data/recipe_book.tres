@@ -32,500 +32,240 @@
 [ext_resource type="Resource" path="res://items/data/cards/qs.tres" id="card_qs"]
 [ext_resource type="Resource" path="res://items/data/cards/ks.tres" id="card_ks"]
 
-[sub_resource type="Resource" id="Ingredient_1"]
+[sub_resource type="Resource" id="Ing_t1c"]
 script = ExtResource("ing")
-rank = 3
+tier = 1
+suit = 2
 
-[sub_resource type="Resource" id="Ingredient_2"]
+[sub_resource type="Resource" id="Ing_t1d"]
 script = ExtResource("ing")
-rank = 2
+tier = 1
+suit = 1
 
-[sub_resource type="Resource" id="Ingredient_3"]
+[sub_resource type="Resource" id="Ing_t1h"]
 script = ExtResource("ing")
-rank = 4
+tier = 1
+suit = 0
 
-[sub_resource type="Resource" id="Ingredient_4"]
+[sub_resource type="Resource" id="Ing_t1s"]
 script = ExtResource("ing")
-rank = 3
+tier = 1
+suit = 3
 
-[sub_resource type="Resource" id="Ingredient_5"]
+[sub_resource type="Resource" id="Ing_t2c"]
 script = ExtResource("ing")
-rank = 5
+tier = 2
+suit = 2
 
-[sub_resource type="Resource" id="Ingredient_6"]
+[sub_resource type="Resource" id="Ing_t2d"]
 script = ExtResource("ing")
-rank = 4
+tier = 2
+suit = 1
 
-[sub_resource type="Resource" id="Ingredient_7"]
+[sub_resource type="Resource" id="Ing_t2h"]
 script = ExtResource("ing")
-rank = 6
+tier = 2
+suit = 0
 
-[sub_resource type="Resource" id="Ingredient_8"]
+[sub_resource type="Resource" id="Ing_t2s"]
 script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_9"]
-script = ExtResource("ing")
-rank = 3
-
-[sub_resource type="Resource" id="Ingredient_10"]
-script = ExtResource("ing")
-rank = 2
-
-[sub_resource type="Resource" id="Ingredient_11"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_12"]
-script = ExtResource("ing")
-rank = 3
-
-[sub_resource type="Resource" id="Ingredient_13"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_14"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_15"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_16"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_17"]
-script = ExtResource("ing")
-rank = 3
-
-[sub_resource type="Resource" id="Ingredient_18"]
-script = ExtResource("ing")
-rank = 2
-
-[sub_resource type="Resource" id="Ingredient_19"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_20"]
-script = ExtResource("ing")
-rank = 3
-
-[sub_resource type="Resource" id="Ingredient_21"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_22"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_23"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_24"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_25"]
-script = ExtResource("ing")
-rank = 3
-
-[sub_resource type="Resource" id="Ingredient_26"]
-script = ExtResource("ing")
-rank = 2
-
-[sub_resource type="Resource" id="Ingredient_27"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_28"]
-script = ExtResource("ing")
-rank = 3
-
-[sub_resource type="Resource" id="Ingredient_29"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_30"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_31"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_32"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_33"]
-script = ExtResource("ing")
-card = ExtResource("card_7h")
-
-[sub_resource type="Resource" id="Ingredient_34"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_35"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_36"]
-script = ExtResource("ing")
-card = ExtResource("card_8h")
-
-[sub_resource type="Resource" id="Ingredient_37"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_38"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_39"]
-script = ExtResource("ing")
-card = ExtResource("card_10h")
-
-[sub_resource type="Resource" id="Ingredient_40"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_41"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_42"]
-script = ExtResource("ing")
-card = ExtResource("card_7d")
-
-[sub_resource type="Resource" id="Ingredient_43"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_44"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_45"]
-script = ExtResource("ing")
-card = ExtResource("card_8d")
-
-[sub_resource type="Resource" id="Ingredient_46"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_47"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_48"]
-script = ExtResource("ing")
-card = ExtResource("card_10d")
-
-[sub_resource type="Resource" id="Ingredient_49"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_50"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_51"]
-script = ExtResource("ing")
-card = ExtResource("card_7c")
-
-[sub_resource type="Resource" id="Ingredient_52"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_53"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_54"]
-script = ExtResource("ing")
-card = ExtResource("card_8c")
-
-[sub_resource type="Resource" id="Ingredient_55"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_56"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_57"]
-script = ExtResource("ing")
-card = ExtResource("card_10c")
-
-[sub_resource type="Resource" id="Ingredient_58"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_59"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_60"]
-script = ExtResource("ing")
-card = ExtResource("card_7s")
-
-[sub_resource type="Resource" id="Ingredient_61"]
-script = ExtResource("ing")
-rank = 5
-
-[sub_resource type="Resource" id="Ingredient_62"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_63"]
-script = ExtResource("ing")
-card = ExtResource("card_8s")
-
-[sub_resource type="Resource" id="Ingredient_64"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_65"]
-script = ExtResource("ing")
-rank = 4
-
-[sub_resource type="Resource" id="Ingredient_66"]
-script = ExtResource("ing")
-card = ExtResource("card_10s")
-
-[sub_resource type="Resource" id="Ingredient_67"]
-script = ExtResource("ing")
-rank = 6
-
-[sub_resource type="Resource" id="Ingredient_68"]
-script = ExtResource("ing")
-rank = 5
+tier = 2
+suit = 3
 
 [sub_resource type="Resource" id="Recipe_7h"]
 script = ExtResource("recipe")
 result = ExtResource("card_7h")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_1"), SubResource("Ingredient_2")])
-requires_suit = true
-required_suit = 0
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1h"), SubResource("Ing_t1h"), SubResource("Ing_t1d")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_8h"]
 script = ExtResource("recipe")
 result = ExtResource("card_8h")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_3"), SubResource("Ingredient_4")])
-requires_suit = true
-required_suit = 0
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1h"), SubResource("Ing_t1h"), SubResource("Ing_t1h")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_9h"]
 script = ExtResource("recipe")
 result = ExtResource("card_9h")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_5"), SubResource("Ingredient_6")])
-requires_suit = true
-required_suit = 0
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1h"), SubResource("Ing_t1h"), SubResource("Ing_t1c")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_10h"]
 script = ExtResource("recipe")
 result = ExtResource("card_10h")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_7"), SubResource("Ingredient_8")])
-requires_suit = true
-required_suit = 0
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1h"), SubResource("Ing_t1h"), SubResource("Ing_t1s")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_7d"]
 script = ExtResource("recipe")
 result = ExtResource("card_7d")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_9"), SubResource("Ingredient_10")])
-requires_suit = true
-required_suit = 1
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1d"), SubResource("Ing_t1d"), SubResource("Ing_t1d")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_8d"]
 script = ExtResource("recipe")
 result = ExtResource("card_8d")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_11"), SubResource("Ingredient_12")])
-requires_suit = true
-required_suit = 1
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1d"), SubResource("Ing_t1d"), SubResource("Ing_t1c")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_9d"]
 script = ExtResource("recipe")
 result = ExtResource("card_9d")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_13"), SubResource("Ingredient_14")])
-requires_suit = true
-required_suit = 1
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1d"), SubResource("Ing_t1d"), SubResource("Ing_t1h")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_10d"]
 script = ExtResource("recipe")
 result = ExtResource("card_10d")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_15"), SubResource("Ingredient_16")])
-requires_suit = true
-required_suit = 1
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1d"), SubResource("Ing_t1d"), SubResource("Ing_t1s")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_7c"]
 script = ExtResource("recipe")
 result = ExtResource("card_7c")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_17"), SubResource("Ingredient_18")])
-requires_suit = true
-required_suit = 2
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1c"), SubResource("Ing_t1c"), SubResource("Ing_t1c")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_8c"]
 script = ExtResource("recipe")
 result = ExtResource("card_8c")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_19"), SubResource("Ingredient_20")])
-requires_suit = true
-required_suit = 2
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1c"), SubResource("Ing_t1c"), SubResource("Ing_t1d")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_9c"]
 script = ExtResource("recipe")
 result = ExtResource("card_9c")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_21"), SubResource("Ingredient_22")])
-requires_suit = true
-required_suit = 2
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1c"), SubResource("Ing_t1c"), SubResource("Ing_t1h")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_10c"]
 script = ExtResource("recipe")
 result = ExtResource("card_10c")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_23"), SubResource("Ingredient_24")])
-requires_suit = true
-required_suit = 2
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1c"), SubResource("Ing_t1c"), SubResource("Ing_t1s")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_7s"]
 script = ExtResource("recipe")
 result = ExtResource("card_7s")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_25"), SubResource("Ingredient_26")])
-requires_suit = true
-required_suit = 3
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1s"), SubResource("Ing_t1s"), SubResource("Ing_t1h")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_8s"]
 script = ExtResource("recipe")
 result = ExtResource("card_8s")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_27"), SubResource("Ingredient_28")])
-requires_suit = true
-required_suit = 3
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1s"), SubResource("Ing_t1s"), SubResource("Ing_t1c")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_9s"]
 script = ExtResource("recipe")
 result = ExtResource("card_9s")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_29"), SubResource("Ingredient_30")])
-requires_suit = true
-required_suit = 3
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1s"), SubResource("Ing_t1s"), SubResource("Ing_t1s")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_10s"]
 script = ExtResource("recipe")
 result = ExtResource("card_10s")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_31"), SubResource("Ingredient_32")])
-requires_suit = true
-required_suit = 3
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t1s"), SubResource("Ing_t1s"), SubResource("Ing_t1d")])
+requires_suit = false
 gold_units = 8.0
 
 [sub_resource type="Resource" id="Recipe_jh"]
 script = ExtResource("recipe")
 result = ExtResource("card_jh")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_33"), SubResource("Ingredient_34"), SubResource("Ingredient_35")])
-requires_suit = true
-required_suit = 0
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2h"), SubResource("Ing_t2h"), SubResource("Ing_t1c")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_qh"]
 script = ExtResource("recipe")
 result = ExtResource("card_qh")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_36"), SubResource("Ingredient_37"), SubResource("Ingredient_38")])
-requires_suit = true
-required_suit = 0
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2h"), SubResource("Ing_t2s"), SubResource("Ing_t1h")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_kh"]
 script = ExtResource("recipe")
 result = ExtResource("card_kh")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_39"), SubResource("Ingredient_40"), SubResource("Ingredient_41")])
-requires_suit = true
-required_suit = 0
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2h"), SubResource("Ing_t1h"), SubResource("Ing_t2c")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_jd"]
 script = ExtResource("recipe")
 result = ExtResource("card_jd")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_42"), SubResource("Ingredient_43"), SubResource("Ingredient_44")])
-requires_suit = true
-required_suit = 1
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2d"), SubResource("Ing_t2d"), SubResource("Ing_t1c")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_qd"]
 script = ExtResource("recipe")
 result = ExtResource("card_qd")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_45"), SubResource("Ingredient_46"), SubResource("Ingredient_47")])
-requires_suit = true
-required_suit = 1
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2d"), SubResource("Ing_t2c"), SubResource("Ing_t1d")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_kd"]
 script = ExtResource("recipe")
 result = ExtResource("card_kd")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_48"), SubResource("Ingredient_49"), SubResource("Ingredient_50")])
-requires_suit = true
-required_suit = 1
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2d"), SubResource("Ing_t1d"), SubResource("Ing_t2s")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_jc"]
 script = ExtResource("recipe")
 result = ExtResource("card_jc")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_51"), SubResource("Ingredient_52"), SubResource("Ingredient_53")])
-requires_suit = true
-required_suit = 2
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2c"), SubResource("Ing_t2c"), SubResource("Ing_t1s")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_qc"]
 script = ExtResource("recipe")
 result = ExtResource("card_qc")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_54"), SubResource("Ingredient_55"), SubResource("Ingredient_56")])
-requires_suit = true
-required_suit = 2
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2c"), SubResource("Ing_t2s"), SubResource("Ing_t1c")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_kc"]
 script = ExtResource("recipe")
 result = ExtResource("card_kc")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_57"), SubResource("Ingredient_58"), SubResource("Ingredient_59")])
-requires_suit = true
-required_suit = 2
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2c"), SubResource("Ing_t1c"), SubResource("Ing_t2h")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_js"]
 script = ExtResource("recipe")
 result = ExtResource("card_js")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_60"), SubResource("Ingredient_61"), SubResource("Ingredient_62")])
-requires_suit = true
-required_suit = 3
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2s"), SubResource("Ing_t2s"), SubResource("Ing_t1h")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_qs"]
 script = ExtResource("recipe")
 result = ExtResource("card_qs")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_63"), SubResource("Ingredient_64"), SubResource("Ingredient_65")])
-requires_suit = true
-required_suit = 3
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2s"), SubResource("Ing_t2s"), SubResource("Ing_t1c")])
+requires_suit = false
 gold_units = 20.0
 
 [sub_resource type="Resource" id="Recipe_ks"]
 script = ExtResource("recipe")
 result = ExtResource("card_ks")
-ingredients = Array[ExtResource("ing")]([SubResource("Ingredient_66"), SubResource("Ingredient_67"), SubResource("Ingredient_68")])
-requires_suit = true
-required_suit = 3
+ingredients = Array[ExtResource("ing")]([SubResource("Ing_t2s"), SubResource("Ing_t1s"), SubResource("Ing_t2c")])
+requires_suit = false
 gold_units = 20.0
 
 [resource]

@@ -33,7 +33,7 @@ Status: **in discussion.** *(yours)* = your idea, *(draft)* = mine, ⚠ = flagge
 
 5 card slots. Picking up a card **pauses the game** and opens the inventory (swap, rearrange, discard).
 
-**Recipes** (first pass): T2 = two ranks in any suit, at least one card of its own suit, plus gold. T3 = its suit's T2 plus two ranks, plus more gold. You must hold the components (or a wildcard: a joker at +50% gold each, or the Q♦ Forger wildcard).
+**Recipes:** T2 = two T1s of its suit + one T1 of a partner suit, plus gold. T3 = two T2s + one T1 (suits case by case), plus more gold. You must hold the components (or a wildcard: a joker at +50% gold each, or the Q♦ Forger wildcard).
 
 **Safehouse lobby:** a small walkable scene between levels with a **shop** (lists every recipe you can complete right now, plus greyed-out near misses one card short; no rerolls), a **trader** (a few offers to swap one of your cards for one of the same or one-higher rank, never T3; reroll for gold), and the **exit door** to the next level.
 
@@ -110,40 +110,40 @@ Occupy a card slot and **stack without limit** in it. PC keys 1–4 use ace stac
 | A♣ | **Flurry:** for the next 5 s, your next 4 ability casts each have only a flat 0.2 s cooldown. *(yours)* |
 | A♦ | **Upgrade:** used on the card pickup screen: reroll the offered card into one a rank higher. *(yours)* |
 
-## Recipes (first pass)
+## Recipes
 
-Recipes name **ranks, in any suit**, and need **at least one card of the result's suit** (a joker or the Forger wildcard can stand in for it). T3 recipes need that suit's T2 as an exact card. Prices at the current economy; jokers +50% each.
+Recipes name **tiers and suits**, any rank within the tier (T1 = 2–6, T2 = 7–10). A **T2** is two T1s of its own suit plus one T1 of a partner suit chosen by theme (each suit's four T2s use the four partners, its own included). A **T3** is two T2s plus one T1, suits chosen card by card (Kings: a T2 and a T1 of their own suit plus a guest T2). Jokers and the Q♦ Forger wildcard can stand in for any ingredient. Prices at the current economy; jokers +50% each.
 
 | Card | Recipe | Price |
 |---|---|---|
-| 7♥ | a 3 + a 2, at least one ♥ | 40 g |
-| 8♥ | a 4 + a 3, at least one ♥ | 40 g |
-| 9♥ | a 5 + a 4, at least one ♥ | 40 g |
-| 10♥ | a 6 + a 5, at least one ♥ | 40 g |
-| 7♦ | a 3 + a 2, at least one ♦ | 40 g |
-| 8♦ | a 4 + a 3, at least one ♦ | 40 g |
-| 9♦ | a 5 + a 4, at least one ♦ | 40 g |
-| 10♦ | a 6 + a 5, at least one ♦ | 40 g |
-| 7♣ | a 3 + a 2, at least one ♣ | 40 g |
-| 8♣ | a 4 + a 3, at least one ♣ | 40 g |
-| 9♣ | a 5 + a 4, at least one ♣ | 40 g |
-| 10♣ | a 6 + a 5, at least one ♣ | 40 g |
-| 7♠ | a 3 + a 2, at least one ♠ | 40 g |
-| 8♠ | a 4 + a 3, at least one ♠ | 40 g |
-| 9♠ | a 5 + a 4, at least one ♠ | 40 g |
-| 10♠ | a 6 + a 5, at least one ♠ | 40 g |
-| J♥ | 7♥ + a 5 + a 4, at least one ♥ | 100 g |
-| Q♥ | 8♥ + a 6 + a 4, at least one ♥ | 100 g |
-| K♥ | 10♥ + a 6 + a 5, at least one ♥ | 100 g |
-| J♦ | 7♦ + a 5 + a 4, at least one ♦ | 100 g |
-| Q♦ | 8♦ + a 6 + a 4, at least one ♦ | 100 g |
-| K♦ | 10♦ + a 6 + a 5, at least one ♦ | 100 g |
-| J♣ | 7♣ + a 5 + a 4, at least one ♣ | 100 g |
-| Q♣ | 8♣ + a 6 + a 4, at least one ♣ | 100 g |
-| K♣ | 10♣ + a 6 + a 5, at least one ♣ | 100 g |
-| J♠ | 7♠ + a 5 + a 4, at least one ♠ | 100 g |
-| Q♠ | 8♠ + a 6 + a 4, at least one ♠ | 100 g |
-| K♠ | 10♠ + a 6 + a 5, at least one ♠ | 100 g |
+| 7♥ | 2× T1 ♥ + 1× T1 ♦ | 40 g |
+| 8♥ | 3× T1 ♥ | 40 g |
+| 9♥ | 2× T1 ♥ + 1× T1 ♣ | 40 g |
+| 10♥ | 2× T1 ♥ + 1× T1 ♠ | 40 g |
+| 7♦ | 3× T1 ♦ | 40 g |
+| 8♦ | 2× T1 ♦ + 1× T1 ♣ | 40 g |
+| 9♦ | 2× T1 ♦ + 1× T1 ♥ | 40 g |
+| 10♦ | 2× T1 ♦ + 1× T1 ♠ | 40 g |
+| 7♣ | 3× T1 ♣ | 40 g |
+| 8♣ | 2× T1 ♣ + 1× T1 ♦ | 40 g |
+| 9♣ | 2× T1 ♣ + 1× T1 ♥ | 40 g |
+| 10♣ | 2× T1 ♣ + 1× T1 ♠ | 40 g |
+| 7♠ | 2× T1 ♠ + 1× T1 ♥ | 40 g |
+| 8♠ | 2× T1 ♠ + 1× T1 ♣ | 40 g |
+| 9♠ | 3× T1 ♠ | 40 g |
+| 10♠ | 2× T1 ♠ + 1× T1 ♦ | 40 g |
+| J♥ | 2× T2 ♥ + 1× T1 ♣ | 100 g |
+| Q♥ | 1× T2 ♥ + 1× T2 ♠ + 1× T1 ♥ | 100 g |
+| K♥ | 1× T2 ♥ + 1× T2 ♣ + 1× T1 ♥ | 100 g |
+| J♦ | 2× T2 ♦ + 1× T1 ♣ | 100 g |
+| Q♦ | 1× T2 ♦ + 1× T2 ♣ + 1× T1 ♦ | 100 g |
+| K♦ | 1× T2 ♦ + 1× T2 ♠ + 1× T1 ♦ | 100 g |
+| J♣ | 2× T2 ♣ + 1× T1 ♠ | 100 g |
+| Q♣ | 1× T2 ♣ + 1× T2 ♠ + 1× T1 ♣ | 100 g |
+| K♣ | 1× T2 ♣ + 1× T2 ♥ + 1× T1 ♣ | 100 g |
+| J♠ | 2× T2 ♠ + 1× T1 ♥ | 100 g |
+| Q♠ | 2× T2 ♠ + 1× T1 ♣ | 100 g |
+| K♠ | 1× T2 ♠ + 1× T2 ♣ + 1× T1 ♠ | 100 g |
 
 ## Open questions
 
