@@ -1,0 +1,62 @@
+[gd_resource type="Resource" format=3]
+
+[ext_resource type="Script" path="res://meta/upgrade_board.gd" id="board"]
+[ext_resource type="Script" path="res://meta/upgrade_data.gd" id="upgrade"]
+
+[sub_resource type="Resource" id="Up_hp"]
+script = ExtResource("upgrade")
+id = &"thick_skin"
+display_name = "Thick Skin"
+description = "%s max HP"
+stat = &"max_hp"
+value_per_rank = 25.0
+costs = PackedInt32Array(10, 20, 35)
+
+[sub_resource type="Resource" id="Up_speed"]
+script = ExtResource("upgrade")
+id = &"fleet_foot"
+display_name = "Fleet Foot"
+description = "%s m/s move speed"
+stat = &"move_speed"
+value_per_rank = 0.2
+costs = PackedInt32Array(15, 30, 50)
+
+[sub_resource type="Resource" id="Up_haste"]
+script = ExtResource("upgrade")
+id = &"quick_hands"
+display_name = "Quick Hands"
+description = "%s ability haste"
+stat = &"ability_haste"
+value_per_rank = 5.0
+costs = PackedInt32Array(10, 20, 35)
+
+[sub_resource type="Resource" id="Up_will"]
+script = ExtResource("upgrade")
+id = &"steady_will"
+display_name = "Steady Will"
+description = "%s Will"
+stat = &"will"
+value_per_rank = 3.0
+costs = PackedInt32Array(10, 20, 35)
+
+[sub_resource type="Resource" id="Up_armour"]
+script = ExtResource("upgrade")
+id = &"hardened"
+display_name = "Hardened"
+description = "%s armour"
+stat = &"armour"
+value_per_rank = 4.0
+costs = PackedInt32Array(10, 20, 35)
+
+[sub_resource type="Resource" id="Up_gold"]
+script = ExtResource("upgrade")
+id = &"allowance"
+display_name = "Allowance"
+description = "%s gold at the start of each level"
+stat = &"gold_per_level"
+value_per_rank = 10.0
+costs = PackedInt32Array(10, 20, 35)
+
+[resource]
+script = ExtResource("board")
+upgrades = Array[ExtResource("upgrade")]([SubResource("Up_hp"), SubResource("Up_speed"), SubResource("Up_haste"), SubResource("Up_will"), SubResource("Up_armour"), SubResource("Up_gold")])

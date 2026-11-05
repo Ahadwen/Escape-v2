@@ -11,6 +11,8 @@
 [ext_resource type="Script" path="res://ui/hud/interact_prompt.gd" id="12_prompt"]
 [ext_resource type="Script" path="res://core/pause_controller.gd" id="13_pause"]
 [ext_resource type="PackedScene" path="res://world/safehouse/station.tscn" id="19_station"]
+[ext_resource type="Script" path="res://ui/nexus/mirror_screen.gd" id="20_mirror"]
+[ext_resource type="Script" path="res://ui/nexus/armory_screen.gd" id="21_armory"]
 
 [sub_resource type="Environment" id="Environment_nexus"]
 background_mode = 1
@@ -130,12 +132,19 @@ prompt = "Start a run"
 color = Color(0.55, 0.35, 0.95, 1)
 size = Vector3(2.6, 3.0, 0.6)
 
-[node name="CharacterPedestal" parent="NavigationRegion3D" instance=ExtResource("19_station")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -3)
-title = "The Knight"
-prompt = "Inspect"
+[node name="Armory" parent="NavigationRegion3D" instance=ExtResource("19_station")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, 1)
+title = "Armory"
+prompt = "Choose character"
 color = Color(0.75, 0.75, 0.8, 1)
-size = Vector3(1.6, 1.0, 1.6)
+size = Vector3(2.6, 1.4, 1.2)
+
+[node name="Mirror" parent="NavigationRegion3D" instance=ExtResource("19_station")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 1)
+title = "Mirror"
+prompt = "Upgrades"
+color = Color(0.85, 0.3, 0.45, 1)
+size = Vector3(1.6, 2.6, 0.5)
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
@@ -219,6 +228,24 @@ horizontal_alignment = 1
 layer = 20
 
 
+
+[node name="MirrorScreen" type="Control" parent="MenuLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("20_mirror")
+
+[node name="ArmoryScreen" type="Control" parent="MenuLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("21_armory")
 
 [node name="PauseController" type="Node" parent="."]
 script = ExtResource("13_pause")

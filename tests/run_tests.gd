@@ -23,6 +23,8 @@ func _initialize() -> void:
 
 
 func _run_all() -> void:
+	# Tests never read or write the real meta save.
+	MetaProgress.saving_enabled = false
 	var filter: String = ""
 	var user_args: PackedStringArray = OS.get_cmdline_user_args()
 	if not user_args.is_empty():

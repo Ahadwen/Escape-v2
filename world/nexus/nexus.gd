@@ -1,7 +1,7 @@
 extends Node3D
 ## The Nexus: the hub between runs. Every run starts and ends here. Walk
-## into the portal to start a run; the character pedestal shows who you're
-## playing (only the Knight so far). Meta progression comes later.
+## into the portal to start a run, choose who to play at the Armory, and buy
+## permanent upgrades with Reagents at the Mirror.
 
 @onready var _nav_region: NavigationRegion3D = $NavigationRegion3D
 @onready var _input_router: InputRouter = $InputRouter
@@ -14,7 +14,10 @@ extends Node3D
 @onready var _title: Label = $HUD/TitleLabel
 @onready var _status: Label = $HUD/StatusLabel
 @onready var _portal: Station = $NavigationRegion3D/Portal
-@onready var _pedestal: Station = $NavigationRegion3D/CharacterPedestal
+@onready var _armory: Station = $NavigationRegion3D/Armory
+@onready var _mirror: Station = $NavigationRegion3D/Mirror
+@onready var _armory_screen: ArmoryScreen = $MenuLayer/ArmoryScreen
+@onready var _mirror_screen: MirrorScreen = $MenuLayer/MirrorScreen
 
 
 func _ready() -> void:
@@ -28,7 +31,10 @@ func _ready() -> void:
 	_input_router.scheme_changed.connect(_on_scheme_changed)
 	_on_scheme_changed(_input_router.active_kind)
 	_portal.used.connect(_on_portal)
-	_pedestal.used.connect(_on_pedestal)
+	_armory.used.connect(func(_who: Player) -> void: _armory_screen.open())
+	_mirror.used.connect(func(_who: Player) -> void: _mirror_screen.open())
+	_armory_screen.closed.connect(_on_armory_closed)
+	_mirror_screen.closed.connect(_on_mirror_closed)
 	_title.text = "The Nexus"
 	if RunState.last_result.is_empty():
 		_status.text = "Walk into the portal to start a run."
@@ -53,5 +59,13 @@ func _on_portal(_player_used: Player) -> void:
 	get_tree().change_scene_to_file(RunState.LEVEL_SCENE)
 
 
-func _on_pedestal(_player_used: Player) -> void:
-	_status.text = "The Knight. More characters will stand here later."
+## New upgrades show up straight away on the Nexus player.
+func _on_mirror_closed() -> void:
+	MetaProgress.apply_to(_player.stats.block)
+	_player.health.refresh_max(true)
+
+
+## A different character means a different player: rebuild the room.
+func _on_armory_closed() -> void:
+	if MetaProgress.selected_character() != _player.character:
+		get_tree().reload_current_scene()

@@ -26,10 +26,15 @@ var is_dead: bool = false
 func _ready() -> void:
 	add_to_group(GROUP)
 	health.died.connect(_on_died)
+	# The character chosen in the Nexus Armory, if any.
+	var chosen: CharacterData = MetaProgress.selected_character()
+	if chosen != null:
+		character = chosen
 	if character == null:
 		push_warning("Player has no CharacterData assigned.")
 		return
 	stats.initialize(character.get_base_stats())
+	MetaProgress.apply_to(stats.block)
 	health.refresh_max(true)
 	abilities.set_abilities(character.get_abilities())
 

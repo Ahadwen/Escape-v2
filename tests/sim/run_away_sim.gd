@@ -42,6 +42,8 @@ var _hit_rates: Array[float] = []
 
 
 func _initialize() -> void:
+	# A clean profile, and never touch the real save.
+	MetaProgress.saving_enabled = false
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	var numbers: Array[String] = []
 	for arg: String in args:
