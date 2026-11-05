@@ -26,34 +26,18 @@ extends Resource
 @export_group("Points of interest")
 @export_range(0.0, 1.0) var crystal_chance: float = 0.3
 @export_range(0.0, 1.0) var chest_chance: float = 0.07
+## Safehouses are rare and spread out: the world is split into cells of
+## safehouse_cell_size x safehouse_cell_size chunks, and each cell holds at
+## most one (in a random chunk of it, with safehouse_cell_chance). Roughly one
+## per 90 s of steady travel. You find them by finding them.
+@export var safehouse_cell_size: int = 5
+@export_range(0.0, 1.0) var safehouse_cell_chance: float = 0.8
 ## No safehouses within this many chunks of the start.
-@export var safehouse_min_distance: int = 3
-## Safehouse chance per chunk grows by this much per chunk of distance beyond
-## the minimum, up to safehouse_max_chance.
-@export var safehouse_chance_per_distance: float = 0.04
-@export_range(0.0, 1.0) var safehouse_max_chance: float = 0.0
+@export var safehouse_min_distance: int = 4
 ## Clear space kept around points of interest.
 @export var poi_clearance: float = 3.5
-
-@export_group("Timed safehouses")
-## Safehouses open on a timer rather than being scattered through chunks:
-## one opens every interval_min..max seconds (the previous one closes), a
-## distance ahead of where you've been heading. 0 = off.
-@export var safehouse_interval_min: float = 75.0
-@export var safehouse_interval_max: float = 110.0
-@export var safehouse_distance_min: float = 45.0
-@export var safehouse_distance_max: float = 65.0
-## Opens within this angle either side of your heading.
-@export var safehouse_spread_degrees: float = 70.0
 
 @export_group("Look")
 @export var ground_color_a: Color = Color(0.36, 0.48, 0.32)
 @export var ground_color_b: Color = Color(0.33, 0.45, 0.30)
 @export var obstacle_color: Color = Color(0.58, 0.58, 0.62)
-
-
-func safehouse_chance(chunk_distance: int) -> float:
-	if chunk_distance < safehouse_min_distance:
-		return 0.0
-	var steps: int = chunk_distance - safehouse_min_distance
-	return minf(steps * safehouse_chance_per_distance, safehouse_max_chance)

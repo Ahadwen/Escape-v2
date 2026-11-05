@@ -76,29 +76,6 @@ func test_no_safehouses_near_start() -> void:
 				assert_ne(p.kind, ChunkLayout.POI_SAFEHOUSE, "safehouse at %d,%d" % [x, y])
 
 
-func test_safehouses_appear_far_away() -> void:
-	# The scattered mode (off by default now that safehouses are timed).
-	profile.safehouse_max_chance = 0.35
-	var gen: ChunkGenerator = ChunkGeneratorScript.new(profile, 42, 0)
-	var found: int = 0
-	for x: int in range(8, 18):
-		for y: int in range(-5, 5):
-			for p: ChunkLayout.PoiSpec in gen.generate(Vector2i(x, y)).pois:
-				if p.kind == ChunkLayout.POI_SAFEHOUSE:
-					found += 1
-	assert_true(found > 0, "no safehouses in 100 distant chunks")
-
-
-func test_safehouse_chance_curve() -> void:
-	profile.safehouse_min_distance = 3
-	profile.safehouse_chance_per_distance = 0.05
-	profile.safehouse_max_chance = 0.2
-	assert_almost_eq(profile.safehouse_chance(2), 0.0)
-	assert_almost_eq(profile.safehouse_chance(3), 0.0)
-	assert_almost_eq(profile.safehouse_chance(5), 0.1)
-	assert_almost_eq(profile.safehouse_chance(50), 0.2)
-
-
 func test_poi_ids_are_unique_and_stable() -> void:
 	var gen: ChunkGenerator = ChunkGeneratorScript.new(profile, 3, 0)
 	var seen: Dictionary = {}
@@ -145,8 +122,40 @@ func test_compound_corner_is_two_meeting_walls() -> void:
 	assert_almost_eq(pieces[0].yaw, pieces[1].yaw)
 
 
-func test_chunks_no_longer_scatter_safehouses_by_default() -> void:
-	var profile: TerrainProfile = TerrainProfile.new()
-	assert_almost_eq(profile.safehouse_max_chance, 0.0)
-	assert_true(profile.safehouse_interval_min > 0.0, "timed safehouses on")
-	assert_true(profile.safehouse_interval_max >= profile.safehouse_interval_min)
+func test_safehouses_are_rare_and_spread_out() -> void:
+	var gen: ChunkGenerator = ChunkGeneratorScript.new(profile, 42, 0)
+	var size: int = profile.safehouse_cell_size
+	var per_cell: Dictionary = {}
+	var total: int = 0
+	for x: int in range(-20, 20):
+		for y: int in range(-20, 20):
+			if not gen.is_safehouse_chunk(Vector2i(x, y)):
+				continue
+			total += 1
+			assert_true(
+				(
+					ChunkGenerator.chunk_distance(Vector2i(x, y), Vector2i.ZERO)
+					>= profile.safehouse_min_distance
+				),
+				"not near the start"
+			)
+			var cell: Vector2i = Vector2i(floori(x / float(size)), floori(y / float(size)))
+			assert_false(per_cell.has(cell), "at most one per cell")
+			per_cell[cell] = true
+	# 1600 chunks = 64 cells; about 80% of them hold one.
+	assert_true(total >= 35 and total <= 64, "safehouses: %d" % total)
+
+
+func test_safehouse_chunk_gets_a_safehouse_poi() -> void:
+	var gen: ChunkGenerator = ChunkGeneratorScript.new(profile, 42, 0)
+	for x: int in range(5, 30):
+		for y: int in range(-10, 10):
+			var coord: Vector2i = Vector2i(x, y)
+			if not gen.is_safehouse_chunk(coord):
+				continue
+			var kinds: Array[StringName] = []
+			for poi: ChunkLayout.PoiSpec in gen.generate(coord).pois:
+				kinds.append(poi.kind)
+			assert_true(ChunkLayout.POI_SAFEHOUSE in kinds, "safehouse placed in %s" % coord)
+			return
+	fail("no safehouse chunk found")

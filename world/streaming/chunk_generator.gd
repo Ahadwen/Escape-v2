@@ -13,6 +13,8 @@ const OBSTACLE_KINDS: Dictionary = {
 }
 const ROTATIONS: Array[float] = [0.0, 0.0, PI * 0.5, PI * 0.5, PI * 0.25]
 const PLACEMENT_ATTEMPTS: int = 40
+## Mixed into a cell's seed when choosing its safehouse chunk.
+const SAFEHOUSE_SALT: int = 0x5AFE
 
 var profile: TerrainProfile
 var run_seed: int
@@ -55,6 +57,21 @@ func seed_for(coord: Vector2i) -> int:
 	return h
 
 
+## True for the one chunk of its safehouse cell chosen to hold a safehouse
+## (if that cell has one at all). Deterministic per run seed and level.
+func is_safehouse_chunk(coord: Vector2i) -> bool:
+	var size: int = maxi(profile.safehouse_cell_size, 1)
+	if chunk_distance(coord, Vector2i.ZERO) < profile.safehouse_min_distance:
+		return false
+	var cell: Vector2i = Vector2i(floori(coord.x / float(size)), floori(coord.y / float(size)))
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = seed_for(cell) ^ SAFEHOUSE_SALT
+	if rng.randf() >= profile.safehouse_cell_chance:
+		return false
+	var pick: Vector2i = Vector2i(rng.randi_range(0, size - 1), rng.randi_range(0, size - 1))
+	return coord == cell * size + pick
+
+
 func generate(coord: Vector2i) -> ChunkLayout:
 	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.seed = seed_for(coord)
@@ -81,8 +98,7 @@ func generate(coord: Vector2i) -> ChunkLayout:
 func _place_pois(
 	rng: RandomNumberGenerator, layout: ChunkLayout, coord: Vector2i, keepouts: Array[Vector3]
 ) -> void:
-	var distance: int = chunk_distance(coord, Vector2i.ZERO)
-	if rng.randf() < profile.safehouse_chance(distance):
+	if is_safehouse_chunk(coord):
 		_add_poi(rng, layout, coord, ChunkLayout.POI_SAFEHOUSE, keepouts)
 	if coord != Vector2i.ZERO and rng.randf() < profile.crystal_chance:
 		_add_poi(rng, layout, coord, ChunkLayout.POI_CRYSTAL, keepouts)

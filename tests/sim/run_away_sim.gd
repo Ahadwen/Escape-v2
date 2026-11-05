@@ -61,8 +61,7 @@ func _initialize() -> void:
 	# Kept as members: if nothing holds them, the cache frees them and the
 	# level would load unmodified copies.
 	_terrain = load("res://world/streaming/default_terrain.tres")
-	_terrain.safehouse_max_chance = 0.0
-	_terrain.safehouse_interval_min = 0.0
+	_terrain.safehouse_cell_chance = 0.0
 	if _only != &"":
 		_hunt = load("res://director/data/hunt.tres")
 		var hunt: ThreatProfile = _hunt
