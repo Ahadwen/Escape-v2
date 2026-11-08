@@ -19,6 +19,17 @@ var lifetime: float = 10.0
 var color: Color = Color(1.0, 0.45, 0.25)
 ## Flies at most this far, then ends (impacted at that point).
 var max_distance: float = INF
+## Optional weave: the shot swings side to side around its straight line by
+## up to this many metres ...
+var wave_amplitude: float = 0.0
+## ... this many times a second, starting at this phase (radians).
+var wave_frequency: float = 1.0
+var wave_phase: float = 0.0
+
+var _age: float = 0.0
+## Where the shot would be on its straight line (the weave is added to it).
+var _base: Vector3
+var _has_base: bool = false
 
 var _travelled: float = 0.0
 
@@ -67,13 +78,16 @@ func _physics_process(delta: float) -> void:
 		queue_free()
 		return
 	var from: Vector3 = global_position
+	if not _has_base:
+		_base = from - _weave_offset()
+		_has_base = true
 	var time_scale: float = EnemyTime.scale() * DilationField.projectile_scale_at(from)
-	var to: Vector3 = from + velocity * delta * time_scale
-	var remaining: float = max_distance - _travelled
-	if from.distance_to(to) > remaining:
-		to = from + (to - from).normalized() * remaining
+	var step: float = minf(velocity.length() * delta * time_scale, max_distance - _travelled)
+	_travelled += step
+	_age += delta * time_scale
+	_base += velocity.normalized() * step
+	var to: Vector3 = _base + _weave_offset()
 	var stop: Vector3 = AttackUtils.ray_to_wall(get_world_3d(), from, to)
-	_travelled += from.distance_to(stop)
 	global_position = stop
 	for target: Targetable in AttackUtils.player_targets(get_tree()):
 		if AttackUtils.is_phased(target):
@@ -87,6 +101,14 @@ func _physics_process(delta: float) -> void:
 			return
 	if not stop.is_equal_approx(to) or _travelled >= max_distance - 0.001:
 		_end(stop, null)
+
+
+## Sideways offset from the straight line at the shot's current age.
+func _weave_offset() -> Vector3:
+	if wave_amplitude <= 0.0 or velocity.length_squared() < 0.0001:
+		return Vector3.ZERO
+	var side: Vector3 = velocity.normalized().cross(Vector3.UP)
+	return side * wave_amplitude * sin(TAU * wave_frequency * _age + wave_phase)
 
 
 func _end(point: Vector3, target: Targetable) -> void:
