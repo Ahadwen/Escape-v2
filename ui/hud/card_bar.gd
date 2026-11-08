@@ -1,6 +1,6 @@
 class_name CardBar
 extends Control
-## The five card slots and gold, under the HP bar. Aces are cast from their
+## The card slots and gold, under the HP bar. Aces are cast from their
 ## icons above the ability bar (AceBar), so here they're just cards.
 
 const SLOT_SIZE: Vector2 = Vector2(64, 46)

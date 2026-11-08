@@ -7,4 +7,4 @@
 script = ExtResource("1_loot")
 library = ExtResource("2_library")
 ace_chance = 0.15
-t1_rank_weights = PackedFloat32Array(5, 4, 3, 2, 1)
+rank_weights = PackedFloat32Array(5, 4, 3, 2, 1, 1.2, 1, 0.8, 0.6)

@@ -1,6 +1,6 @@
 class_name CardPickupScreen
 extends Control
-## Shown when you pick up a card (the game pauses). Your 5 slots and the new
+## Shown when you pick up a card (the game pauses). Your card slots and the new
 ## card, which waits in its own spot. Mouse/touch: drag a card onto another
 ## spot to move or swap. Gamepad (or clicking): A/click a card to pick it up,
 ## move to a destination, A/click to drop or swap. Discard; Done. Whatever is

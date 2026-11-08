@@ -1,13 +1,16 @@
 class_name LootTable
 extends Resource
-## What chests drop: mostly low T1 cards, sometimes an Ace. (T2s don't drop,
-## except under special conditions later.)
+## What chests drop: any card from Ace to 10. Mostly low ranks; T2s (7-10)
+## are rarer, and Aces and jokers have their own chances. (J/Q/K come from
+## safehouse recipes only.)
 
 @export var library: CardLibrary
 @export_range(0.0, 1.0) var ace_chance: float = 0.15
 @export_range(0.0, 1.0) var joker_chance: float = 0.05
-## Relative weight of each T1 rank, index 0 = rank 2 ... index 4 = rank 6.
-@export var t1_rank_weights: PackedFloat32Array = PackedFloat32Array([5.0, 4.0, 3.0, 2.0, 1.0])
+## Relative weight of each rank, index 0 = rank 2 ... index 8 = rank 10.
+@export var rank_weights: PackedFloat32Array = PackedFloat32Array(
+	[5.0, 4.0, 3.0, 2.0, 1.0, 1.2, 1.0, 0.8, 0.6]
+)
 
 
 func roll() -> CardData:
@@ -19,7 +22,7 @@ func roll() -> CardData:
 		var aces: Array[CardData] = library.cards_of_tier(0)
 		if not aces.is_empty():
 			return aces.pick_random()
-	var rank: int = 2 + _pick_weighted(t1_rank_weights)
+	var rank: int = 2 + _pick_weighted(rank_weights)
 	var suit: CardData.Suit = (randi() % 4) as CardData.Suit
 	return library.find(suit, rank)
 

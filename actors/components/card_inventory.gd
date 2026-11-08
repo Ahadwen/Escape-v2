@@ -1,10 +1,10 @@
 class_name CardInventory
 extends Node
-## Five card slots. Applies held cards' stats, stacks aces and uses them.
+## Six card slots. Applies held cards' stats, stacks aces and uses them.
 
 signal changed
 
-const SLOT_COUNT: int = 5
+const SLOT_COUNT: int = 6
 const STAT_SOURCE: StringName = &"cards"
 
 @export var stats: StatsComponent

@@ -31,13 +31,13 @@ Status: **in discussion.** *(yours)* = your idea, *(draft)* = mine, ⚠ = flagge
 | Aces | A | 4 | Consumables, stack in one slot | Chests |
 | Jokers | — | — | Wildcard recipe ingredient (recipe costs more gold) | Chests (rare) |
 
-5 card slots. Picking up a card **pauses the game** and opens the inventory (swap, rearrange, discard).
+6 card slots. Picking up a card **pauses the game** and opens the inventory (swap, rearrange, discard).
 
 **Recipes:** T2 = two T1s of its suit + one T1 of a partner suit, plus gold. T3 = two T2s + one T1 (suits case by case), plus more gold. You must hold the components (or a wildcard: a joker at +50% gold each, or the Q♦ Forger wildcard).
 
 **Safehouse lobby:** a small walkable scene between levels with a **shop** (lists every recipe you can complete right now, plus greyed-out near misses one card short; no rerolls), a **trader** (a few offers to swap one of your cards for one of the same or one-higher rank, never T3; reroll for gold), and the **exit door** to the next level.
 
-**T2s don't drop from chests** except under special conditions. **No set bonuses for now.**
+**Chests drop Ace to 10** (T2s rarer than T1s); J/Q/K come from recipes only. **No set bonuses for now.**
 
 **Gold:** every amount lives in one economy data file, expressed against a base unit, so the economy can be designed and scaled as a whole later.
 

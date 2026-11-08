@@ -39,8 +39,8 @@ func before_each() -> void:
 	add_to_tree(inventory)
 
 
-func test_has_five_empty_slots() -> void:
-	assert_eq(inventory.slots.size(), 5)
+func test_has_six_empty_slots() -> void:
+	assert_eq(inventory.slots.size(), 6)
 	assert_eq(inventory.first_empty_slot(), 0)
 
 
@@ -153,3 +153,17 @@ func test_card_value() -> void:
 	assert_eq(_card(0, 12).value(), 12)
 	assert_eq(_card(0, 1).value(), 0)
 	assert_eq(_joker().value(), 0)
+
+
+func test_chests_drop_ace_to_ten_with_t2s_rarer() -> void:
+	var loot: LootTable = load("res://items/data/chest_loot.tres") as LootTable
+	seed(4)
+	var counts: Dictionary = {0: 0, 1: 0, 2: 0, 3: 0}
+	for i: int in 3000:
+		var card: CardData = loot.roll()
+		if card != null and not card.joker:
+			counts[card.tier()] += 1
+	assert_eq(counts[3], 0, "no J/Q/K from chests")
+	assert_true(counts[2] > 200, "T2s drop: %d" % counts[2])
+	assert_true(counts[1] > counts[2] * 2, "T1s are more common")
+	assert_true(counts[0] > 0, "aces still drop")
