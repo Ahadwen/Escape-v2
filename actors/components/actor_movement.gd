@@ -34,6 +34,15 @@ var time_scale: float = 1.0
 var rooted: bool = false
 ## Minimum move speed (hunters' pursuit rule). 0 = none.
 var speed_floor: float = 0.0
+## Move orders go in a straight line to the point instead of following the
+## navmesh (K♠ Ghostwalk: walls don't stop you, so don't path around them).
+## Turning it on straightens a path already being followed.
+var direct_movement: bool = false:
+	set(value):
+		direct_movement = value
+		if value and mode == Mode.TO_POINT and not _path.is_empty():
+			_path = PackedVector3Array([_path[_path.size() - 1]])
+			_path_index = 0
 
 var _direction: Vector3 = Vector3.ZERO
 var _path: PackedVector3Array = PackedVector3Array()
@@ -63,6 +72,11 @@ static func next_waypoint_index(
 
 
 func move_to(point: Vector3) -> void:
+	if direct_movement:
+		_path = PackedVector3Array([point])
+		_path_index = 0
+		mode = Mode.TO_POINT
+		return
 	var map: RID = body.get_world_3d().navigation_map
 	_path = NavigationServer3D.map_get_path(
 		map, body.global_position, point, true, navigation_layers

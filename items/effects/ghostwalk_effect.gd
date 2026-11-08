@@ -55,6 +55,7 @@ class Instance:
 		if on == _ghosting:
 			return
 		_ghosting = on
+		player.movement.direct_movement = on
 		if on:
 			player.collision_mask &= ~GhostwalkEffect.WALL_LAYER_BIT
 		else:
