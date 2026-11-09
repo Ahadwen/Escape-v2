@@ -16,9 +16,13 @@ extends HunterAbility
 @export var sweep_degrees: float = 0.0
 ## ... this many full left-right-left sweeps a second.
 @export var sweep_frequency: float = 1.5
-## How much of your movement the light shots lead (1 = full). Under 1 they
-## pressure rather than snipe; the final shot always leads fully.
-@export_range(0.0, 1.0) var light_lead_ratio: float = 0.7
+## How much of the sweep goes behind you (0 = none, 1 = as much as ahead).
+## Below 1 the arc leans toward where you're heading, cutting you off rather
+## than wasting half the spray on ground you've left.
+@export_range(0.0, 1.0) var sweep_behind: float = 1.0
+## How far the centre of the spray leads you (1 = to where your recent
+## heading puts you when the shots arrive). The final shot always leads fully.
+@export_range(0.0, 1.5) var light_lead_ratio: float = 1.0
 @export var final_tell: float = 0.45
 @export var final_lock: float = 0.15
 @export var final_speed: float = 50.0
@@ -91,15 +95,23 @@ class Action:
 		enemy().set_tell(false)
 
 	func _light_shot() -> void:
+		# Centre of the arc: where your recent heading takes you by the time the
+		# shots arrive (so firing from alongside you sprays ahead, not behind).
 		var flight: float = brain.distance_to_target() / ability.shot_speed
-		var direction: Vector3 = brain.direction_to_predicted(flight * ability.light_lead_ratio)
-		if direction == Vector3.ZERO:
-			direction = enemy().movement.get_facing()
+		var lead: Vector3 = brain.target.average_velocity * flight * ability.light_lead_ratio
+		var offset: Vector3 = brain.target.world_position() + lead - enemy().global_position
+		offset.y = 0.0
+		var direction: Vector3 = (
+			offset.normalized() if offset.length_squared() > 0.01 else enemy().movement.get_facing()
+		)
 		# The spray: swing the aim side to side around the line to you at a
 		# steady rate (a zigzag, not a sine, which would linger at the edges
 		# and send most shots wide).
 		var sweep: float = SalvoAbility.zigzag(ability.sweep_frequency * _fired * ability.interval)
-		direction = direction.rotated(Vector3.UP, deg_to_rad(ability.sweep_degrees) * sweep)
+		# Lean the arc toward your heading: -sweep_behind..1 instead of -1..1.
+		sweep = lerpf(-ability.sweep_behind, 1.0, (sweep + 1.0) * 0.5)
+		var ahead: float = _ahead_sign(direction)
+		direction = direction.rotated(Vector3.UP, deg_to_rad(ability.sweep_degrees) * sweep * ahead)
 		fire_shot(
 			direction,
 			ability.shot_speed,
@@ -115,6 +127,15 @@ class Action:
 			_phase = Phase.FINAL_TELL
 			_timer = ability.final_tell
 			_aim_final()
+
+	## Which way to turn the aim (+1 / -1) to swing it ahead of where you're
+	## heading, seen from the Gunslinger.
+	func _ahead_sign(aim: Vector3) -> float:
+		var heading: Vector3 = brain.target.average_velocity
+		if heading.length_squared() < 1.0:
+			return 1.0
+		var turned: Vector3 = aim.rotated(Vector3.UP, 0.1)
+		return 1.0 if turned.dot(heading) >= aim.dot(heading) else -1.0
 
 	func _aim_final() -> void:
 		_direction = lead_direction(ability.final_speed, maxf(_timer, 0.0))
