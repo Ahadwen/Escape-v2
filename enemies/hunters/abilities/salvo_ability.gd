@@ -1,11 +1,10 @@
 class_name SalvoAbility
 extends HunterAbility
-## The Gunslinger's salvo: a quick stream of light shots that weave side to
-## side, all launched on the same wave so together they form a sine-wave
-## snake rolling at you (read the gaps; stepping aside isn't enough), then a
-## heavy straight shot with its own tell (body flash + aim line), then a
-## reload: a visible gap in the shooting that's your window. He keeps moving
-## throughout.
+## The Gunslinger's salvo: he holds the trigger and sweeps his aim left and
+## right across you (a sine wave around the line to you), spraying a fan of
+## straight shots you have to slip between, then a heavy straight shot with
+## its own tell (body flash + aim line), then a reload: a visible gap in the
+## shooting that's your window. He keeps moving throughout.
 
 @export var shots: int = 5
 @export var interval: float = 0.32
@@ -13,10 +12,10 @@ extends HunterAbility
 @export var shot_radius: float = 0.25
 @export var shot_damage: float = 22.0
 @export var reach: float = 22.0
-## Light shots weave this far either side of their line ...
-@export var wave_amplitude: float = 0.0
-## ... this many times a second.
-@export var wave_frequency: float = 1.2
+## The spray sweeps this many degrees either side of the line to you ...
+@export var sweep_degrees: float = 0.0
+## ... this many full left-right-left sweeps a second.
+@export var sweep_frequency: float = 1.5
 ## How much of your movement the light shots lead (1 = full). Under 1 they
 ## pressure rather than snipe; the final shot always leads fully.
 @export_range(0.0, 1.0) var light_lead_ratio: float = 0.7
@@ -89,7 +88,10 @@ class Action:
 		var direction: Vector3 = brain.direction_to_predicted(flight * ability.light_lead_ratio)
 		if direction == Vector3.ZERO:
 			direction = enemy().movement.get_facing()
-		var shot: Projectile = fire_shot(
+		# The spray: swing the aim side to side around the line to you.
+		var sweep: float = sin(TAU * ability.sweep_frequency * _fired * ability.interval)
+		direction = direction.rotated(Vector3.UP, deg_to_rad(ability.sweep_degrees) * sweep)
+		fire_shot(
 			direction,
 			ability.shot_speed,
 			ability.shot_damage,
@@ -97,8 +99,6 @@ class Action:
 			ability.color,
 			ability.reach
 		)
-		shot.wave_amplitude = ability.wave_amplitude
-		shot.wave_frequency = ability.wave_frequency
 		_fired += 1
 		_timer = ability.interval
 		if _fired >= ability.shots - 1:
