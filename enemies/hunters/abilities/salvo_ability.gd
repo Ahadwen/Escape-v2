@@ -1,7 +1,7 @@
 class_name SalvoAbility
 extends HunterAbility
 ## The Gunslinger's salvo: he holds the trigger and sweeps his aim left and
-## right across you (a sine wave around the line to you), spraying a fan of
+## right across you (a steady zigzag around the line to you), spraying a fan of
 ## straight shots you have to slip between, then a heavy straight shot with
 ## its own tell (body flash + aim line), then a reload: a visible gap in the
 ## shooting that's your window. He keeps moving throughout.
@@ -26,6 +26,13 @@ extends HunterAbility
 @export var final_damage: float = 60.0
 @export var reload: float = 1.6
 @export var color: Color = Color(1.0, 0.85, 0.35)
+
+
+## A steady left-right sweep: -1..1 and back once per unit of `cycles`,
+## starting at the centre and moving at a constant rate.
+static func zigzag(cycles: float) -> float:
+	var t: float = fposmod(cycles + 0.25, 1.0)
+	return 4.0 * absf(t - 0.5) - 1.0
 
 
 func create_action(brain: HunterBrain) -> HunterAction:
@@ -88,8 +95,10 @@ class Action:
 		var direction: Vector3 = brain.direction_to_predicted(flight * ability.light_lead_ratio)
 		if direction == Vector3.ZERO:
 			direction = enemy().movement.get_facing()
-		# The spray: swing the aim side to side around the line to you.
-		var sweep: float = sin(TAU * ability.sweep_frequency * _fired * ability.interval)
+		# The spray: swing the aim side to side around the line to you at a
+		# steady rate (a zigzag, not a sine, which would linger at the edges
+		# and send most shots wide).
+		var sweep: float = SalvoAbility.zigzag(ability.sweep_frequency * _fired * ability.interval)
 		direction = direction.rotated(Vector3.UP, deg_to_rad(ability.sweep_degrees) * sweep)
 		fire_shot(
 			direction,
