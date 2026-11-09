@@ -226,3 +226,27 @@ func _deal_starting_cards() -> void:
 		var slot: int = _player.cards.first_empty_slot()
 		if card != null and slot != -1:
 			_player.cards.set_stack(slot, CardStack.new(card))
+
+
+## Run details for the stats overlay (hold Tab).
+func stats_context() -> PackedStringArray:
+	var profile: ThreatProfile = _director.profile
+	var threat: float = _director.threat
+	var lines: PackedStringArray = PackedStringArray()
+	lines.append("Level %d of %d" % [RunState.level_index + 1, RunState.LEVEL_COUNT])
+	lines.append("Time  %s" % RunInfo.format_time(_director.elapsed))
+	lines.append("Threat  %.1f  (+%.2f a minute)" % [threat, profile.level_threat_per_minute()])
+	lines.append(
+		(
+			"Danger  damage x%.2f, speed x%.2f"
+			% [profile.damage_multiplier_for(threat), profile.speed_multiplier_for(threat)]
+		)
+	)
+	lines.append(
+		"Hunters  %d  (+%d Shamblers)" % [_director.hunter_count(), _director.ambient_count()]
+	)
+	if theme != null and theme.zone != null:
+		lines.append("Zone  %s (%d%%)" % [theme.zone.display_name, roundi(theme.intensity * 100.0)])
+	lines.append(StatsHud.mirror_line())
+	lines.append("Seed  %d" % RunState.run_seed)
+	return lines

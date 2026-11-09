@@ -69,3 +69,13 @@ func _on_mirror_closed() -> void:
 func _on_armory_closed() -> void:
 	if MetaProgress.selected_character() != _player.character:
 		get_tree().reload_current_scene()
+
+
+## Details for the stats overlay (hold Tab).
+func stats_context() -> PackedStringArray:
+	var lines: PackedStringArray = PackedStringArray(["The Nexus"])
+	lines.append("Playing as  %s" % _player.character.display_name)
+	lines.append(StatsHud.mirror_line())
+	if not RunState.last_result.is_empty():
+		lines.append("Last run  %s" % RunState.last_result)
+	return lines

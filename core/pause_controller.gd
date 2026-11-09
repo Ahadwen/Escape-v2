@@ -14,6 +14,7 @@ const STICK_THRESHOLD: float = 0.5
 ## Actions that never count as "resume playing" input.
 const NON_GAMEPLAY_ACTIONS: Array[StringName] = [
 	InputActions.PAUSE,
+	InputActions.SHOW_STATS,
 	InputActions.DEBUG_CYCLE_SCHEME,
 	InputActions.DEBUG_SPAWN_ENEMY,
 	InputActions.DEBUG_GIVE_LOOT,

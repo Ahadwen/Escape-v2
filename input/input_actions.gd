@@ -33,6 +33,8 @@ const ABILITY_4: StringName = &"ability_4"
 
 const INTERACT: StringName = &"interact"
 const PAUSE: StringName = &"pause"
+## Hold to see your stats and the run's details (works while paused).
+const SHOW_STATS: StringName = &"show_stats"
 
 # Aces. PC: keys 1-4 use ace stack 1-4 (in slot order).
 const USE_ACE_1: StringName = &"use_ace_1"
@@ -79,6 +81,7 @@ const ALL: Array[StringName] = [
 	ABILITY_4,
 	INTERACT,
 	PAUSE,
+	SHOW_STATS,
 	USE_ACE_1,
 	USE_ACE_2,
 	USE_ACE_3,

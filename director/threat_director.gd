@@ -84,6 +84,20 @@ func _unhandled_input(event: InputEvent) -> void:
 	print("Debug spawn: %s" % entry.enemy.display_name)
 
 
+## Hunters currently on the field (not the ambient Shamblers).
+func hunter_count() -> int:
+	return _alive_count()
+
+
+## Ambient enemies (Shamblers) currently around.
+func ambient_count() -> int:
+	var count: int = 0
+	for enemy: Enemy in _ambient:
+		if is_instance_valid(enemy):
+			count += 1
+	return count
+
+
 func alive_cost() -> float:
 	var total: float = 0.0
 	for enemy: Enemy in _alive:

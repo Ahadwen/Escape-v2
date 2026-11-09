@@ -56,6 +56,11 @@ func test_gameplay_press_detection() -> void:
 	alt.physical_keycode = KEY_ALT
 	alt.pressed = true
 	assert_false(PauseControllerScript.is_gameplay_press(alt), "Alt doesn't unpause")
+	var tab: InputEventKey = InputEventKey.new()
+	tab.physical_keycode = KEY_TAB
+	tab.pressed = true
+	assert_true(tab.is_action(InputActions.SHOW_STATS), "Tab shows stats")
+	assert_false(PauseControllerScript.is_gameplay_press(tab), "Tab doesn't unpause")
 	var motion: InputEventMouseMotion = InputEventMouseMotion.new()
 	assert_false(PauseControllerScript.is_gameplay_press(motion))
 	var stick: InputEventJoypadMotion = InputEventJoypadMotion.new()

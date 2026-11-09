@@ -32,6 +32,7 @@
 [ext_resource type="Script" path="res://ui/hud/interact_prompt.gd" id="29_prompt"]
 [ext_resource type="Script" path="res://ui/debug/debug_card_picker.gd" id="30_picker"]
 [ext_resource type="Script" path="res://world/hazards/hazard_spawner.gd" id="31_hazards"]
+[ext_resource type="Script" path="res://ui/hud/stats_hud.gd" id="90_stats_hud"]
 
 [sub_resource type="Environment" id="Environment_level"]
 background_mode = 1
@@ -109,6 +110,19 @@ camera = NodePath("../IsometricCamera")
 aim_origin = NodePath("../Player")
 
 [node name="HUD" type="CanvasLayer" parent="."]
+
+
+[node name="StatsHud" type="Control" parent="HUD" node_paths=PackedStringArray("player", "context_source")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("90_stats_hud")
+player = NodePath("../../Player")
+context_source = NodePath("../..")
 
 [node name="PoiIndicators" type="Control" parent="HUD"]
 layout_mode = 3

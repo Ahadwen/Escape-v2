@@ -71,3 +71,14 @@ func _on_exit(_player_used: Player) -> void:
 		return
 	RunState.level_index += 1
 	get_tree().change_scene_to_file(RunState.LEVEL_SCENE)
+
+
+## Run details for the stats overlay (hold Tab).
+func stats_context() -> PackedStringArray:
+	var lines: PackedStringArray = PackedStringArray()
+	lines.append(
+		"Safehouse after level %d of %d" % [RunState.level_index + 1, RunState.LEVEL_COUNT]
+	)
+	lines.append(StatsHud.mirror_line())
+	lines.append("Seed  %d" % RunState.run_seed)
+	return lines

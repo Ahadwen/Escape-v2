@@ -19,6 +19,7 @@
 [ext_resource type="Resource" path="res://core/economy/default_economy.tres" id="17_economy"]
 [ext_resource type="Resource" path="res://items/data/card_library.tres" id="18_library"]
 [ext_resource type="PackedScene" path="res://world/safehouse/station.tscn" id="19_station"]
+[ext_resource type="Script" path="res://ui/hud/stats_hud.gd" id="90_stats_hud"]
 
 [sub_resource type="Environment" id="Environment_lobby"]
 background_mode = 1
@@ -174,6 +175,19 @@ camera = NodePath("../IsometricCamera")
 aim_origin = NodePath("../Player")
 
 [node name="HUD" type="CanvasLayer" parent="."]
+
+
+[node name="StatsHud" type="Control" parent="HUD" node_paths=PackedStringArray("player", "context_source")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("90_stats_hud")
+player = NodePath("../../Player")
+context_source = NodePath("../..")
 
 [node name="InteractPrompt" type="Label" parent="HUD" node_paths=PackedStringArray("player")]
 script = ExtResource("12_prompt")
