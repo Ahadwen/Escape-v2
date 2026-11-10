@@ -1,12 +1,15 @@
 class_name SalvoAbility
 extends HunterAbility
-## The Gunslinger's salvo: he holds the trigger and sweeps his aim left and
-## right across you (a steady zigzag around the line to you), spraying a fan of
+## The Gunslinger's salvo: a short body flash, then he holds the trigger and
+## sweeps his aim left and right across you (a steady zigzag around the line
+## to you), spraying a fan of
 ## straight shots you have to slip between, then a heavy straight shot with
 ## its own tell (body flash + aim line), then a reload: a visible gap in the
 ## shooting that's your window. He keeps moving throughout.
 
 @export var shots: int = 5
+## Body flash before the spray starts, so even a close salvo is announced.
+@export var start_tell: float = 0.25
 @export var interval: float = 0.32
 @export var shot_speed: float = 34.0
 @export var shot_radius: float = 0.25
@@ -46,10 +49,10 @@ func create_action(brain: HunterBrain) -> HunterAction:
 class Action:
 	extends HunterAction
 
-	enum Phase { SHOOTING, FINAL_TELL, RELOAD }
+	enum Phase { START_TELL, SHOOTING, FINAL_TELL, RELOAD }
 
 	var ability: SalvoAbility
-	var _phase: Phase = Phase.SHOOTING
+	var _phase: Phase = Phase.START_TELL
 	var _timer: float = 0.0
 	var _fired: int = 0
 	var _direction: Vector3 = Vector3.FORWARD
@@ -59,10 +62,17 @@ class Action:
 		ability = p_ability
 
 	func start() -> void:
-		_timer = 0.05
+		enemy().set_tell(true)
+		_timer = ability.start_tell
 
 	func tick(delta: float) -> bool:
 		match _phase:
+			Phase.START_TELL:
+				brain.pursue(delta)
+				_timer -= delta
+				if _timer <= 0.0:
+					enemy().set_tell(false)
+					_phase = Phase.SHOOTING
 			Phase.SHOOTING:
 				brain.pursue(delta)
 				_timer -= delta
