@@ -10,6 +10,11 @@ const SPAWN_ATTEMPTS: int = 12
 const RETRY_DELAY: float = 0.5
 const FAR_CHECK_INTERVAL: float = 1.0
 
+## Test tuning (pause screen, debug builds): added to the hunter cap and the
+## Shambler target. Kept across levels for the session.
+static var hunter_cap_offset: int = 0
+static var ambient_offset: int = 0
+
 @export var profile: ThreatProfile
 @export var enemy_scene: PackedScene
 @export var player: Node3D
@@ -130,9 +135,19 @@ func _physics_process(delta: float) -> void:
 			_spawn_timer = minf(_spawn_timer, RETRY_DELAY)
 
 
+## Most hunters allowed on the field right now (with test tuning).
+func hunter_cap() -> int:
+	return maxi(profile.max_alive_for(threat) + hunter_cap_offset, 0)
+
+
+## Shamblers kept around right now (with test tuning).
+func ambient_target() -> int:
+	return maxi(profile.ambient_target_for(threat) + ambient_offset, 0)
+
+
 func _try_spawn() -> bool:
-	var cap: int = profile.max_alive_for(threat)
-	if cap > 0 and _alive_count() >= cap:
+	var cap: int = hunter_cap()
+	if _alive_count() >= cap:
 		return true
 	var budget_left: float = profile.budget_for(threat) - alive_cost()
 	var exclude: Array[StringName] = _alive_ids()
@@ -163,7 +178,7 @@ func _top_up_ambient() -> void:
 	for i: int in range(_ambient.size() - 1, -1, -1):
 		if not is_instance_valid(_ambient[i]) or _ambient[i].is_despawning():
 			_ambient.remove_at(i)
-	if _ambient.size() >= profile.ambient_target_for(threat):
+	if _ambient.size() >= ambient_target() or profile.ambient_enemy == null:
 		return
 	var point: Variant = _find_spawn_point()
 	if point == null:

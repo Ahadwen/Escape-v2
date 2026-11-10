@@ -27,6 +27,10 @@ var manual_paused: bool = false
 var _menu_pauses: int = 0
 var _overlay: Label
 var _touch_button: Button
+## Debug builds: test tuning shown while paused (hunter cap, Shamblers).
+var _test_panel: PanelContainer
+var _hunter_label: Label
+var _shambler_label: Label
 
 
 static func find(tree: SceneTree) -> PauseController:
@@ -60,6 +64,8 @@ func _ready() -> void:
 	_touch_button.visible = false
 	_touch_button.pressed.connect(toggle_manual)
 	layer.add_child(_touch_button)
+	if OS.is_debug_build():
+		_build_test_panel(layer)
 
 
 ## Shows the touch pause button only for the touch scheme.
@@ -124,15 +130,83 @@ static func is_gameplay_press(event: InputEvent) -> bool:
 	return false
 
 
+## True for a click or tap on the pause button or the test panel (those
+## don't count as "resume playing").
 func _is_on_pause_button(event: InputEvent) -> bool:
-	if not _touch_button.visible:
-		return false
 	var at: Vector2 = Vector2.INF
 	if event is InputEventScreenTouch:
 		at = (event as InputEventScreenTouch).position
 	elif event is InputEventMouseButton:
 		at = (event as InputEventMouseButton).position
-	return _touch_button.get_global_rect().has_point(at)
+	if _touch_button.visible and _touch_button.get_global_rect().has_point(at):
+		return true
+	return (
+		_test_panel != null and _test_panel.visible and _test_panel.get_global_rect().has_point(at)
+	)
+
+
+func _build_test_panel(layer: CanvasLayer) -> void:
+	_test_panel = PanelContainer.new()
+	_test_panel.visible = false
+	_test_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	_test_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_test_panel.position += Vector2(16, -16)
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(0.05, 0.05, 0.1, 0.85)
+	style.set_corner_radius_all(6)
+	style.set_content_margin_all(10)
+	_test_panel.add_theme_stylebox_override("panel", style)
+	layer.add_child(_test_panel)
+	var column: VBoxContainer = VBoxContainer.new()
+	_test_panel.add_child(column)
+	var title: Label = Label.new()
+	title.text = "Test tuning"
+	title.add_theme_font_size_override("font_size", 13)
+	title.modulate = Color(1, 1, 1, 0.7)
+	column.add_child(title)
+	_hunter_label = _tuning_row(column, _change_hunters)
+	_shambler_label = _tuning_row(column, _change_shamblers)
+	_refresh_test_panel()
+
+
+func _tuning_row(parent: Control, change: Callable) -> Label:
+	var row: HBoxContainer = HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	parent.add_child(row)
+	var minus: Button = Button.new()
+	minus.text = " − "
+	minus.focus_mode = Control.FOCUS_NONE
+	minus.pressed.connect(change.bind(-1))
+	row.add_child(minus)
+	var plus: Button = Button.new()
+	plus.text = " + "
+	plus.focus_mode = Control.FOCUS_NONE
+	plus.pressed.connect(change.bind(1))
+	row.add_child(plus)
+	var label: Label = Label.new()
+	label.add_theme_font_size_override("font_size", 15)
+	row.add_child(label)
+	return label
+
+
+func _change_hunters(step: int) -> void:
+	ThreatDirector.hunter_cap_offset += step
+	_refresh_test_panel()
+
+
+func _change_shamblers(step: int) -> void:
+	ThreatDirector.ambient_offset += step
+	_refresh_test_panel()
+
+
+func _refresh_test_panel() -> void:
+	if _test_panel == null:
+		return
+	var director: ThreatDirector = ThreatDirector.find(get_tree())
+	var cap: String = str(director.hunter_cap()) if director != null else "—"
+	var shamblers: String = str(director.ambient_target()) if director != null else "—"
+	_hunter_label.text = "Hunters on field: %s  (%+d)" % [cap, ThreatDirector.hunter_cap_offset]
+	_shambler_label.text = "Shamblers: %s  (%+d)" % [shamblers, ThreatDirector.ambient_offset]
 
 
 func _apply() -> void:
@@ -141,3 +215,6 @@ func _apply() -> void:
 		get_tree().paused = paused
 		paused_changed.emit(paused)
 	_overlay.visible = manual_paused and _menu_pauses == 0
+	if _test_panel != null:
+		_test_panel.visible = _overlay.visible and ThreatDirector.find(get_tree()) != null
+		_refresh_test_panel()

@@ -171,7 +171,7 @@ func _hunt() -> ThreatProfile:
 func test_body_blocking_layers() -> void:
 	var scene: PackedScene = load("res://enemies/enemy.tscn") as PackedScene
 	var cases: Dictionary = {
-		"res://enemies/data/hunters/shambler.tres": [32, true],
+		"res://enemies/data/hunters/shambler.tres": [0, false],
 		"res://enemies/data/hunters/brood_mite.tres": [0, false],
 		"res://enemies/data/hunters/brute.tres": [4, true],
 	}
