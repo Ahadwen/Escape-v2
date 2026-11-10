@@ -39,9 +39,28 @@ func before_each() -> void:
 	add_to_tree(inventory)
 
 
-func test_has_six_empty_slots() -> void:
-	assert_eq(inventory.slots.size(), 6)
-	assert_eq(inventory.first_empty_slot(), 0)
+func test_deck_has_a_slot_per_rank_and_a_backpack() -> void:
+	assert_eq(inventory.slots.size(), 16)
+	assert_eq(CardInventory.rank_slot(_card(0, 1)), 0, "Ace slot")
+	assert_eq(CardInventory.rank_slot(_card(0, 13)), 12, "King slot")
+	assert_true(CardInventory.can_hold(6, _card(2, 7)), "7 goes in the 7 slot")
+	assert_false(CardInventory.can_hold(6, _card(2, 8)), "8 doesn't")
+	assert_true(CardInventory.can_hold(14, _card(2, 8)), "anything goes in the backpack")
+
+
+func test_place_uses_rank_slot_then_backpack() -> void:
+	assert_true(inventory.place(CardStackScript.new(_card(0, 7))))
+	assert_not_null(inventory.stack_at(6))
+	assert_true(inventory.place(CardStackScript.new(_card(1, 7))))
+	assert_not_null(inventory.stack_at(13), "second 7 goes to the backpack")
+	assert_true(inventory.holds(_card(1, 7)))
+
+
+func test_backpack_cards_are_inactive() -> void:
+	inventory.set_stack(14, CardStackScript.new(_card(0, 2, StatIds.ARMOUR, 4.0)))
+	assert_almost_eq(stats.get_value(StatIds.ARMOUR), 10.0, 0.001, "spare in the backpack")
+	inventory.swap(14, 1)
+	assert_almost_eq(stats.get_value(StatIds.ARMOUR), 14.0, 0.001, "equipped in the 2 slot")
 
 
 func test_card_stats_apply_and_remove() -> void:
@@ -85,21 +104,11 @@ func test_consuming_last_ace_empties_slot() -> void:
 	assert_null(inventory.stack_at(1))
 
 
-func test_ace_index_follows_slot_order() -> void:
-	inventory.set_stack(3, CardStackScript.new(_card(0, 1)))
-	inventory.set_stack(1, CardStackScript.new(_card(3, 1)))
-	assert_eq(inventory.ace_slot_by_index(0), 1)
-	assert_eq(inventory.ace_slot_by_index(1), 3)
-	assert_eq(inventory.ace_slot_by_index(2), -1)
-
-
-func test_selected_ace_cycles() -> void:
+func test_only_the_ace_slot_ace_is_usable() -> void:
 	inventory.set_stack(0, CardStackScript.new(_card(0, 1)))
-	inventory.set_stack(2, CardStackScript.new(_card(1, 1)))
-	assert_eq(inventory.selected_ace_slot, 0)
-	inventory.cycle_selected_ace(1)
-	assert_eq(inventory.selected_ace_slot, 2)
-	inventory.cycle_selected_ace(1)
+	inventory.set_stack(13, CardStackScript.new(_card(3, 1)))
+	assert_eq(inventory.ace_slot_by_index(0), 0)
+	assert_eq(inventory.ace_slot_by_index(1), -1, "backpack aces are spares")
 	assert_eq(inventory.selected_ace_slot, 0)
 
 

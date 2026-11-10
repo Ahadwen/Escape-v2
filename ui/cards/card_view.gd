@@ -20,10 +20,16 @@ var selected: bool = false:
 		_refresh()
 ## Shown when the slot is empty.
 var empty_text: String = "Empty"
+## Size of the view (smaller in the deck grid).
+var view_size: Vector2 = SIZE
+## Compact: just the card's name and title (full text in the tooltip).
+var compact: bool = false
 
 
 func _ready() -> void:
-	custom_minimum_size = SIZE
+	custom_minimum_size = view_size
+	if compact:
+		add_theme_font_size_override("font_size", 13)
 	autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	clip_text = false
 	alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -59,10 +65,20 @@ func _refresh() -> void:
 		text = empty_text
 		modulate = Color(1, 1, 1, 0.55)
 	else:
-		text = describe(stack)
+		text = describe_compact(stack) if compact else describe(stack)
+		tooltip_text = describe(stack)
 		modulate = stack.card.color().lerp(Color.WHITE, 0.55)
 	if selected:
 		modulate = Color(1.0, 1.0, 0.55)
+
+
+## Name and title only ("7♥\nCrystal Skin", "A♠ ×2").
+static func describe_compact(card_stack: CardStack) -> String:
+	var card: CardData = card_stack.card
+	var heading: String = card.label()
+	if card_stack.count > 1:
+		heading += " ×%d" % card_stack.count
+	return heading if card.title.is_empty() else "%s\n%s" % [heading, card.title]
 
 
 static func describe(card_stack: CardStack) -> String:

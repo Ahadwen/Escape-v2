@@ -292,14 +292,25 @@ func _refresh_header() -> void:
 	_gold.text = "%d gold" % _player.wallet.gold
 	for child: Node in _cards_row.get_children():
 		child.queue_free()
-	for i: int in CardInventory.SLOT_COUNT:
-		var view: CardView = CardView.new()
-		view.focus_mode = Control.FOCUS_NONE
-		view.disabled = true
-		view.empty_text = "Slot %d\nempty" % (i + 1)
-		_readable(view)
-		_cards_row.add_child(view)
-		view.stack = _player.cards.stack_at(i)
+	var views: Array[Control] = DeckLayout.build(_cards_row, _header_view, 4)
+	for i: int in views.size():
+		(views[i] as CardView).stack = _player.cards.stack_at(i)
+
+
+## A small, display-only view of one deck slot for the header.
+func _header_view(slot: int) -> Control:
+	var view: CardView = CardView.new()
+	view.compact = true
+	view.view_size = Vector2(78, 46)
+	if slot == CardInventory.ACE_SLOT:
+		view.view_size = Vector2(78, 96)
+	elif CardInventory.is_backpack(slot):
+		view.view_size = Vector2(96, 28)
+	view.focus_mode = Control.FOCUS_NONE
+	view.disabled = true
+	view.empty_text = CardInventory.slot_label(slot)
+	_readable(view)
+	return view
 
 
 ## Display-only card views are disabled buttons; keep their text bright.
@@ -322,15 +333,32 @@ func _left_label(text: String, font_size: int) -> Label:
 	return label
 
 
+static func _free_backpack(stacks: Array[CardStack]) -> int:
+	for i: int in range(CardInventory.RANK_SLOTS, CardInventory.SLOT_COUNT):
+		if stacks[i] == null:
+			return i
+	return -1
+
+
 func _on_buy(recipe: RecipeData) -> void:
 	var plan: RecipePlan = RecipePlan.build(recipe, _player.cards.slots, _wildcard_available)
 	var cost: int = plan.cost(economy, _player.stats.get_value(StatIds.RECIPE_DISCOUNT))
 	if not plan.is_complete() or not _player.wallet.spend(cost):
 		return
+	# Trade in the ingredients; the result goes in its rank slot, and whatever
+	# was there moves to the backpack.
 	var stacks: Array[CardStack] = _player.cards.slots.duplicate()
-	var into: int = plan.used_slots.min()
 	for slot: int in plan.used_slots:
 		stacks[slot] = null
+	var into: int = CardInventory.rank_slot(recipe.result)
+	if stacks[into] != null:
+		var spare: int = _free_backpack(stacks)
+		if spare == -1:
+			_player.wallet.add(cost)
+			_title.text = "No room: free a backpack slot for your %s" % stacks[into].card.label()
+			_show_grid()
+			return
+		stacks[spare] = stacks[into]
 	stacks[into] = CardStack.new(recipe.result)
 	_player.cards.replace_all(stacks)
 	if plan.wildcard_slot != -1:

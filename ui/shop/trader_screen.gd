@@ -136,9 +136,11 @@ func _roll() -> void:
 	while _offers.size() < count and not tradeable.is_empty() and attempts < 20:
 		attempts += 1
 		var slot: int = tradeable[attempts % tradeable.size()]
-		var options: Array[CardData] = candidates_for(
-			_player.cards.stack_at(slot).card, library.cards
-		)
+		var options: Array[CardData] = []
+		for option: CardData in candidates_for(_player.cards.stack_at(slot).card, library.cards):
+			# One of each card: never offer one you already hold.
+			if not _player.cards.holds(option):
+				options.append(option)
 		if options.is_empty():
 			continue
 		var offer: Offer = Offer.new()
@@ -197,7 +199,17 @@ func _on_trade(index: int) -> void:
 	var offer: Offer = _offers[index]
 	if _player.cards.stack_at(offer.give_slot) == null:
 		return
-	_player.cards.set_stack(offer.give_slot, CardStack.new(offer.receive))
+	# The new card goes in its own rank slot (or the backpack).
+	var given: CardStack = _player.cards.stack_at(offer.give_slot)
+	var received: CardStack = CardStack.new(offer.receive)
+	if CardInventory.can_hold(offer.give_slot, offer.receive):
+		_player.cards.set_stack(offer.give_slot, received)
+	else:
+		_player.cards.set_stack(offer.give_slot, null)
+		if not _player.cards.place(received):
+			_player.cards.set_stack(offer.give_slot, given)
+			_title.text = "No room for %s: free its slot or a backpack slot" % offer.receive.label()
+			return
 	_title.text = "Traded for %s" % offer.receive.label()
 	# Other offers that gave away the same slot are no longer valid.
 	var remaining: Array[Offer] = []

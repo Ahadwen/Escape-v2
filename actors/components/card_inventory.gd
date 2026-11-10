@@ -1,10 +1,16 @@
 class_name CardInventory
 extends Node
-## Six card slots. Applies held cards' stats, stacks aces and uses them.
+## V1-style deck: one slot per rank (A, 2 ... K), each holding only a card of
+## that rank, plus a 3-slot backpack for spares (any card, jokers included).
+## Only cards in rank slots are active (stats, effects; the Ace slot's Ace
+## is the one you use). Slots 0-12 are ranks A-K, 13-15 the backpack.
 
 signal changed
 
-const SLOT_COUNT: int = 6
+const RANK_SLOTS: int = 13
+const BACKPACK_SLOTS: int = 3
+const SLOT_COUNT: int = RANK_SLOTS + BACKPACK_SLOTS
+const ACE_SLOT: int = 0
 const STAT_SOURCE: StringName = &"cards"
 
 @export var stats: StatsComponent
@@ -21,6 +27,31 @@ var _equipped: Array[CardEffectInstance] = []
 
 func _init() -> void:
 	slots.resize(SLOT_COUNT)
+
+
+## The rank slot for a card's rank (A = 0 ... K = 12), or -1 (jokers).
+static func rank_slot(card: CardData) -> int:
+	if card == null or card.joker or card.rank < 1 or card.rank > RANK_SLOTS:
+		return -1
+	return card.rank - 1
+
+
+static func is_backpack(slot: int) -> bool:
+	return slot >= RANK_SLOTS and slot < SLOT_COUNT
+
+
+## Whether a slot may hold this card (backpack: anything; rank slot: its rank).
+static func can_hold(slot: int, card: CardData) -> bool:
+	if card == null or is_backpack(slot):
+		return true
+	return slot >= 0 and slot < RANK_SLOTS and rank_slot(card) == slot
+
+
+## Short label for a slot ("A", "7", "K", "Pack 1").
+static func slot_label(slot: int) -> String:
+	if is_backpack(slot):
+		return "Pack %d" % (slot - RANK_SLOTS + 1)
+	return CardData.rank_text(slot + 1)
 
 
 func stack_at(slot: int) -> CardStack:
@@ -46,11 +77,33 @@ func swap(a: int, b: int) -> void:
 	_refresh()
 
 
-func first_empty_slot() -> int:
-	for i: int in SLOT_COUNT:
+## Where a new card would go: its rank slot if free, else the first free
+## backpack slot, else -1.
+func free_slot_for(card: CardData) -> int:
+	var own: int = rank_slot(card)
+	if own != -1 and slots[own] == null:
+		return own
+	for i: int in range(RANK_SLOTS, SLOT_COUNT):
 		if slots[i] == null:
 			return i
 	return -1
+
+
+## Puts a card in its free rank slot or the backpack. Returns false if full.
+func place(stack: CardStack) -> bool:
+	var slot: int = free_slot_for(stack.card)
+	if slot == -1:
+		return false
+	set_stack(slot, stack)
+	return true
+
+
+## Whether this exact card (suit and rank) is held anywhere.
+func holds(card: CardData) -> bool:
+	for stack: CardStack in slots:
+		if stack != null and stack.card.same_card(card):
+			return true
+	return false
 
 
 ## Slot holding a stack of this ace, or -1.
@@ -68,11 +121,11 @@ func add_to_stack(slot: int, count: int) -> void:
 	_refresh()
 
 
+## Usable aces: only the one in the Ace slot (backpack aces are spares).
 func ace_slots() -> Array[int]:
 	var found: Array[int] = []
-	for i: int in SLOT_COUNT:
-		if slots[i] != null and slots[i].card.is_ace():
-			found.append(i)
+	if slots[ACE_SLOT] != null and slots[ACE_SLOT].card.is_ace():
+		found.append(ACE_SLOT)
 	return found
 
 
@@ -130,9 +183,18 @@ func _refresh() -> void:
 	changed.emit()
 
 
+## Cards in rank slots (the active ones).
+func active_stacks() -> Array[CardStack]:
+	var active: Array[CardStack] = []
+	for i: int in RANK_SLOTS:
+		if slots[i] != null:
+			active.append(slots[i])
+	return active
+
+
 func _physics_process(delta: float) -> void:
-	for stack: CardStack in slots:
-		if stack != null and stack.effect_instance != null:
+	for stack: CardStack in active_stacks():
+		if stack.effect_instance != null:
 			stack.effect_instance.tick(delta)
 
 
@@ -140,9 +202,17 @@ func _physics_process(delta: float) -> void:
 func _sync_effects() -> void:
 	if player == null:
 		return
+	# Cards moved to the backpack stop working (and start fresh if moved back).
+	for i: int in range(RANK_SLOTS, SLOT_COUNT):
+		var spare: CardStack = slots[i]
+		if spare != null and spare.effect_instance != null:
+			if spare.effect_instance in _equipped:
+				spare.effect_instance.unequip()
+				_equipped.erase(spare.effect_instance)
+			spare.effect_instance = null
 	var held: Array[CardEffectInstance] = []
-	for stack: CardStack in slots:
-		if stack == null or stack.card.effect == null:
+	for stack: CardStack in active_stacks():
+		if stack.card.effect == null:
 			continue
 		if stack.effect_instance == null:
 			stack.effect_instance = stack.card.effect.create_instance()
@@ -158,9 +228,7 @@ func _apply_stats() -> void:
 	if stats == null:
 		return
 	stats.block.remove_modifiers_from(STAT_SOURCE)
-	for stack: CardStack in slots:
-		if stack == null:
-			continue
+	for stack: CardStack in active_stacks():
 		for line: CardStat in stack.all_stats():
 			stats.block.add_modifier(
 				StatModifier.new(line.stat, StatModifier.Type.FLAT, line.value, STAT_SOURCE)

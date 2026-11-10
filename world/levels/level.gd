@@ -223,9 +223,8 @@ func _deal_starting_cards() -> void:
 	for i: int in kit.start_aces:
 		picks.append(card_library.cards_of_tier(0).pick_random())
 	for card: CardData in picks:
-		var slot: int = _player.cards.first_empty_slot()
-		if card != null and slot != -1:
-			_player.cards.set_stack(slot, CardStack.new(card))
+		if card != null:
+			_player.cards.place(CardStack.new(card))
 
 
 ## Run details for the stats overlay (hold Tab).

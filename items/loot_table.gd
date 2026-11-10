@@ -4,6 +4,8 @@ extends Resource
 ## are rarer, and Aces and jokers have their own chances. (J/Q/K come from
 ## safehouse recipes only.)
 
+const REROLLS: int = 12
+
 @export var library: CardLibrary
 @export_range(0.0, 1.0) var ace_chance: float = 0.15
 @export_range(0.0, 1.0) var joker_chance: float = 0.05
@@ -13,7 +15,17 @@ extends Resource
 )
 
 
-func roll() -> CardData:
+## A random drop. `is_held(card) -> bool` (optional) excludes cards already
+## held; it re-rolls a few times, then gives up on the exclusion.
+func roll(is_held: Callable = Callable()) -> CardData:
+	for attempt: int in REROLLS:
+		var card: CardData = _roll_once()
+		if card == null or not is_held.is_valid() or not is_held.call(card) or card.joker:
+			return card
+	return _roll_once()
+
+
+func _roll_once() -> CardData:
 	if library == null:
 		return null
 	if randf() < joker_chance and library.joker() != null:

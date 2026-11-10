@@ -32,7 +32,11 @@ func _unhandled_input(event: InputEvent) -> void:
 func open_chest(player: Player) -> void:
 	if loot_table == null:
 		return
-	var card: CardData = loot_table.roll()
+	# One of each card: never a card you already hold (Aces stack, so they can).
+	var card: CardData = loot_table.roll(
+		func(candidate: CardData) -> bool:
+			return not candidate.is_ace() and player.cards.holds(candidate)
+	)
 	if card == null:
 		return
 	var gold: int = economy.card_pickup_gold(player.stats.get_value(StatIds.GOLD_PER_PICKUP))
@@ -54,6 +58,4 @@ func offer(player: Player, card: CardData, count: int = 1) -> void:
 	if pickup_screen != null:
 		pickup_screen.open(player, card, count)
 	else:
-		var empty: int = player.cards.first_empty_slot()
-		if empty != -1:
-			player.cards.set_stack(empty, CardStack.new(card, count))
+		player.cards.place(CardStack.new(card, count))

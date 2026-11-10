@@ -31,7 +31,7 @@ Status: **in discussion.** *(yours)* = your idea, *(draft)* = mine, ⚠ = flagge
 | Aces | A | 4 | Consumables, stack in one slot | Chests |
 | Jokers | — | — | Wildcard recipe ingredient (recipe costs more gold) | Chests (rare) |
 
-6 card slots. Picking up a card **pauses the game** and opens the inventory (swap, rearrange, discard).
+**Deck (V1 format, no set bonuses):** 13 slots, one per rank (A, 2 ... K), each holding only a card of that rank (any suit), plus a **3-slot backpack** for spares (any card, jokers included). Only cards in rank slots are active; the Ace slot's Ace is the one you use. One of each card: chests and the trader never give you a card you already hold (Aces stack). Picking up a card **pauses the game** and opens the deck (equip, swap, rearrange, discard).
 
 **Recipes:** T2 = two T1s of its suit + one T1 of a partner suit, plus gold. T3 = two T2s + one T1 (suits case by case), plus more gold. You must hold the components (or a wildcard: a joker at +50% gold each, or the Q♦ Forger wildcard).
 
