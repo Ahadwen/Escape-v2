@@ -166,7 +166,48 @@ func _build_test_panel(layer: CanvasLayer) -> void:
 	column.add_child(title)
 	_hunter_label = _tuning_row(column, _change_hunters)
 	_shambler_label = _tuning_row(column, _change_shamblers)
+	var builds: HBoxContainer = HBoxContainer.new()
+	builds.add_theme_constant_override("separation", 8)
+	column.add_child(builds)
+	_test_button(builds, "Empty my build", _empty_build)
+	_test_button(builds, "Randomise my build", _randomise_build)
 	_refresh_test_panel()
+
+
+func _test_button(parent: Control, text: String, handler: Callable) -> void:
+	var button: Button = Button.new()
+	button.text = text
+	button.focus_mode = Control.FOCUS_NONE
+	button.pressed.connect(handler)
+	parent.add_child(button)
+
+
+func _test_player() -> Player:
+	return get_tree().get_first_node_in_group(Player.GROUP) as Player
+
+
+## Clears every deck and backpack slot.
+func _empty_build() -> void:
+	var player: Player = _test_player()
+	if player == null:
+		return
+	var empty: Array[CardStack] = []
+	player.cards.replace_all(empty)
+
+
+## Fills every rank slot (A-K) with a random card of that rank; backpack empty.
+func _randomise_build() -> void:
+	var player: Player = _test_player()
+	var loot: LootService = LootService.find(get_tree())
+	if player == null or loot == null or loot.loot_table == null:
+		return
+	var library: CardLibrary = loot.loot_table.library
+	var stacks: Array[CardStack] = []
+	for slot: int in CardInventory.RANK_SLOTS:
+		var suit: CardData.Suit = (randi() % 4) as CardData.Suit
+		var card: CardData = library.find(suit, slot + 1)
+		stacks.append(CardStack.new(card) if card != null else null)
+	player.cards.replace_all(stacks)
 
 
 func _tuning_row(parent: Control, change: Callable) -> Label:
